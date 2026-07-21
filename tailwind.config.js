@@ -9,13 +9,15 @@ export default {
       colors: {
         navy: {
           900: '#0B192C',
-          800: '#1E3A5F',
-          700: '#2C4E80',
+          950: '#0F172A',
         },
         gold: {
-          500: '#D4AF37',
-          600: '#AA820A',
-        },
+          400: '#D4AF37',
+          500: '#C5A059',
+        }
+      },
+      fontFamily: {
+        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
       },
     },
   },
