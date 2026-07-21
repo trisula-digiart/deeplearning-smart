@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 
 /**
- * TRISULAPROMPT - AIWorkspace Component v2.8 (Smart Sub-Tab Synthesizer Edition)
+ * TRISULAPROMPT - AIWorkspace Component v2.9 (Exact Boundary Sub-Tab Router Edition)
  * Author: TRISULACODER v8.7 - Lead Solution Architect
  * Stack: React / Vite / Tailwind CSS
  * Features:
+ *  - Fixed Precise Section Boundary Filter Engine (Preserves ### sub-headings and content under ## sections)
  *  - Smart Sub-Tab Synthesizer (Generates exact Markdown headers matching CP, TP, ATP, KKTP, Prota, Prosem filters)
- *  - Dynamic Sub-Tab Content Router (Flexible Keyword Matcher for Header Parsing)
  *  - Interactive Empty-State Generator Actions Per Sub-Tab
  *  - Word-Compatible Table Engine for Mermaid Diagrams & Data Charts (No Flexbox Breakage in MS Word)
  *  - High-Fidelity Math/LaTeX Pretty Renderer Engine
@@ -41,18 +41,21 @@ export default function AIWorkspace({ activeDocument, onBackToDashboard, onUpdat
 ---
 
 ## II. CAPAIAN PEMBELAJARAN (CP)
-Peserta didik mampu menerapkan konsep analisis data, menyusun algoritma pemrosesan logika, serta merancang diagram alir pemecahan masalah kontekstual dalam pemrograman.
+### 📘 Analisis Capaian Pembelajaran Elemen (INFORMATIKA)
+Peserta didik mampu menerapkan konsep analisis data, menyusun algoritma pemrosesan logika, serta merancang diagram alir pemecahan masalah kontekstual secara kritis dan kolaboratif.
 
 ---
 
 ## III. TUJUAN PEMBELAJARAN (TP)
+### 🎯 Poin Tujuan Pembelajaran ABCD (INFORMATIKA)
 - **TP1**: Menganalisis kompleksitas algoritma menggunakan persamaan logika $O(n \\log n)$.
 - **TP2**: Menyusun diagram alir logika pemrosesan data menggunakan sintaks flowchart.
-- **TP3**: Memprediksi tren data hasil eksekusi program berdasarkan grafik frekuensi statistika.
+- **TP3**: Memprediksi tren data hasil eksekusi program berdasarkan grafik frekuensi.
 
 ---
 
 ## IV. ALUR TUJUAN PEMBELAJARAN (ATP)
+### 🗺️ Pemetaan Runtutan ATP (INFORMATIKA)
 | Kode ATP | Alokasi Waktu | Indikator Ketercapaian | Rencana Asesmen |
 | :--- | :--- | :--- | :--- |
 | **ATP.11.1** | 2 JP | Mampu menganalisis efisiensi algoritma | Formatif Latihan Soal |
@@ -61,6 +64,7 @@ Peserta didik mampu menerapkan konsep analisis data, menyusun algoritma pemroses
 ---
 
 ## V. KRITERIA KETERCAPAIAN TUJUAN PEMBELAJARAN (KKTP)
+### 📊 Rubrik Observasi Unjuk Kerja Pemecahan Masalah (INFORMATIKA)
 | Kriteria Penilaian | Belum Memenuhi (1) | Memenuhi (2-3) | Sangat Baik (4) |
 | :--- | :--- | :--- | :--- |
 | **Penerapan Algoritma** | Salah menyusun instruksi | Tepat menyusun 80% logika | Tepat 100% & optimalisasi memori |
@@ -69,19 +73,21 @@ Peserta didik mampu menerapkan konsep analisis data, menyusun algoritma pemroses
 ---
 
 ## VI. PROGRAM TAHUNAN (PROTA)
-| No | Bab / Elemen Materi | Alokasi Waktu (JP) | Semester |
+### 🗓️ Alokasi Efektif Jam Pelajaran Tahunan (INFORMATIKA)
+| No | Bab / Elemen Materi Utama | Alokasi Waktu (JP) | Keterangan Semester |
 | :--- | :--- | :--- | :--- |
-| 1 | Analisis Data & Algoritma Pemrograman | 18 JP | Semester 1 |
-| 2 | Rekayasa Perangkat Lunak & Proyek STEM | 18 JP | Semester 2 |
+| **1** | Analisis Data & Algoritma Pemrograman | 18 JP | Semester 1 |
+| **2** | Rekayasa Perangkat Lunak & Proyek STEM | 18 JP | Semester 2 |
 
 ---
 
 ## VII. PROGRAM SEMESTER (PROSEM)
+### 📅 Alokasi Pemetaan Jam Pelajaran Semester 1 & 2 (INFORMATIKA)
 | No | Materi / Tujuan Pembelajaran | JP | Juli | Ags | Sep | Okt | Nov | Des |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| 1 | Analisis Kompleksitas Algoritma | 6 JP | x | x | | | | |
-| 2 | Pembuatan Diagram Alir Flowchart | 6 JP | | | x | x | | |
-| 3 | Pengujian Program & Grafik Statistika | 6 JP | | | | | x | x |
+| **1** | Analisis Kompleksitas Algoritma | 6 JP | x | x | | | | |
+| **2** | Pembuatan Diagram Alir Flowchart | 6 JP | | | x | x | | |
+| **3** | Pengujian Program & Grafik Statistika | 6 JP | | | | | x | x |
 
 ---
 
@@ -161,7 +167,7 @@ graph TD
     {
       id: 1,
       sender: 'ai',
-      text: `Halo Bapak/Ibu Guru! Saya **Deep Learning Engine v2.8**. Dokumen ${currentDoc.subject || 'Pembelajaran'} Anda lengkap dengan LaTeX Math, Diagram Mermaid, Grafik Data, serta Smart Sub-Tab Routing siap ditinjau!`
+      text: `Halo Bapak/Ibu Guru! Saya **Deep Learning Engine v2.9**. Dokumen ${currentDoc.subject || 'Pembelajaran'} Anda lengkap dengan LaTeX Math, Diagram Mermaid, Grafik Data, serta Boundary-Exact Sub-Tab Routing siap ditinjau!`
     }
   ]);
   const [inputInstruction, setInputInstruction] = useState('');
@@ -194,28 +200,31 @@ graph TD
       .replace(/\\div/g, '÷');
   };
 
-  // Flexible Dynamic Sub-Tab Content Filter Engine
+  // FIXED: Precise Boundary Dynamic Sub-Tab Content Filter Engine
   const filterContentByTab = (fullContent, tabId) => {
     if (!fullContent) return '';
     if (tabId === 'modul-ajar') return fullContent;
 
-    const sections = fullContent.split(/(?=##\s+)/g);
+    // Split strictly on ## headings (not ### headings)
+    const sections = fullContent.split(/(?=\n##\s+)/g);
 
     const matchedSection = sections.find(sec => {
-      const headerLine = sec.split('\n')[0].toUpperCase();
+      const firstLine = sec.trim().split('\n')[0].toUpperCase();
+      if (!firstLine.startsWith('##')) return false;
+
       switch (tabId) {
-        case 'cp': return headerLine.includes('CAPAIAN PEMBELAJARAN') || headerLine.includes('CP');
-        case 'tp': return (headerLine.includes('TUJUAN PEMBELAJARAN') || headerLine.includes('TP')) && !headerLine.includes('ALUR') && !headerLine.includes('KRITERIA');
-        case 'atp': return headerLine.includes('ALUR TUJUAN') || headerLine.includes('ATP');
-        case 'kktp': return headerLine.includes('KRITERIA KETERCAPAIAN') || headerLine.includes('KKTP');
-        case 'prota': return headerLine.includes('PROGRAM TAHUNAN') || headerLine.includes('PROTA');
-        case 'prosem': return headerLine.includes('PROGRAM SEMESTER') || headerLine.includes('PROSEM');
+        case 'cp': return firstLine.includes('CAPAIAN PEMBELAJARAN') || firstLine.includes('CP');
+        case 'tp': return (firstLine.includes('TUJUAN PEMBELAJARAN') || firstLine.includes('TP')) && !firstLine.includes('ALUR') && !firstLine.includes('KRITERIA');
+        case 'atp': return firstLine.includes('ALUR TUJUAN') || firstLine.includes('ATP');
+        case 'kktp': return firstLine.includes('KRITERIA KETERCAPAIAN') || firstLine.includes('KKTP');
+        case 'prota': return firstLine.includes('PROGRAM TAHUNAN') || firstLine.includes('PROTA');
+        case 'prosem': return firstLine.includes('PROGRAM SEMESTER') || firstLine.includes('PROSEM');
         default: return false;
       }
     });
 
     if (matchedSection) {
-      return matchedSection;
+      return matchedSection.trim();
     } else {
       // Clean Empty State Draf
       return `# SEKSI ${tabId.toUpperCase()} BELUM TERSEDIA
@@ -447,7 +456,7 @@ Gunakan tombol di bawah ini untuk menginstruksikan AI menyusun seksi ini secara 
         htmlResult.push(`<blockquote style="border-left:4px solid #D4AF37; background:#FEF3C7; padding:8px 12px; margin:10px 0; color:#78350F; font-size:11px;">${parseInlineMarkdown(line.replace('> ', ''))}</blockquote>`);
       } else if (line.trim().startsWith('- ')) {
         htmlResult.push(`<li style="margin-left:20px; margin-bottom:4px; color:#334155;">${parseInlineMarkdown(line.replace('- ', ''))}</li>`);
-      } else if (line.trim().length > 0) {
+      } else if (line.trim().length > 0 && line.trim() !== '#') {
         htmlResult.push(`<p style="margin-bottom:8px; color:#334155; line-height:1.6;">${parseInlineMarkdown(line)}</p>`);
       }
     }
@@ -721,7 +730,7 @@ Lengkapi tabel analisis formula dan diagram alir berikut:
             </button>
             <div>
               <h3 className="font-bold text-xs text-slate-100 flex items-center gap-1.5">
-                <span>🤖</span> AI Co-Pilot (Deep Learning v2.8)
+                <span>🤖</span> AI Co-Pilot (Deep Learning v2.9)
               </h3>
               <p className="text-[10px] text-slate-400">Pilar: Mindful • Meaningful • Joyful</p>
             </div>
@@ -785,7 +794,7 @@ Lengkapi tabel analisis formula dan diagram alir berikut:
               value={inputInstruction}
               onChange={(e) => setInputInstruction(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-              placeholder="Ketik instruksi, misal: 'Tolong buatkan seksi PROSEM'..."
+              placeholder="Ketik instruksi, misal: 'Tolong buatkan seksi CP'..."
               className="flex-1 px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-[#D4AF37]"
             />
             <button
@@ -913,8 +922,6 @@ Lengkapi tabel analisis formula dan diagram alir berikut:
                   <span className="text-2xl">📄</span>
                   <div>
                     <div className="font-bold text-xs text-slate-100 group-hover:text-[#D4AF37]">
-                      Unduh Teks Polos (.txt)
-========================================
                       Unduh Teks Polos (.txt)
                     </div>
                     <div className="text-[10px] text-slate-400">Format markdown murni tanpa format visual</div>
