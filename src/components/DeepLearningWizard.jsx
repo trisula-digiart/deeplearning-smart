@@ -18,17 +18,6 @@ import {
 /**
  * TRISULAPROMPT - Deep Learning Wizard Modal Component (v2.5)
  * Guided 4-Step interactive modal for synthesizing CP into TP, ATP, KKTP, Prota, Prosem, & Modul Ajar.
- * 
- * @param {Object} props
- * @param {boolean} props.isOpen - Toggle visibility for modal overlay
- * @param {Function} props.onClose - Callback to close modal
- * @param {number} props.wizardStep - Active step counter (1 | 2 | 3 | 4)
- * @param {Function} props.setWizardStep - Setter for wizard step navigation
- * @param {Object} props.wizardData - Form data state object
- * @param {Function} props.setWizardData - Setter for form data state
- * @param {boolean} props.isGenerating - Processing state during AI synthesis
- * @param {Function} props.onNextStep - Callback triggered when proceeding to next step
- * @param {Function} props.onPrevStep - Callback triggered when navigating backwards
  */
 export default function DeepLearningWizard({
   isOpen,
@@ -81,7 +70,7 @@ export default function DeepLearningWizard({
           </button>
         </div>
 
-        {/* Horizontal Progress Stepper Bar */}
+        {}
         <div className="px-6 py-3 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between shrink-0 overflow-x-auto gap-2">
           {stepsList.map((s) => {
             const isActive = wizardStep === s.step;
@@ -121,7 +110,7 @@ export default function DeepLearningWizard({
           })}
         </div>
 
-        {/* Scrollable Form Body Container */}
+        {}
         <div className="p-6 overflow-y-auto flex-1 space-y-5 bg-[#0B192C]">
           {/* STEP 1: Basic Metadata & Capaian Pembelajaran Input */}
           {wizardStep === 1 && (
@@ -220,7 +209,7 @@ export default function DeepLearningWizard({
             </div>
           )}
 
-          {/* STEP 2: AI Diagnostic Interview & 3 Pillars Context Input */}
+          {}
           {wizardStep === 2 && (
             <div className="space-y-4 animate-fadeIn">
               <div className="p-4 bg-gradient-to-r from-amber-500/10 via-indigo-500/10 to-transparent border border-amber-500/20 rounded-2xl">
@@ -279,7 +268,7 @@ export default function DeepLearningWizard({
             </div>
           )}
 
-          {/* STEP 3: Generated Review Matrix Display */}
+          {}
           {wizardStep === 3 && (
             <div className="space-y-4 animate-fadeIn">
               {isGenerating ? (
@@ -301,7 +290,6 @@ export default function DeepLearningWizard({
                     Sintesis Konsep Berhasil! Silakan tinjau draf hasil olahan AI di bawah ini.
                   </div>
 
-                  {/* Generated TP Block */}
                   <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2">
                     <h4 className="text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
                       <FileText className="w-3.5 h-3.5 text-amber-400" />
@@ -312,7 +300,6 @@ export default function DeepLearningWizard({
                     </p>
                   </div>
 
-                  {/* Generated ATP Block */}
                   <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2">
                     <h4 className="text-xs font-bold text-indigo-300 uppercase tracking-wider flex items-center gap-1.5">
                       <Layers className="w-3.5 h-3.5 text-indigo-400" />
@@ -327,7 +314,7 @@ export default function DeepLearningWizard({
             </div>
           )}
 
-          {/* STEP 4: Final Confirmation Screen */}
+          {}
           {wizardStep === 4 && (
             <div className="text-center py-8 space-y-5 animate-fadeIn">
               <div className="w-20 h-20 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-full flex items-center justify-center mx-auto shadow-2xl shadow-emerald-500/20">
@@ -349,12 +336,12 @@ export default function DeepLearningWizard({
           )}
         </div>
 
-        {/* Modal Navigation Footer */}
+        {}
         <div className="p-4 bg-slate-950 border-t border-slate-800 flex items-center justify-between shrink-0">
           <button
             disabled={wizardStep === 1 || isGenerating}
             onClick={onPrevStep}
-            className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold transition disabled:opacity-50 active:scale-95"
+            className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold transition disabled:opacity-50 active:scale-95 cursor-pointer"
           >
             Kembali
           </button>
@@ -362,7 +349,7 @@ export default function DeepLearningWizard({
           <button
             disabled={isGenerating}
             onClick={onNextStep}
-            className="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white rounded-xl text-xs font-bold shadow-lg shadow-indigo-600/30 border border-indigo-400/20 transition flex items-center gap-1.5 active:scale-95 disabled:opacity-50"
+            className="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white rounded-xl text-xs font-bold shadow-lg shadow-indigo-600/30 border border-indigo-400/20 transition flex items-center gap-1.5 active:scale-95 disabled:opacity-50 cursor-pointer"
           >
             {wizardStep === 4 ? (
               <>
