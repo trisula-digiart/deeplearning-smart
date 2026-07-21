@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 
-// Google Apps Script Webhook URL (Replace with your deployed Web App URL)
-const GOOGLE_SHEETS_WEBHOOK_URL = "";
+// Google Apps Script Webhook URL (Ganti dengan Web App URL dari Deployment Google Apps Script kamu)
+const GOOGLE_SHEETS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyJJp3CVGiAEkCQ-6zDTgS1Rz2Fz2vQYCvpn_hB-JkN13q9aWQOAFfAtpWH3cHnby6LEg/exec";
 
 const syncUserToGoogleSheets = async (userData, action = 'SYNC_USER') => {
   if (!GOOGLE_SHEETS_WEBHOOK_URL) return;
@@ -88,6 +88,21 @@ const Icons = {
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
     </svg>
+  ),
+  Folder: ({ className = "w-4 h-4" }) => (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+    </svg>
+  ),
+  Edit: ({ className = "w-4 h-4" }) => (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+    </svg>
+  ),
+  Bolt: ({ className = "w-4 h-4 text-amber-400" }) => (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+    </svg>
   )
 };
 
@@ -125,7 +140,7 @@ function LoginPage({ onLoginSuccess }) {
       setIsLoading(false);
       const userPayload = {
         id: `usr_${Math.floor(1000 + Math.random() * 9000)}`,
-        name: fullName || (email.includes('admin') ? 'Administrator Trisula' : email.split('@')[0]),
+        name: fullName || (email.includes('admin') ? 'Root Admin Trisula' : email.split('@')[0]),
         email: email,
         role: selectedRole,
         is_premium: selectedRole === 'admin' || email.includes('premium') || email.includes('budi'),
@@ -344,7 +359,7 @@ function LoginPage({ onLoginSuccess }) {
               <button
                 type="button"
                 onClick={() => setAuthMode('forgot')}
-                className="hover:text-[#D4AF37] transition-colors"
+                className="hover:text-[#D4AF37] transition-colors cursor-pointer"
               >
                 Lupa Sandi?
               </button>
@@ -403,7 +418,7 @@ function LoginPage({ onLoginSuccess }) {
               <button
                 type="button"
                 onClick={() => setAuthMode('register')}
-                className="text-[#D4AF37] font-bold hover:underline"
+                className="text-[#D4AF37] font-bold hover:underline cursor-pointer"
               >
                 Daftar Sekarang
               </button>
@@ -414,7 +429,7 @@ function LoginPage({ onLoginSuccess }) {
               <button
                 type="button"
                 onClick={() => setAuthMode('login')}
-                className="text-[#D4AF37] font-bold hover:underline"
+                className="text-[#D4AF37] font-bold hover:underline cursor-pointer"
               >
                 Masuk Kembali
               </button>
@@ -571,9 +586,9 @@ function AdminDashboard({ usersData, onUpdateUserStatus, onAddCredits, onAddUser
             className="bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-[#D4AF37] w-full md:w-80"
           />
           <div className="flex items-center gap-2">
-            <button onClick={() => setStatusFilter('ALL')} className={`px-3 py-1.5 rounded-lg text-xs font-semibold ${statusFilter === 'ALL' ? 'bg-[#D4AF37] text-slate-950' : 'bg-slate-800 text-slate-400'}`}>Semua</button>
-            <button onClick={() => setStatusFilter('PREMIUM')} className={`px-3 py-1.5 rounded-lg text-xs font-semibold ${statusFilter === 'PREMIUM' ? 'bg-[#D4AF37] text-slate-950' : 'bg-slate-800 text-slate-400'}`}>Premium</button>
-            <button onClick={() => setStatusFilter('FREE')} className={`px-3 py-1.5 rounded-lg text-xs font-semibold ${statusFilter === 'FREE' ? 'bg-[#D4AF37] text-slate-950' : 'bg-slate-800 text-slate-400'}`}>Gratis</button>
+            <button onClick={() => setStatusFilter('ALL')} className={`px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer ${statusFilter === 'ALL' ? 'bg-[#D4AF37] text-slate-950' : 'bg-slate-800 text-slate-400'}`}>Semua</button>
+            <button onClick={() => setStatusFilter('PREMIUM')} className={`px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer ${statusFilter === 'PREMIUM' ? 'bg-[#D4AF37] text-slate-950' : 'bg-slate-800 text-slate-400'}`}>Premium</button>
+            <button onClick={() => setStatusFilter('FREE')} className={`px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer ${statusFilter === 'FREE' ? 'bg-[#D4AF37] text-slate-950' : 'bg-slate-800 text-slate-400'}`}>Gratis</button>
           </div>
         </div>
 
@@ -751,8 +766,8 @@ function AdminDashboard({ usersData, onUpdateUserStatus, onAddCredits, onAddUser
                 className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-[#D4AF37]"
               />
               <div className="flex justify-end gap-2">
-                <button type="button" onClick={() => setSelectedUserForCredits(null)} className="px-3 py-1.5 bg-slate-800 text-slate-300 rounded-lg text-xs">Batal</button>
-                <button type="submit" className="px-3 py-1.5 bg-[#D4AF37] text-slate-950 font-bold rounded-lg text-xs">Simpan & Sync</button>
+                <button type="button" onClick={() => setSelectedUserForCredits(null)} className="px-3 py-1.5 bg-slate-800 text-slate-300 rounded-lg text-xs cursor-pointer">Batal</button>
+                <button type="submit" className="px-3 py-1.5 bg-[#D4AF37] text-slate-950 font-bold rounded-lg text-xs cursor-pointer">Simpan & Sync</button>
               </div>
             </form>
           </div>
@@ -773,24 +788,104 @@ function AIWorkspace({ onBackToDashboard, externalUserStatus }) {
   const [isPaywallOpen, setIsPaywallOpen] = useState(false);
   const [paywallReason, setPaywallReason] = useState('');
   const [selectedPlan, setSelectedPlan] = useState(null);
-  const [paymentStep, setPaymentStep] = useState(1);
-  const [paymentForm, setPaymentForm] = useState({ fullname: '', email: '' });
 
   const defaultDoc = {
-    title: 'Modul Ajar STEM & Informatika - Model Matematika & Prosem',
+    title: 'Modul Ajar STEM & Informatika - Model Matematika, Algoritma & Prosem',
     subject: 'Informatika & STEM',
-    content: `# MODUL AJAR DEEP LEARNING: INFORMATIKA & STEM FASE F (KELAS 11 SMA)\n\n## I. INFORMASI UMUM\n- **Mata Pelajaran**: Informatika & STEM Integrated\n- **Fase / Kelas**: Fase F (Kelas 11 SMA)\n\n--- \n\n## II. CAPAIAN PEMBELAJARAN (CP)\nPeserta didik mampu menerapkan konsep analisis data & algoritma.`
+    phase: 'Fase F (Kelas 11 SMA)',
+    content: `# MODUL AJAR DEEP LEARNING: INFORMATIKA & STEM FASE F (KELAS 11 SMA)
+
+## I. INFORMASI UMUM
+- **Mata Pelajaran**: Informatika & STEM Integrated
+- **Fase / Kelas**: Fase F (Kelas 11 SMA)
+- **Topik Utama**: Analisis Data, Algoritma Logika & Pemrograman
+- **Alokasi Waktu**: 2 JP x 45 Menit
+
+---
+
+## II. CAPAIAN PEMBELAJARAN (CP)
+### 📘 Analisis Capaian Pembelajaran Elemen (INFORMATIKA)
+Peserta didik mampu menerapkan konsep analisis data, menyusun algoritma pemrosesan logika, serta merancang diagram alir pemecahan masalah kontekstual secara kritis dan kolaboratif.
+
+---
+
+## III. TUJUAN PEMBELAJARAN (TP)
+### 🎯 Poin Tujuan Pembelajaran ABCD (INFORMATIKA)
+- **TP1**: Menganalisis kompleksitas algoritma menggunakan persamaan logika $O(n \\log n)$.
+- **TP2**: Menyusun diagram alir logika pemrosesan data menggunakan sintaks flowchart.
+- **TP3**: Memprediksi tren data hasil eksekusi program berdasarkan grafik frekuensi.
+
+---
+
+## IV. ALUR TUJUAN PEMBELAJARAN (ATP)
+### 🗺️ Pemetaan Runtutan ATP (INFORMATIKA)
+| Kode ATP | Alokasi Waktu | Indikator Ketercapaian | Rencana Asesmen |
+| :--- | :--- | :--- | :--- |
+| **ATP.11.1** | 2 JP | Mampu menganalisis efisiensi algoritma | Formatif Latihan Soal |
+| **ATP.11.2** | 2 JP | Mampu membuat diagram alir logika terstruktur | Unjuk Kerja Kelompok |
+
+---
+
+## V. KRITERIA KETERCAPAIAN TUJUAN PEMBELAJARAN (KKTP)
+### 📊 Rubrik Observasi Unjuk Kerja Pemecahan Masalah (INFORMATIKA)
+| Kriteria Penilaian | Belum Memenuhi (1) | Memenuhi (2-3) | Sangat Baik (4) |
+| :--- | :--- | :--- | :--- |
+| **Penerapan Algoritma** | Salah menyusun instruksi | Tepat menyusun 80% logika | Tepat 100% & optimalisasi memori |
+| **Diagram Logika** | Diagram tidak terstruktur | Diagram rapi dan alur benar | Diagram sangat presisi & solutif |
+
+---
+
+## VI. PROGRAM TAHUNAN (PROTA)
+### 🗓️ Alokasi Efektif Jam Pelajaran Tahunan (INFORMATIKA)
+| No | Bab / Elemen Materi Utama | Alokasi Waktu (JP) | Keterangan Semester |
+| :--- | :--- | :--- | :--- |
+| **1** | Analisis Data & Algoritma Pemrograman | 18 JP | Semester 1 |
+| **2** | Rekayasa Perangkat Lunak & Proyek STEM | 18 JP | Semester 2 |
+
+---
+
+## VII. PROGRAM SEMESTER (PROSEM)
+### 📅 Alokasi Pemetaan Jam Pelajaran Semester 1 & 2 (INFORMATIKA)
+| No | Materi / Tujuan Pembelajaran | JP | Juli | Ags | Sep | Okt | Nov | Des |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **1** | Analisis Kompleksitas Algoritma | 6 JP | x | x | | | | |
+| **2** | Pembuatan Diagram Alir Flowchart | 6 JP | | | x | x | | |
+| **3** | Pengujian Program & Grafik Statistika | 6 JP | | | | | x | x |
+
+---
+
+## VIII. INTEGRASI 3 PILAR DEEP LEARNING
+
+### 1. Mindful Learning (Penyadaran Diri)
+- **Latihan Hening STOP**: Siswa diajak hening selama 3 menit untuk menyadarkan fokus pikiran sebelum memecahkan rumus algoritma kompleks.
+- **Refleksi Awal**: Siswa menuliskan tingkat kepercayaan diri dalam mengoperasikan logika program.
+
+### 2. Meaningful Learning (Keterhubungan Masalah Nyata)
+- **Konteks Lokal**: Membahas data statistik hasil panen lokal dan grafik tren fluktuasi harga pasar daerah.
+- **Problem Solving**: Merancang model algoritma untuk mempredict keuntungan hasil tani.
+
+### 3. Joyful Learning (Kolaboratif & Menggembirakan)
+- **Game Simulasi**: Tantangan logika "Tebak Algoritma & Diagram Alir" berbasis kelompok.
+- **Apresiasi Sebaya**: Sesi saling memberi masukan konstruktif atas program kelompok lain.
+
+---
+
+## IX. LEMBAR KERJA PESERTA DIDIK (LKPD)
+### 👥 Nama Kelompok: ____________________
+1. Hitunglah nilai $T(n)$ jika diketahui $n = 16$!
+2. Analisis diagram alir di atas dan tuliskan langkah perbaikannya!`
   };
 
   const [docContent, setDocContent] = useState(defaultDoc.content);
   const [inputInstruction, setInputInstruction] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [messages, setMessages] = useState([
-    { id: 1, sender: 'ai', text: 'Halo Bapak/Ibu Guru! AI Workspace siap membantu penyusunan perangkat ajar!' }
+    { id: 1, sender: 'ai', text: 'Halo Bapak/Ibu Guru! Saya Deep Learning Engine v3.0. Dokumen Matematika & STEM Anda siap disempurnakan!' }
   ]);
 
-  const handleSendMessage = () => {
-    if (!inputInstruction.trim()) return;
+  const handleSendMessage = (customPrompt) => {
+    const textToSend = customPrompt || inputInstruction;
+    if (!textToSend.trim()) return;
 
     if (!userStatus.is_premium && userStatus.doc_generated_count >= 1) {
       setPaywallReason('Batas 1x Generate Dokumen Gratis telah dicapai. Upgrade ke Premium untuk Generate tanpa batas!');
@@ -798,19 +893,18 @@ function AIWorkspace({ onBackToDashboard, externalUserStatus }) {
       return;
     }
 
-    const txt = inputInstruction;
     setInputInstruction('');
-    setMessages(prev => [...prev, { id: Date.now(), sender: 'user', text: txt }]);
+    setMessages(prev => [...prev, { id: Date.now(), sender: 'user', text: textToSend }]);
     setIsGenerating(true);
 
     setTimeout(() => {
-      setDocContent(prev => prev + `\n\n---\n## TANGGAPAN AI\n- Hasil rekomendasi: ${txt}`);
+      setDocContent(prev => prev + `\n\n---\n## TANGGAPAN AI & REVISI\n- **Instruksi**: ${textToSend}\n- **Hasil**: Penyesuaian pilar Mindful, Meaningful, & Joyful berhasil disuntikkan.`);
       setUserStatus(prev => ({
         ...prev,
         doc_generated_count: prev.doc_generated_count + 1,
         kredit_tersisa: Math.max(0, prev.kredit_tersisa - 1)
       }));
-      setMessages(prev => [...prev, { id: Date.now() + 1, sender: 'ai', text: 'Seksi perangkat ajar berhasil ditambahkan ke kanvas!' }]);
+      setMessages(prev => [...prev, { id: Date.now() + 1, sender: 'ai', text: '✨ Seksi perangkat ajar berhasil ditambahkan ke kanvas!' }]);
       setIsGenerating(false);
     }, 1000);
   };
@@ -824,46 +918,95 @@ function AIWorkspace({ onBackToDashboard, externalUserStatus }) {
     alert('Dokumen berhasil diekspor!');
   };
 
+  const filterContentByTab = (fullContent, tabId) => {
+    if (tabId === 'modul-ajar') return fullContent;
+    const sections = fullContent.split(/(?=\n##\s+)/g);
+    const matched = sections.find(sec => {
+      const line = sec.trim().split('\n')[0].toUpperCase();
+      switch (tabId) {
+        case 'cp': return line.includes('CAPAIAN PEMBELAJARAN') || line.includes('CP');
+        case 'tp': return line.includes('TUJUAN PEMBELAJARAN') && !line.includes('ALUR');
+        case 'atp': return line.includes('ALUR TUJUAN');
+        case 'kktp': return line.includes('KRITERIA KETERCAPAIAN');
+        case 'prota': return line.includes('PROGRAM TAHUNAN');
+        case 'prosem': return line.includes('PROGRAM SEMESTER');
+        default: return false;
+      }
+    });
+    return matched ? matched.trim() : `# SEKSI ${tabId.toUpperCase()} BELUM TERSEDIA\n\nSilakan gunakan AI Co-Pilot untuk menghasilkan draf seksi ini.`;
+  };
+
   return (
     <div className="h-full flex flex-col md:flex-row gap-4 font-sans">
       <div className="w-full md:w-5/12 bg-[#0F172A] border border-slate-800 rounded-2xl flex flex-col overflow-hidden">
         <div className="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-900/50">
-          <button onClick={onBackToDashboard} className="text-xs text-slate-400 hover:text-white">← Kembali</button>
-          <span className="text-xs font-bold text-[#D4AF37]">AI Co-Pilot</span>
+          <button onClick={onBackToDashboard} className="text-xs text-slate-400 hover:text-white cursor-pointer">← Kembali</button>
+          <span className="text-xs font-bold text-[#D4AF37]">AI Co-Pilot (Deep Learning v3.0)</span>
         </div>
 
         <div className="flex-1 p-4 overflow-y-auto space-y-3 text-xs">
           {messages.map(m => (
-            <div key={m.id} className={`p-3 rounded-xl max-w-[85%] ${m.sender === 'user' ? 'bg-indigo-600 ml-auto text-white' : 'bg-slate-900 border border-slate-800 text-slate-200'}`}>
+            <div key={m.id} className={`p-3 rounded-2xl max-w-[85%] ${m.sender === 'user' ? 'bg-indigo-600 ml-auto text-white' : 'bg-slate-900 border border-slate-800 text-slate-200'}`}>
               {m.text}
             </div>
           ))}
-          {isGenerating && <div className="text-xs text-slate-400 italic">Sedang memproses...</div>}
+          {isGenerating && <div className="text-xs text-slate-400 italic">⏳ AI sedang merancang & menyuntikkan dokumen...</div>}
         </div>
 
-        <div className="p-3 border-t border-slate-800 flex gap-2">
-          <input
-            type="text"
-            value={inputInstruction}
-            onChange={(e) => setInputInstruction(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-            placeholder="Instruksi AI..."
-            className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#D4AF37]"
-          />
-          <button onClick={handleSendMessage} className="px-4 py-2 bg-[#D4AF37] text-slate-950 font-bold rounded-xl text-xs">Kirim</button>
+        <div className="p-3 border-t border-slate-800 bg-slate-900/60 space-y-2">
+          <div className="flex gap-2 overflow-x-auto pb-1">
+            <button onClick={() => handleSendMessage('Tolong buatkan Asesmen & Rubrik Penilaian')} className="px-2.5 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-lg text-[10px] font-semibold shrink-0 cursor-pointer">
+              🎯 + Asesmen & Rubrik
+            </button>
+            <button onClick={() => handleSendMessage('Tolong buatkan LKPD IPAS lengkap')} className="px-2.5 py-1 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded-lg text-[10px] font-semibold shrink-0 cursor-pointer">
+              📄 + LKPD IPAS
+            </button>
+          </div>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={inputInstruction}
+              onChange={(e) => setInputInstruction(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+              placeholder="Ketik instruksi, misal: 'Tambahkan LKPD SD'..."
+              className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#D4AF37]"
+            />
+            <button onClick={() => handleSendMessage()} className="px-4 py-2 bg-[#D4AF37] hover:bg-amber-500 text-slate-950 font-bold rounded-xl text-xs cursor-pointer">Kirim</button>
+          </div>
         </div>
       </div>
 
       <div className="w-full md:w-7/12 bg-[#0F172A] border border-slate-800 rounded-2xl flex flex-col overflow-hidden p-4 space-y-4">
-        <div className="flex justify-between items-center border-b border-slate-800 pb-3">
-          <span className="text-xs font-bold text-white">Kanvas Modul Ajar</span>
-          <button onClick={handleOpenExportModal} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs">
-            🖨️ Export Dokumen
+        <div className="flex flex-wrap justify-between items-center border-b border-slate-800 pb-3 gap-2">
+          <div className="flex gap-1 overflow-x-auto">
+            {[
+              { id: 'modul-ajar', label: 'Modul Ajar' },
+              { id: 'cp', label: 'CP' },
+              { id: 'tp', label: 'TP' },
+              { id: 'atp', label: 'ATP' },
+              { id: 'kktp', label: 'KKTP' },
+              { id: 'prota', label: 'Prota' },
+              { id: 'prosem', label: 'Prosem' }
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveSubTab(tab.id)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  activeSubTab === tab.id ? 'bg-[#D4AF37] text-slate-950 shadow-md' : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          <button onClick={handleOpenExportModal} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs cursor-pointer">
+            🖨️ Cetak / Export Dokumen
           </button>
         </div>
 
-        <div className="flex-1 bg-white text-slate-900 p-6 rounded-xl overflow-y-auto font-mono text-xs leading-relaxed whitespace-pre-wrap">
-          {docContent}
+        <div className="flex-1 bg-white text-slate-900 p-6 rounded-xl overflow-y-auto font-mono text-xs leading-relaxed whitespace-pre-wrap shadow-2xl">
+          {filterContentByTab(docContent, activeSubTab)}
         </div>
       </div>
 
@@ -872,7 +1015,7 @@ function AIWorkspace({ onBackToDashboard, externalUserStatus }) {
           <div className="bg-[#0B192C] border border-[#D4AF37] rounded-3xl max-w-lg w-full p-6 space-y-4 text-white">
             <div className="flex justify-between items-center border-b border-slate-800 pb-2">
               <h3 className="font-bold text-base text-[#D4AF37]">🔒 Fitur Premium Terkunci</h3>
-              <button onClick={() => setIsPaywallOpen(false)} className="text-slate-400">✕</button>
+              <button onClick={() => setIsPaywallOpen(false)} className="text-slate-400 cursor-pointer">✕</button>
             </div>
             <p className="text-xs text-slate-300">{paywallReason}</p>
             <div className="grid grid-cols-2 gap-3 pt-2">
@@ -896,14 +1039,14 @@ function AIWorkspace({ onBackToDashboard, externalUserStatus }) {
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState({
-    id: 'usr_admin_master',
-    name: 'Root Admin Trisula',
-    email: 'admin@trisula.ai',
-    role: 'admin',
+    id: 'usr_premium_01',
+    name: 'Budi Santoso, M.Pd.',
+    email: 'budi.santoso@guru.sma.sch.id',
+    role: 'guru',
     is_premium: true,
-    kredit_tersisa: 999999,
-    doc_generated_count: 0,
-    school: 'HQ Trisula Engine'
+    kredit_tersisa: 250,
+    doc_generated_count: 14,
+    school: 'SMA Negeri 1 Jakarta'
   });
 
   const [allUsers, setAllUsers] = useState([
@@ -912,7 +1055,7 @@ export default function App() {
     { id: 'usr_free_01', name: 'Siti Rahmawati, S.Pd.', email: 'siti.rahma@sd.kemdikbud.go.id', role: 'guru', is_premium: false, kredit_tersisa: 1, doc_generated_count: 1, school: 'SD Negeri 05 Kebayoran' }
   ]);
 
-  const [currentView, setCurrentView] = useState('admin');
+  const [currentView, setCurrentView] = useState('dashboard'); // 'dashboard', 'workspace', 'admin'
   const [toastMessage, setToastMessage] = useState(null);
 
   const showToast = (msg) => {
@@ -922,14 +1065,12 @@ export default function App() {
 
   const handleLoginSuccess = (userPayload) => {
     setCurrentUser(userPayload);
-    
     setAllUsers(prev => {
       if (!prev.some(u => u.email === userPayload.email)) {
         return [userPayload, ...prev];
       }
       return prev;
     });
-
     setCurrentView(userPayload.role === 'admin' ? 'admin' : 'dashboard');
     showToast(`Selamat datang kembali, ${userPayload.name}! Data tersinkron ke Google Sheets.`);
   };
@@ -975,7 +1116,7 @@ export default function App() {
       )}
 
       {/* HEADER TOP NAV BAR */}
-      <header className="h-16 bg-[#0B1728]/95 border-b border-slate-800/80 px-4 md:px-8 flex items-center justify-between sticky top-0 z-40 backdrop-blur-md">
+      <header className="h-16 bg-[#0B1728]/95 border-b border-slate-800/80 px-4 md:px-6 flex items-center justify-between sticky top-0 z-40 backdrop-blur-md">
         <div className="flex items-center gap-3">
           <button 
             onClick={() => setCurrentView('dashboard')}
@@ -990,40 +1131,19 @@ export default function App() {
           </button>
           
           <span className="hidden sm:inline-block px-2.5 py-0.5 bg-slate-800/90 text-[#D4AF37] border border-[#D4AF37]/30 text-[10px] font-bold rounded-full uppercase tracking-wider">
-            GOOGLE SHEETS SYNC ACTIVE
+            DEEP LEARNING ENGINE V3.0
           </span>
         </div>
 
-        <div className="hidden lg:flex items-center gap-1 bg-slate-900/80 p-1 rounded-xl border border-slate-800 text-xs font-semibold">
-          <button
-            onClick={() => setCurrentView('dashboard')}
-            className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
-              currentView === 'dashboard' ? 'bg-slate-800 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            <Icons.Home /> Dashboard
-          </button>
+        <div className="flex items-center gap-3">
           <button
             onClick={() => setCurrentView('workspace')}
-            className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
-              currentView === 'workspace' ? 'bg-gradient-to-r from-[#D4AF37] to-amber-500 text-slate-950 font-bold shadow-sm' : 'text-slate-400 hover:text-slate-200'
-            }`}
+            className="px-4 py-2 bg-[#D4AF37] hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-xs flex items-center gap-1.5 transition-all shadow-md shadow-amber-500/10 cursor-pointer"
           >
-            <Icons.Sparkles /> AI Workspace
+            <Icons.Plus className="w-4 h-4 text-slate-950" />
+            <span>+ Buat Perangkat Baru</span>
           </button>
-          {(currentUser.role === 'admin' || currentUser.email.includes('admin')) && (
-            <button
-              onClick={() => setCurrentView('admin')}
-              className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
-                currentView === 'admin' ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold shadow-sm' : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              <Icons.Shield /> Admin Panel
-            </button>
-          )}
-        </div>
 
-        <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 pl-2 border-l border-slate-800">
             <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-500 to-[#D4AF37] text-slate-950 font-extrabold flex items-center justify-center text-xs shadow-md">
               {currentUser.name ? currentUser.name.substring(0, 2).toUpperCase() : 'GH'}
@@ -1054,70 +1174,221 @@ export default function App() {
         </div>
       </header>
 
-      {/* BODY CONTENT */}
+      {/* MAIN BODY LAYOUT WITH SIDEBAR */}
       <div className="flex-1 flex overflow-hidden">
-        {currentView === 'dashboard' && (
-          <div className="flex-1 p-4 md:p-8 max-w-7xl mx-auto space-y-6 w-full">
-            <div className="bg-gradient-to-r from-[#112238] via-[#0F1E33] to-[#0A1628] border border-slate-800 rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden">
-              <div className="space-y-3 max-w-2xl relative z-10">
-                <span className="inline-block px-3 py-1 bg-amber-500/10 text-[#D4AF37] border border-[#D4AF37]/30 text-xs font-bold rounded-full uppercase tracking-wider">
-                  Real-time Google Sheets Integration Active
-                </span>
-                <h1 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
-                  Selamat Datang, {currentUser.name}! 🚀
-                </h1>
-                <p className="text-xs md:text-sm text-slate-300 leading-relaxed">
-                  Setiap aksi registrasi, perubahan lisensi akun, serta konsumsi kredit otomatis tersinkronisasi ke Google Sheets milikmu.
-                </p>
+        {/* SIDEBAR NAVIGASI UTAMA KIRI */}
+        <aside className="w-64 bg-[#0B1728] border-r border-slate-800/80 p-4 hidden md:flex flex-col justify-between shrink-0">
+          <div className="space-y-6">
+            <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-3">
+              NAVIGASI UTAMA
+            </div>
+
+            <nav className="space-y-1">
+              <button
+                onClick={() => setCurrentView('dashboard')}
+                className={`w-full px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2.5 cursor-pointer ${
+                  currentView === 'dashboard'
+                    ? 'bg-slate-800/90 text-white border border-slate-700/80 shadow-sm'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
+                }`}
+              >
+                <Icons.Home /> Halaman Depan
+              </button>
+
+              <button
+                onClick={() => setCurrentView('workspace')}
+                className={`w-full px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2.5 cursor-pointer ${
+                  currentView === 'workspace'
+                    ? 'bg-slate-800/90 text-white border border-slate-700/80 shadow-sm'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
+                }`}
+              >
+                <Icons.Bolt /> Ruang Bantu AI
+              </button>
+
+              <button
+                onClick={() => setCurrentView('dashboard')}
+                className="w-full px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 transition-all flex items-center gap-2.5 cursor-pointer"
+              >
+                <Icons.Folder /> Berkas Saya
+              </button>
+
+              <button
+                onClick={() => setCurrentView('workspace')}
+                className="w-full px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 transition-all flex items-center gap-2.5 cursor-pointer"
+              >
+                <Icons.Edit /> Editor Teks Rapih
+              </button>
+
+              {(currentUser.role === 'admin' || currentUser.email.includes('admin')) && (
                 <button
-                  onClick={() => setCurrentView('workspace')}
-                  className="px-5 py-2.5 bg-gradient-to-r from-[#D4AF37] to-amber-500 text-slate-950 font-bold text-xs rounded-xl hover:brightness-110 shadow-lg shadow-amber-500/20 transition-all flex items-center gap-2 cursor-pointer mt-2"
+                  onClick={() => setCurrentView('admin')}
+                  className={`w-full px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2.5 cursor-pointer ${
+                    currentView === 'admin'
+                      ? 'bg-cyan-950/60 text-cyan-300 border border-cyan-500/30 shadow-sm'
+                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
+                  }`}
                 >
-                  ✨ Buka AI Workspace
+                  <Icons.Shield /> Panel Admin
                 </button>
+              )}
+            </nav>
+          </div>
+
+          <div className="p-3 bg-slate-900/80 border border-slate-800 rounded-2xl space-y-1 text-[10px] text-slate-400">
+            <div className="font-bold text-amber-300 flex items-center gap-1">
+              ⚡ 3 Pilar Active
+            </div>
+            <div>Mindful • Meaningful • Joyful Engine Connected</div>
+          </div>
+        </aside>
+
+        {/* CONTENT AREA */}
+        <main className="flex-1 overflow-y-auto">
+          {currentView === 'dashboard' && (
+            <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
+              {/* WELCOME BANNER */}
+              <div className="bg-gradient-to-r from-[#112238] via-[#0F1E33] to-[#0A1628] border border-slate-800 rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden">
+                <div className="space-y-3 max-w-2xl relative z-10">
+                  <span className="inline-block px-3 py-1 bg-amber-500/10 text-[#D4AF37] border border-[#D4AF37]/30 text-xs font-bold rounded-full uppercase tracking-wider">
+                    SaaS Engine Kurikulum Merdeka v2.5
+                  </span>
+                  <h1 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
+                    Selamat Datang, Bapak/Ibu Guru Hebat! 🚀
+                  </h1>
+                  <p className="text-xs md:text-sm text-slate-300 leading-relaxed">
+                    Rancang Modul Ajar, TP, ATP, KKTP, Prota, dan Prosem terintegrasi 3 Pilar Deep Learning (Mindful, Meaningful, Joyful) secara otomatis dan presisi.
+                  </p>
+
+                  <div className="flex flex-wrap items-center gap-3 pt-2">
+                    <button
+                      onClick={() => setCurrentView('workspace')}
+                      className="px-5 py-2.5 bg-gradient-to-r from-[#D4AF37] to-amber-500 text-slate-950 font-bold text-xs rounded-xl hover:brightness-110 shadow-lg shadow-amber-500/20 transition-all flex items-center gap-2 cursor-pointer"
+                    >
+                      <span>✨ Mulai Wizard Deep Learning</span>
+                    </button>
+                    <button
+                      onClick={() => setCurrentView('workspace')}
+                      className="px-4 py-2.5 bg-slate-800/80 hover:bg-slate-800 text-slate-200 border border-slate-700 font-bold text-xs rounded-xl transition-all cursor-pointer"
+                    >
+                      Lihat Semua Proyek (2)
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* STATS METRICS GRID */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="bg-[#0D1C2E] border border-slate-800 p-4 rounded-2xl space-y-1">
+                  <div className="text-[11px] text-slate-400">Total Perangkat Ajar</div>
+                  <div className="text-2xl font-bold text-white">2</div>
+                  <div className="text-[10px] text-emerald-400">+2 minggu ini</div>
+                </div>
+
+                <div className="bg-[#0D1C2E] border border-slate-800 p-4 rounded-2xl space-y-1">
+                  <div className="text-[11px] text-slate-400">Dalam Proses (Draft)</div>
+                  <div className="text-2xl font-bold text-amber-400">1</div>
+                  <div className="text-[10px] text-amber-300">Butuh peninjauan TP/ATP</div>
+                </div>
+
+                <div className="bg-[#0D1C2E] border border-slate-800 p-4 rounded-2xl space-y-1">
+                  <div className="text-[11px] text-slate-400">Selesai & Siap Cetak</div>
+                  <div className="text-2xl font-bold text-emerald-400">1</div>
+                  <div className="text-[10px] text-emerald-300">Siap di-export PDF/Word</div>
+                </div>
+
+                <div className="bg-[#0D1C2E] border border-slate-800 p-4 rounded-2xl space-y-1">
+                  <div className="text-[11px] text-slate-400">Estimasi Waktu Dihemat</div>
+                  <div className="text-2xl font-bold text-[#D4AF37]">18.5 Jam</div>
+                  <div className="text-[10px] text-cyan-400">Otomasi Deep Learning</div>
+                </div>
+              </div>
+
+              {/* DRAFT PERANGKAT AJAR TERBARU */}
+              <div className="space-y-4">
+                <h2 className="text-base font-bold text-white flex items-center gap-2">
+                  <span>📋</span> Draft Perangkat Ajar Terbaru
+                </h2>
+
+                <div className="grid md:grid-cols-2 gap-4">
+                  {/* CARD 1 */}
+                  <div className="bg-[#0D1C2E] border border-slate-800 rounded-2xl p-5 space-y-3 hover:border-slate-700 transition-all">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                        Informatika • Fase E (Kelas 10)
+                      </span>
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                        In Progress
+                      </span>
+                    </div>
+
+                    <h3 className="text-sm font-bold text-white">Modul Ajar Informatika - Algoritma Pemrograman</h3>
+                    <p className="text-xs text-slate-400 leading-relaxed">
+                      Peserta didik mampu menerapkan strategi algoritmik standar untuk menghasilkan beberapa solusi persoalan dengan data diskrit volume besar.
+                    </p>
+
+                    <div className="flex justify-between items-center pt-2 border-t border-slate-800 text-xs">
+                      <span className="text-slate-500">Edit di Notion Studio</span>
+                      <button
+                        onClick={() => setCurrentView('workspace')}
+                        className="text-[#D4AF37] font-bold hover:underline cursor-pointer"
+                      >
+                        Buka AI Workspace →
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* CARD 2 */}
+                  <div className="bg-[#0D1C2E] border border-slate-800 rounded-2xl p-5 space-y-3 hover:border-slate-700 transition-all">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                        Matematika • Fase F (Kelas 11)
+                      </span>
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                        Completed
+                      </span>
+                    </div>
+
+                    <h3 className="text-sm font-bold text-white">Perangkat Ajar Matematika - Analisis Data & Peluang</h3>
+                    <p className="text-xs text-slate-400 leading-relaxed">
+                      Peserta didik mampu melakukan evaluasi kritis terhadap penyajian data statistik.
+                    </p>
+
+                    <div className="flex justify-between items-center pt-2 border-t border-slate-800 text-xs">
+                      <span className="text-slate-500">Edit di Notion Studio</span>
+                      <button
+                        onClick={() => setCurrentView('workspace')}
+                        className="text-[#D4AF37] font-bold hover:underline cursor-pointer"
+                      >
+                        Buka AI Workspace →
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
+          )}
 
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="bg-[#0D1C2E] border border-slate-800 p-4 rounded-2xl">
-                <div className="text-[11px] text-slate-400">Status Lisensi</div>
-                <div className="text-xl font-bold text-[#D4AF37] mt-1">{currentUser.is_premium ? 'PRO / Premium' : 'Free / Gratis'}</div>
-              </div>
-              <div className="bg-[#0D1C2E] border border-slate-800 p-4 rounded-2xl">
-                <div className="text-[11px] text-slate-400">Sisa Kredit</div>
-                <div className="text-xl font-bold text-emerald-400 mt-1">{currentUser.kredit_tersisa} Dokumen</div>
-              </div>
-              <div className="bg-[#0D1C2E] border border-slate-800 p-4 rounded-2xl">
-                <div className="text-[11px] text-slate-400">Total Dokumen Dibuat</div>
-                <div className="text-xl font-bold text-white mt-1">{currentUser.doc_generated_count}</div>
-              </div>
-              <div className="bg-[#0D1C2E] border border-slate-800 p-4 rounded-2xl">
-                <div className="text-[11px] text-slate-400">Google Sheets Sync</div>
-                <div className="text-xl font-bold text-cyan-400 mt-1">Otomatis</div>
-              </div>
+          {currentView === 'workspace' && (
+            <div className="p-2 w-full h-[calc(100vh-4rem)]">
+              <AIWorkspace 
+                onBackToDashboard={() => setCurrentView('dashboard')} 
+                externalUserStatus={currentUser}
+              />
             </div>
-          </div>
-        )}
+          )}
 
-        {currentView === 'workspace' && (
-          <div className="flex-1 p-2 w-full h-[calc(100vh-4rem)]">
-            <AIWorkspace 
-              onBackToDashboard={() => setCurrentView('dashboard')} 
-              externalUserStatus={currentUser}
-            />
-          </div>
-        )}
-
-        {currentView === 'admin' && (
-          <div className="flex-1 w-full">
-            <AdminDashboard 
-              usersData={allUsers} 
-              onUpdateUserStatus={handleUpdateUserStatus}
-              onAddCredits={handleAddCredits}
-              onAddUser={handleAddUser}
-            />
-          </div>
-        )}
+          {currentView === 'admin' && (
+            <div className="w-full">
+              <AdminDashboard 
+                usersData={allUsers} 
+                onUpdateUserStatus={handleUpdateUserStatus}
+                onAddCredits={handleAddCredits}
+                onAddUser={handleAddUser}
+              />
+            </div>
+          )}
+        </main>
       </div>
     </div>
   );
