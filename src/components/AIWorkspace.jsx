@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 
 /**
- * TRISULAPROMPT - AIWorkspace Component v2.7 (Dynamic Sub-Tab Router & Standalone Engine)
+ * TRISULAPROMPT - AIWorkspace Component v2.8 (Smart Sub-Tab Synthesizer Edition)
  * Author: TRISULACODER v8.7 - Lead Solution Architect
  * Stack: React / Vite / Tailwind CSS
  * Features:
- *  - Dynamic Sub-Tab Content Router (Filters & Renders CP, TP, ATP, KKTP, Prota, Prosem dynamically)
+ *  - Smart Sub-Tab Synthesizer (Generates exact Markdown headers matching CP, TP, ATP, KKTP, Prota, Prosem filters)
+ *  - Dynamic Sub-Tab Content Router (Flexible Keyword Matcher for Header Parsing)
  *  - Interactive Empty-State Generator Actions Per Sub-Tab
  *  - Word-Compatible Table Engine for Mermaid Diagrams & Data Charts (No Flexbox Breakage in MS Word)
  *  - High-Fidelity Math/LaTeX Pretty Renderer Engine
@@ -21,40 +22,40 @@ const generateDeepLearningPrompt = ({ subject, phase, topic, instruction }) => {
 export default function AIWorkspace({ activeDocument, onBackToDashboard, onUpdateDocument }) {
   const [activeSubTab, setActiveSubTab] = useState('modul-ajar');
   
-  // Default fallback data (STEM Integrated: Matematika, Fisika, IPAS)
+  // Default fallback data (STEM Integrated: Informatika, Matematika, Fisika)
   const defaultDoc = {
     id: 'doc-stem-master',
-    title: 'Modul Ajar STEM - Model Matematika, Fisika Parabola & Diagram Alir',
-    subject: 'Matematika & Fisika (STEM)',
+    title: 'Modul Ajar STEM & Informatika - Model Matematika, Algoritma & Prosem',
+    subject: 'Informatika & STEM',
     phase: 'Fase F (Kelas 11 SMA)',
-    topic: 'Analisis Data, Persamaan Gelombang & Diagram Alir Logika',
+    topic: 'Analisis Data, Algoritma Logika & Pemrograman',
     status: 'In Progress',
-    content: `# MODUL AJAR DEEP LEARNING: STEM FASE F (KELAS 11 SMA)
+    content: `# MODUL AJAR DEEP LEARNING: INFORMATIKA & STEM FASE F (KELAS 11 SMA)
 
 ## I. INFORMASI UMUM
-- **Mata Pelajaran**: Matematika & Fisika (STEM Integrated)
+- **Mata Pelajaran**: Informatika & STEM Integrated
 - **Fase / Kelas**: Fase F (Kelas 11 SMA)
-- **Topik Utama**: Analisis Data, Persamaan Gelombang & Diagram Alir Logika
+- **Topik Utama**: Analisis Data, Algoritma Logika & Pemrograman
 - **Alokasi Waktu**: 2 JP x 45 Menit
 
 ---
 
 ## II. CAPAIAN PEMBELAJARAN (CP)
-Peserta didik mampu menerapkan konsep analisis data, menyusun persamaan matematika kuadrat untuk gerak fisika, serta merancang diagram alir logika pemecahan masalah kontekstual.
+Peserta didik mampu menerapkan konsep analisis data, menyusun algoritma pemrosesan logika, serta merancang diagram alir pemecahan masalah kontekstual dalam pemrograman.
 
 ---
 
 ## III. TUJUAN PEMBELAJARAN (TP)
-- **TP1**: Menganalisis lintasan parabola menggunakan persamaan $y = v_0 t \\sin(\\theta) - \\frac{1}{2}gt^2$.
+- **TP1**: Menganalisis kompleksitas algoritma menggunakan persamaan logika $O(n \\log n)$.
 - **TP2**: Menyusun diagram alir logika pemrosesan data menggunakan sintaks flowchart.
-- **TP3**: Memprediksi tren data hasil panen berdasarkan grafik frekuensi statistika.
+- **TP3**: Memprediksi tren data hasil eksekusi program berdasarkan grafik frekuensi statistika.
 
 ---
 
 ## IV. ALUR TUJUAN PEMBELAJARAN (ATP)
 | Kode ATP | Alokasi Waktu | Indikator Ketercapaian | Rencana Asesmen |
 | :--- | :--- | :--- | :--- |
-| **ATP.11.1** | 2 JP | Mampu mengoperasikan variabel rumus parabola | Formatif Latihan Soal |
+| **ATP.11.1** | 2 JP | Mampu menganalisis efisiensi algoritma | Formatif Latihan Soal |
 | **ATP.11.2** | 2 JP | Mampu membuat diagram alir logika terstruktur | Unjuk Kerja Kelompok |
 
 ---
@@ -62,44 +63,55 @@ Peserta didik mampu menerapkan konsep analisis data, menyusun persamaan matemati
 ## V. KRITERIA KETERCAPAIAN TUJUAN PEMBELAJARAN (KKTP)
 | Kriteria Penilaian | Belum Memenuhi (1) | Memenuhi (2-3) | Sangat Baik (4) |
 | :--- | :--- | :--- | :--- |
-| **Penerapan Rumus** | Salah mengoperasikan variabel | Tepat menghitung 80% variabel | Tepat 100% & menganalisis fisikanya |
+| **Penerapan Algoritma** | Salah menyusun instruksi | Tepat menyusun 80% logika | Tepat 100% & optimalisasi memori |
 | **Diagram Logika** | Diagram tidak terstruktur | Diagram rapi dan alur benar | Diagram sangat presisi & solutif |
 
 ---
 
-## VI. PROGRAM TAHUNAN & PROGRAM SEMESTER (PROTA & PROSEM)
-- **Semester 1**: Analisis Data & Model Matematika Parabola (12 JP)
-- **Semester 2**: Simulasi Diagram Logika & Proyek STEM Terpadu (16 JP)
+## VI. PROGRAM TAHUNAN (PROTA)
+| No | Bab / Elemen Materi | Alokasi Waktu (JP) | Semester |
+| :--- | :--- | :--- | :--- |
+| 1 | Analisis Data & Algoritma Pemrograman | 18 JP | Semester 1 |
+| 2 | Rekayasa Perangkat Lunak & Proyek STEM | 18 JP | Semester 2 |
 
 ---
 
-## VII. INTEGRASI 3 PILAR DEEP LEARNING
+## VII. PROGRAM SEMESTER (PROSEM)
+| No | Materi / Tujuan Pembelajaran | JP | Juli | Ags | Sep | Okt | Nov | Des |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| 1 | Analisis Kompleksitas Algoritma | 6 JP | x | x | | | | |
+| 2 | Pembuatan Diagram Alir Flowchart | 6 JP | | | x | x | | |
+| 3 | Pengujian Program & Grafik Statistika | 6 JP | | | | | x | x |
+
+---
+
+## VIII. INTEGRASI 3 PILAR DEEP LEARNING
 
 ### 1. Mindful Learning (Penyadaran Diri)
-- **Latihan Hening STOP**: Siswa diajak hening selama 3 menit untuk menyadarkan fokus pikiran sebelum memecahkan rumus matematika kompleks.
-- **Refleksi Awal**: Siswa menuliskan tingkat kepercayaan diri dalam mengoperasikan persamaan variabel.
+- **Latihan Hening STOP**: Siswa diajak hening selama 3 menit untuk menyadarkan fokus pikiran sebelum memecahkan rumus algoritma kompleks.
+- **Refleksi Awal**: Siswa menuliskan tingkat kepercayaan diri dalam mengoperasikan logika program.
 
 ### 2. Meaningful Learning (Keterhubungan Masalah Nyata)
-- **Konteks Lokal**: Membahas data statistik hasil panen padi lokal dan grafik tren fluktuasi harga pasar daerah.
-- **Problem Solving**: Merancang model matematika untuk memprediksi keuntungan hasil tani.
+- **Konteks Lokal**: Membahas data statistik hasil panen lokal dan grafik tren fluktuasi harga pasar daerah.
+- **Problem Solving**: Merancang model algoritma untuk memprediksi keuntungan hasil tani.
 
 ### 3. Joyful Learning (Kolaboratif & Menggembirakan)
-- **Game Simulasi**: Tantangan logika "Tebak Kurva & Diagram Alir" berbasis kelompok.
-- **Apresiasi Sebaya**: Sesi saling memberi masukan konstruktif atas diagram grafik kelompok lain.
+- **Game Simulasi**: Tantangan logika "Tebak Algoritma & Diagram Alir" berbasis kelompok.
+- **Apresiasi Sebaya**: Sesi saling memberi masukan konstruktif atas program kelompok lain.
 
 ---
 
-## VIII. DUKUNGAN RUMUS MATEMATIKA (LATEX FORMULA)
+## IX. DUKUNGAN RUMUS MATEMATIKA (LATEX FORMULA)
 
-Berikut adalah formula dasar perhitungan statistika dan persamaan kuadrat gerak parabola:
+Berikut adalah formula dasar perhitungan efisiensi algoritma dan statistika:
 
-- **Rata-rata Hitung (Mean)**: $\\bar{x} = \\frac{\\sum_{i=1}^{n} x_i}{n}$
-- **Persamaan Lintasan Parabola**: $$y = v_0 t \\sin(\\theta) - \\frac{1}{2}g t^2$$
-- **Standar Deviasi**: $$S = \\sqrt{\\frac{\\sum (x_i - \\bar{x})^2}{n - 1}}$$
+- **Rata-rata Kompleksitas**: $\\bar{x} = \\frac{\\sum_{i=1}^{n} x_i}{n}$
+- **Persamaan Laju Pertumbuhan**: $$T(n) = 2 T\\left(\\frac{n}{2}\\right) + O(n)$$
+- **Deviasi Eksekusi**: $$S = \\sqrt{\\frac{\\sum (x_i - \\bar{x})^2}{n - 1}}$$
 
 ---
 
-## IX. DIAGRAM ALIR PROSES (MERMAID FLOWCHART)
+## X. DIAGRAM ALIR PROSES (MERMAID FLOWCHART)
 
 \`\`\`mermaid
 graph TD
@@ -113,12 +125,12 @@ graph TD
 
 ---
 
-## X. GRAFIK DATA INTERAKTIF (CHART VISUALIZER)
+## XI. GRAFIK DATA INTERAKTIF (CHART VISUALIZER)
 
 \`\`\`chart
 {
   "type": "bar",
-  "title": "Grafik Hasil Panen & Frekuensi Data (Ton)",
+  "title": "Grafik Frekuensi Eksekusi Memori (MB)",
   "labels": ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun"],
   "data": [45, 60, 52, 85, 73, 90]
 }
@@ -126,13 +138,13 @@ graph TD
 
 ---
 
-## XI. LEMBAR KERJA PESERTA DIDIK (LKPD)
+## XII. LEMBAR KERJA PESERTA DIDIK (LKPD)
 
 ### 👥 Nama Kelompok: ____________________
 **Anggota**: 1. _______________ 2. _______________ 3. _______________
 
-#### A. ANALISIS DIAGRAM & FORMULA (15 Menit)
-1. Hitunglah nilai $y$ jika diketahui $v_0 = 20$, $\\theta = 30^\\circ$, $g = 10$, dan $t = 2$!
+#### A. ANALISIS DIAGRAM & ALGORITMA (15 Menit)
+1. Hitunglah nilai $T(n)$ jika diketahui $n = 16$!
 2. Analisis diagram alir di atas dan tuliskan langkah perbaikannya jika input data berupa nilai negatif!`
   };
 
@@ -149,7 +161,7 @@ graph TD
     {
       id: 1,
       sender: 'ai',
-      text: `Halo Bapak/Ibu Guru! Saya **Deep Learning Engine v2.7**. Dokumen ${currentDoc.subject || 'Pembelajaran'} Anda lengkap dengan LaTeX Math, Diagram Mermaid, Grafik Data, dan Router Sub-Tab siap ditinjau!`
+      text: `Halo Bapak/Ibu Guru! Saya **Deep Learning Engine v2.8**. Dokumen ${currentDoc.subject || 'Pembelajaran'} Anda lengkap dengan LaTeX Math, Diagram Mermaid, Grafik Data, serta Smart Sub-Tab Routing siap ditinjau!`
     }
   ]);
   const [inputInstruction, setInputInstruction] = useState('');
@@ -182,30 +194,30 @@ graph TD
       .replace(/\\div/g, '÷');
   };
 
-  // Dynamic Sub-Tab Content Filter Engine
+  // Flexible Dynamic Sub-Tab Content Filter Engine
   const filterContentByTab = (fullContent, tabId) => {
     if (!fullContent) return '';
     if (tabId === 'modul-ajar') return fullContent;
 
     const sections = fullContent.split(/(?=##\s+)/g);
-    let keyword = '';
 
-    switch (tabId) {
-      case 'cp': keyword = 'CAPAIAN PEMBELAJARAN'; break;
-      case 'tp': keyword = 'TUJUAN PEMBELAJARAN'; break;
-      case 'atp': keyword = 'ALUR TUJUAN'; break;
-      case 'kktp': keyword = 'KRITERIA KETERCAPAIAN'; break;
-      case 'prota': keyword = 'PROGRAM TAHUNAN'; break;
-      case 'prosem': keyword = 'PROGRAM SEMESTER'; break;
-      default: return fullContent;
-    }
-
-    const matchedSection = sections.find(sec => sec.toUpperCase().includes(keyword));
+    const matchedSection = sections.find(sec => {
+      const headerLine = sec.split('\n')[0].toUpperCase();
+      switch (tabId) {
+        case 'cp': return headerLine.includes('CAPAIAN PEMBELAJARAN') || headerLine.includes('CP');
+        case 'tp': return (headerLine.includes('TUJUAN PEMBELAJARAN') || headerLine.includes('TP')) && !headerLine.includes('ALUR') && !headerLine.includes('KRITERIA');
+        case 'atp': return headerLine.includes('ALUR TUJUAN') || headerLine.includes('ATP');
+        case 'kktp': return headerLine.includes('KRITERIA KETERCAPAIAN') || headerLine.includes('KKTP');
+        case 'prota': return headerLine.includes('PROGRAM TAHUNAN') || headerLine.includes('PROTA');
+        case 'prosem': return headerLine.includes('PROGRAM SEMESTER') || headerLine.includes('PROSEM');
+        default: return false;
+      }
+    });
 
     if (matchedSection) {
       return matchedSection;
     } else {
-      // Empty State Draf Jika Seksi Belum Ditemukan
+      // Clean Empty State Draf
       return `# SEKSI ${tabId.toUpperCase()} BELUM TERSEDIA
 
 > ℹ️ Seksi **${tabId.toUpperCase()}** belum ditemukan di dalam dokumen saat ini. 
@@ -447,12 +459,33 @@ Gunakan tombol di bawah ini untuk menginstruksikan AI menyusun seksi ini secara 
     return htmlResult.join('');
   };
 
+  // Smart Section Synthesizer
   const generateLKPDBlock = (userInstruction) => {
-    const isAsesmen = userInstruction.toLowerCase().includes('asesmen') || userInstruction.toLowerCase().includes('rubrik');
-    const isLKPD = userInstruction.toLowerCase().includes('lkpd') || userInstruction.toLowerCase().includes('lembar kerja');
-    const subjectName = currentDoc.subject || 'STEM';
+    const textLower = userInstruction.toLowerCase();
+    const subjectName = currentDoc.subject || 'Informatika & STEM';
 
-    if (isAsesmen) {
+    if (textLower.includes('prosem') || textLower.includes('program semester')) {
+      return `\n\n---
+\n## VII. PROGRAM SEMESTER (PROSEM)
+
+### 📅 Alokasi Pemetaan Jam Pelajaran Semester 1 & 2 (${subjectName.toUpperCase()})
+
+| No | Materi / Tujuan Pembelajaran | JP | Juli | Ags | Sep | Okt | Nov | Des |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **1** | Analisis Kompleksitas Algoritma & Variabel | 6 JP | x | x | | | | |
+| **2** | Perancangan Flowchart & Diagram Logika | 6 JP | | | x | x | | |
+| **3** | Pengujian Program & Visualisasi Chart | 6 JP | | | | | x | x |`;
+    } else if (textLower.includes('prota') || textLower.includes('program tahunan')) {
+      return `\n\n---
+\n## VI. PROGRAM TAHUNAN (PROTA)
+
+### 🗓️ Alokasi Efektif Jam Pelajaran Tahunan (${subjectName.toUpperCase()})
+
+| No | Bab / Elemen Materi Utama | Alokasi Waktu (JP) | Keterangan Semester |
+| :--- | :--- | :--- | :--- |
+| **1** | Analisis Data, Algoritma Logika & Flowchart | 18 JP | Semester 1 |
+| **2** | Rekayasa Perangkat Lunak & Proyek STEM | 18 JP | Semester 2 |`;
+    } else if (textLower.includes('kktp') || textLower.includes('kriteria ketercapaian') || textLower.includes('asesmen') || textLower.includes('rubrik')) {
       return `\n\n---
 \n## V. KRITERIA KETERCAPAIAN TUJUAN PEMBELAJARAN (KKTP)
 
@@ -460,12 +493,35 @@ Gunakan tombol di bawah ini untuk menginstruksikan AI menyusun seksi ini secara 
 
 | Kriteria Penilaian | Skor 1 (Perlu Bimbingan) | Skor 2 (Cukup) | Skor 3 (Baik) | Skor 4 (Sangat Baik) |
 | :--- | :--- | :--- | :--- | :--- |
-| **Penerapan Formula & Rumus** | Belum tepat mengoperasikan variabel | Mengoperasikan rumus dengan 1-2 kekeliruan | Tepat mengaplikasikan seluruh rumus matematika/sains | Sangat presisi & mampu menyimpulkan makna fisikanya |
-| **Konstruksi Diagram** | Belum mampu menyusun diagram | Diagram alir tersusun namun alur kurang sistematis | Diagram alir rapi & mudah dipahami | Diagram sangat akurat, komunikatif, & solutif |
-| **Kerjasama Kelompok** | Pasif dalam diskusi | Berpartisipasi jika diminta | Aktif berdiskusi kelompok | Sangat memimpin & mengapresiasi karya kawan |`;
-    } else if (isLKPD) {
+| **Penerapan Logika** | Belum tepat mengoperasikan variabel | Mengoperasikan rumus dengan 1-2 kekeliruan | Tepat mengaplikasikan seluruh logika | Sangat presisi & mampu menyimpulkan hasilnya |
+| **Konstruksi Diagram** | Belum mampu menyusun diagram | Diagram alir tersusun namun alur kurang sistematis | Diagram alir rapi & mudah dipahami | Diagram sangat akurat, komunikatif, & solutif |`;
+    } else if (textLower.includes('atp') || textLower.includes('alur tujuan')) {
       return `\n\n---
-\n## XI. LEMBAR KERJA PESERTA DIDIK (LKPD) - ${subjectName.toUpperCase()}
+\n## IV. ALUR TUJUAN PEMBELAJARAN (ATP)
+
+### 🗺️ Pemetaan Runtutan ATP (${subjectName.toUpperCase()})
+
+| Kode ATP | Alokasi Waktu | Indikator Ketercapaian | Rencana Asesmen |
+| :--- | :--- | :--- | :--- |
+| **ATP.11.1** | 2 JP | Mampu menganalisis efisiensi variabel & logika | Formatif Latihan Soal |
+| **ATP.11.2** | 2 JP | Mampu membuat diagram alir logika terstruktur | Unjuk Kerja Kelompok |`;
+    } else if (textLower.includes('tp') || textLower.includes('tujuan pembelajaran')) {
+      return `\n\n---
+\n## III. TUJUAN PEMBELAJARAN (TP)
+
+### 🎯 Poin Tujuan Pembelajaran ABCD (${subjectName.toUpperCase()})
+- **TP1**: Menganalisis kompleksitas algoritma menggunakan persamaan logika $O(n \\log n)$.
+- **TP2**: Menyusun diagram alir logika pemrosesan data menggunakan sintaks flowchart.
+- **TP3**: Memprediksi tren data hasil eksekusi program berdasarkan grafik frekuensi.`;
+    } else if (textLower.includes('cp') || textLower.includes('capaian')) {
+      return `\n\n---
+\n## II. CAPAIAN PEMBELAJARAN (CP)
+
+### 📘 Analisis Capaian Pembelajaran Elemen (${subjectName.toUpperCase()})
+Peserta didik mampu menerapkan konsep analisis data, menyusun algoritma pemrosesan logika, serta merancang diagram alir pemecahan masalah kontekstual secara kritis dan kolaboratif.`;
+    } else if (textLower.includes('lkpd') || textLower.includes('lembar kerja')) {
+      return `\n\n---
+\n## XII. LEMBAR KERJA PESERTA DIDIK (LKPD) - ${subjectName.toUpperCase()}
 
 ### 👥 Nama Kelompok: ____________________
 **Anggota**: 1. _______________ 2. _______________ 3. _______________
@@ -475,13 +531,13 @@ Lengkapi tabel analisis formula dan diagram alir berikut:
 
 | Nama Eksperimen | Persamaan Formula | Output Diagram | Status |
 | :--- | :--- | :--- | :--- |
-| **Gerak Parabola** | $y = v_0 t \\sin(\\theta) - \\frac{1}{2}gt^2$ | Diagram Alir Logika | Valid |
+| **Algoritma Pemrograman** | $T(n) = 2T(n/2) + O(n)$ | Diagram Alir Logika | Valid |
 | **Pemusatan Data** | $\\bar{x} = \\frac{\\sum x_i}{n}$ | Grafik Batang Frekuensi | Valid |`;
     } else {
       return `\n\n---
-\n## XII. CATATAN & SUPLENEN REVISI AI CO-PILOT
+\n## XIII. CATATAN & SUPLENEN REVISI AI CO-PILOT
 **Instruksi Diterapkan**: "${userInstruction}"
-- **Penguatan Mindful**: Siswa diajak hening 3 menit sebelum memecahkan rumus.
+- **Penguatan Mindful**: Siswa diajak hening 3 menit sebelum memecahkan masalah.
 - **Penguatan Meaningful**: Menghubungkan variabel data dengan kasus nyata.
 - **Penguatan Joyful**: Menggunakan kuis tantangan diagram kelompok.`;
     }
@@ -528,7 +584,7 @@ Lengkapi tabel analisis formula dan diagram alir berikut:
         ]);
 
         setIsGenerating(false);
-        showToast('⚡ Kanvas Kanan Berhasil Diperbarui oleh AI!');
+        showToast(`⚡ Seksi berhasil diperbarui oleh AI!`);
       }, 1000);
 
     } catch (err) {
@@ -665,7 +721,7 @@ Lengkapi tabel analisis formula dan diagram alir berikut:
             </button>
             <div>
               <h3 className="font-bold text-xs text-slate-100 flex items-center gap-1.5">
-                <span>🤖</span> AI Co-Pilot (Deep Learning v2.7)
+                <span>🤖</span> AI Co-Pilot (Deep Learning v2.8)
               </h3>
               <p className="text-[10px] text-slate-400">Pilar: Mindful • Meaningful • Joyful</p>
             </div>
@@ -710,16 +766,16 @@ Lengkapi tabel analisis formula dan diagram alir berikut:
         <div className="p-3 border-t border-slate-800 bg-slate-900/60 space-y-2">
           <div className="flex items-center gap-2 overflow-x-auto pb-1">
             <button
-              onClick={() => handleSendMessage(`Tolong buatkan Asesmen & Rubrik Penilaian ${currentDoc.subject || ''}`)}
+              onClick={() => handleSendMessage(`Tolong buatkan seksi KKTP dan Rubrik Penilaian ${currentDoc.subject || ''}`)}
               className="px-2.5 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-lg text-[11px] font-semibold transition-all shrink-0 cursor-pointer"
             >
-              🎯 + Asesmen & Rubrik
+              🎯 + KKTP & Rubrik
             </button>
             <button
-              onClick={() => handleSendMessage(`Tolong tambahkan LKPD Kelompok ${currentDoc.subject || ''}`)}
+              onClick={() => handleSendMessage(`Tolong buatkan seksi PROSEM secara lengkap dan rinci untuk ${currentDoc.subject || ''}`)}
               className="px-2.5 py-1 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded-lg text-[11px] font-semibold transition-all shrink-0 cursor-pointer"
             >
-              📝 + LKPD {currentDoc.subject || 'Kelompok'}
+              📅 + PROSEM {currentDoc.subject || ''}
             </button>
           </div>
 
@@ -729,7 +785,7 @@ Lengkapi tabel analisis formula dan diagram alir berikut:
               value={inputInstruction}
               onChange={(e) => setInputInstruction(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-              placeholder="Ketik instruksi, misal: 'Tambahkan LKPD SD'..."
+              placeholder="Ketik instruksi, misal: 'Tolong buatkan seksi PROSEM'..."
               className="flex-1 px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-[#D4AF37]"
             />
             <button
@@ -788,7 +844,7 @@ Lengkapi tabel analisis formula dan diagram alir berikut:
               <span className="text-[10px] px-2.5 py-0.5 rounded bg-amber-100 text-amber-800 font-bold border border-amber-300 uppercase">
                 ✨ Sub-Tab Active: {activeSubTab.replace('-', ' ')}
               </span>
-              <span className="text-[10px] text-emerald-600 font-bold">● Live Filtered</span>
+              <span className="text-[10px] text-emerald-600 font-bold">● Live Synced</span>
             </div>
 
             <div
@@ -857,6 +913,8 @@ Lengkapi tabel analisis formula dan diagram alir berikut:
                   <span className="text-2xl">📄</span>
                   <div>
                     <div className="font-bold text-xs text-slate-100 group-hover:text-[#D4AF37]">
+                      Unduh Teks Polos (.txt)
+========================================
                       Unduh Teks Polos (.txt)
                     </div>
                     <div className="text-[10px] text-slate-400">Format markdown murni tanpa format visual</div>
