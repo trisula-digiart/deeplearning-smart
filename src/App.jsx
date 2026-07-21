@@ -180,10 +180,10 @@ export default function App() {
             </div>
 
             {[
-              { id: 'dashboard', label: 'Dashboard SaaS', icon: '📊' },
-              { id: 'workspace', label: 'AI Workspace (Split)', icon: '⚡' },
-              { id: 'project-hub', label: 'Project Hub', icon: '📁' },
-              { id: 'notion-studio', label: 'Notion Studio', icon: '📝' }
+              { id: 'dashboard', label: 'Halaman Depan', icon: '📊' },
+              { id: 'workspace', label: 'Ruang Bantu AI', icon: '⚡' },
+              { id: 'project-hub', label: 'Berkas Saya', icon: '📁' },
+              { id: 'notion-studio', label: 'Editor Teks Rapih', icon: '📝' }
             ].map((menu) => (
               <button
                 key={menu.id}
