@@ -7,7 +7,7 @@
     @apply bg-[#0B192C] text-slate-100 antialiased selection:bg-[#D4AF37] selection:text-black min-h-screen overflow-x-hidden;
     font-family: 'Plus Jakarta Sans', sans-serif;
   }
-}
+} 
 
 /* Custom Scrollbar Styling */
 ::-webkit-scrollbar {
