@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { generateDeepLearningPrompt } from '../services/geminiService';
 
 /**
- * TRISULAPROMPT - AIWorkspace Component v2.5 (Fully Patched with Image & Visual Diagram Parser Engine)
+ * TRISULAPROMPT - AIWorkspace Component v2.5 (Fully Patched Contextual Generator & Layout Engine)
  * Author: TRISULACODER v8.7 - Lead Solution Architect
  * Split-Screen Layout (AI Co-Pilot Chat + Live Canvas Auto-Append & Full Export Engine)
  */
@@ -10,65 +10,37 @@ import { generateDeepLearningPrompt } from '../services/geminiService';
 export default function AIWorkspace({ activeDocument, onBackToDashboard, onUpdateDocument }) {
   const [activeSubTab, setActiveSubTab] = useState('modul-ajar');
   
-  // Default fallback data jika belum ada dokumen aktif (Spesimen IPAS SD Kelas 5)
+  // Default fallback data jika belum ada dokumen aktif (Spesimen Matematika SMA Kelas 11)
   const defaultDoc = {
-    id: 'doc-ipas-5',
-    title: 'Modul Ajar IPAS - Ekosistem & Keseimbangan Alam',
-    subject: 'IPAS (Ilmu Pengetahuan Alam dan Sosial)',
-    phase: 'Fase C (Kelas 5 SD)',
-    topic: 'Ekosistem, Rantai Makanan & Keseimbangan Alam',
+    id: 'doc-math-11',
+    title: 'Modul Ajar Matematika - Analisis Data & Statistika',
+    subject: 'Matematika',
+    phase: 'Fase F (Kelas 11-12)',
+    topic: 'Analisis Data, Statistika, & Diagram Batang/Peluang',
     status: 'In Progress',
-    content: `# MODUL AJAR DEEP LEARNING: IPAS FASE C (KELAS 5 SD)
+    content: `# MODUL AJAR DEEP LEARNING: MATEMATIKA FASE F (KELAS 11-12)
 
 ## I. INFORMASI UMUM
-- **Mata Pelajaran**: IPAS (Ilmu Pengetahuan Alam dan Sosial)
-- **Fase / Kelas**: Fase C (Kelas 5 SD)
-- **Topik Utama**: Ekosistem, Rantai Makanan & Keseimbangan Alam
-- **Alokasi Waktu**: 2 JP x 35 Menit
+- **Mata Pelajaran**: Matematika
+- **Fase / Kelas**: Fase F (Kelas 11-12)
+- **Topik Utama**: Analisis Data, Statistika, & Diagram Batang/Peluang
+- **Alokasi Waktu**: 2 JP x 45 Menit
 
 ---
 
 ## II. INTEGRASI 3 PILAR DEEP LEARNING
 
 ### 1. Mindful Learning (Penyadaran Diri)
-- **Latihan Hening STOP**: Sebelum pembelajaran dimulai, murid diajak hening selama 3 menit untuk merasakan napas dan menyadari kebesaran alam penciptaan.
-- **Refleksi Awal**: Murid menuliskan pengamatan singkat tentang makhluk hidup yang sering mereka temui di halaman sekolah.
+- **Latihan Hening STOP**: Sebelum memulai pelajaran, murid diajak hening selama 3 menit untuk menyiapakan kestabilan mental & fokus belajar.
+- **Refleksi Awal**: Murid mengisi jurnal singkat mengenai harapan dan tingkat kesiapan memahami materi Analisis Data, Statistika, & Diagram Batang/Peluang.
 
 ### 2. Meaningful Learning (Keterhubungan Masalah Nyata)
-- **Konteks Lokal**: Membahas fenomena populasi hama tikus yang meningkat di sawah dekat pemukiman akibat berkurangnya populasi ular/elang.
-- **Problem Solving**: Murid menganalisis dampak terputusnya salah satu rantai makanan terhadap keseimbangan alam lokal.
+- **Konteksualisasi**: Mengaitkan konsep Analisis Data, Statistika, & Diagram Batang/Peluang dengan permasalahan nyata kehidupan sehari-hari di lingkungan murid.
+- **Tugas Terapan**: Murid menganalisis studi kasus lokal dan merancang solusi praktis.
 
 ### 3. Joyful Learning (Kolaboratif & Menggembirakan)
-- **Game Unplugged**: Simulation Game "Detektif Rantai Makanan" menggunakan kartu gambar hewan dan tumbuhan.
-- **Apresiasi Sebaya**: Sesi saling memberi umpan balik positif antar kelompok saat mempresentasikan diagram ekosistem.
-
----
-
-## III. DIAGRAM VISUAL RANTAI MAKANAN EKOSISTEM SAWAH
-
-![Diagram Rantai Makanan Sawah](https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80)
-
-| Tingkat Tropik | Peran Makhluk Hidup | Contoh Organisme | Sumber Energi / Makanan |
-| :--- | :--- | :--- | :--- |
-| **Produsen** | Pembuat Makanan Sendiri | Padi / Rumput | Cahaya Matahari (Fotosintesis) |
-| **Konsumen I** | Herbivora (Pemakan Tumbuhan) | Belalang / Tikus | Padi / Tumbuhan |
-| **Konsumen II** | Karnivora (Pemakan Daging) | Katak / Ular | Belalang / Tikus |
-| **Konsumen III** | Predator Puncak | Burung Elang | Ular |
-| **Pengurai** | Dekomposer | Jamur / Bakteri | Bangkai Organisme |
-
----
-
-## IV. LEMBAR KERJA PESERTA DIDIK (LKPD) - IPAS
-
-### 👥 Nama Kelompok: ____________________
-**Anggota**: 1. _______________ 2. _______________ 3. _______________
-
-#### A. ANALISIS BAGAN RANTAI MAKANAN (15 Menit)
-Perhatikan alur aliran energi pada ekosistem berikut:
-**[ Padi ] ➔ [ Belalang ] ➔ [ Katak ] ➔ [ Ular ] ➔ [ Elang ]**
-
-1. Apakah yang akan terjadi pada populasi Katak dan Padi jika pemburu membasmi seluruh Ular di Sawah?
-2. Buatlah rancangan solusi sederhana agar rantai makanan tetap seimbang!`
+- **Gamifikasi Pembelajaran**: Tantangan tim interaktif berbasis kuis/permainan "BONGKAR LOGIKA".
+- **Apresiasi Sebaya**: Sesi saling memberikan umpan balik positif antar kelompok.`
   };
 
   const currentDoc = activeDocument || defaultDoc;
@@ -86,7 +58,7 @@ Perhatikan alur aliran energi pada ekosistem berikut:
     {
       id: 1,
       sender: 'ai',
-      text: 'Halo Bapak/Ibu Guru! Saya **Deep Learning Engine v2.5**. Dokumen IPAS Anda siap ditinjau. Kirim instruksi seperti "Tambahkan LKPD" atau "Buat Asesmen" untuk menyempurnakan dokumen di kanvas kanan!'
+      text: `Halo Bapak/Ibu Guru! Saya **Deep Learning Engine v2.5**. Dokumen ${currentDoc.subject || 'Pembelajaran'} Anda siap ditinjau. Kirim instruksi seperti "Tambahkan LKPD" atau "Buat Asesmen" untuk menyempurnakan dokumen di kanvas kanan!`
     }
   ]);
   const [inputInstruction, setInputInstruction] = useState('');
@@ -109,6 +81,7 @@ Perhatikan alur aliran energi pada ekosistem berikut:
     let htmlResult = [];
     let inTable = false;
     let tableBuffer = [];
+    let isFirstHeading = true;
 
     const renderTable = (rows) => {
       if (rows.length === 0) return '';
@@ -184,15 +157,17 @@ Perhatikan alur aliran energi pada ekosistem berikut:
         inTable = false;
       }
 
-      // Headers Parsing
+      // Headers Parsing (Fix Top-Clipping Bug)
       if (line.startsWith('# ')) {
-        htmlResult.push(`<h1 style="color:#1E3A8A; border-bottom:2px solid #D4AF37; padding-bottom:6px; font-size:20px; font-weight:bold; margin-top:20px; margin-bottom:12px;">${parseInlineMarkdown(line.replace('# ', ''))}</h1>`);
+        const topMargin = isFirstHeading ? 'margin-top:0px;' : 'margin-top:20px;';
+        isFirstHeading = false;
+        htmlResult.push(`<h1 style="color:#1E3A8A; border-bottom:2px solid #D4AF37; padding-bottom:6px; font-size:18px; font-weight:bold; ${topMargin} margin-bottom:12px; line-height:1.3;">${parseInlineMarkdown(line.replace('# ', ''))}</h1>`);
       } else if (line.startsWith('## ')) {
-        htmlResult.push(`<h2 style="color:#1E3A8A; border-bottom:1px solid #E2E8F0; padding-bottom:4px; font-size:16px; font-weight:bold; margin-top:18px; margin-bottom:10px;">${parseInlineMarkdown(line.replace('## ', ''))}</h2>`);
+        htmlResult.push(`<h2 style="color:#1E3A8A; border-bottom:1px solid #E2E8F0; padding-bottom:4px; font-size:15px; font-weight:bold; margin-top:18px; margin-bottom:10px;">${parseInlineMarkdown(line.replace('## ', ''))}</h2>`);
       } else if (line.startsWith('### ')) {
-        htmlResult.push(`<h3 style="color:#2563EB; font-size:14px; font-weight:bold; margin-top:14px; margin-bottom:8px;">${parseInlineMarkdown(line.replace('### ', ''))}</h3>`);
+        htmlResult.push(`<h3 style="color:#2563EB; font-size:13px; font-weight:bold; margin-top:14px; margin-bottom:8px;">${parseInlineMarkdown(line.replace('### ', ''))}</h3>`);
       } else if (line.startsWith('#### ')) {
-        htmlResult.push(`<h4 style="color:#D4AF37; font-size:13px; font-weight:bold; margin-top:12px; margin-bottom:6px;">${parseInlineMarkdown(line.replace('#### ', ''))}</h4>`);
+        htmlResult.push(`<h4 style="color:#D4AF37; font-size:12px; font-weight:bold; margin-top:12px; margin-bottom:6px;">${parseInlineMarkdown(line.replace('#### ', ''))}</h4>`);
       } else if (line.trim() === '---') {
         htmlResult.push(`<hr style="border:0; border-top:1px solid #CBD5E1; margin:16px 0;"/>`);
       } else if (line.trim().startsWith('- ')) {
@@ -209,27 +184,58 @@ Perhatikan alur aliran energi pada ekosistem berikut:
     return htmlResult.join('');
   };
 
-  // Helper Generator LKPD / Penambahan Konten Nyata
+  // Helper Generator LKPD & Asesmen Dinamis Sesuai Mapel
   const generateLKPDBlock = (userInstruction) => {
+    const isAsesmen = userInstruction.toLowerCase().includes('asesmen') || userInstruction.toLowerCase().includes('rubrik');
     const isLKPD = userInstruction.toLowerCase().includes('lkpd') || userInstruction.toLowerCase().includes('lembar kerja');
-    
-    if (isLKPD) {
-      return `\n\n---
-\n## V. ASESMEN & RUBRIK PENILAIAN ANALITIS IPAS
+    const subjectName = currentDoc.subject || 'Matematika';
 
-### 📊 Rubrik Observasi Unjuk Kerja Kelompok
+    if (isAsesmen) {
+      if (subjectName.toLowerCase().includes('matematika')) {
+        return `\n\n---
+\n## III. ASESMEN & RUBRIK PENILAIAN ANALITIS MATEMATIKA
+
+### 📊 Rubrik Penilaian Pemecahan Masalah Statistika & Data
 
 | Kriteria Penilaian | Skor 1 (Perlu Bimbingan) | Skor 2 (Cukup) | Skor 3 (Baik) | Skor 4 (Sangat Baik) |
 | :--- | :--- | :--- | :--- | :--- |
-| **Identifikasi Rantai Makanan** | Belum tepat membedakan produsen & konsumen | Mengidentifikasi produsen & konsumen dengan 1-2 kekeliruan | Tepat mengelompokkan produsen, konsumen, & pengurai | Sangat tepat & mampu menjelaskan aliran energi lengkap |
-| **Kolaborasi Tim** | Pasif dalam diskusi | Cukup berpartisipasi | Aktif berdiskusi | Sangat solutif & saling mengapresiasi kawan |`;
+| **Penyajian Data** | Salah membuat tabel / diagram data | Menampilkan data tetapi interval/skala belum presisi | Penyajian diagram batang/peluang rapi & benar | Penyajian data sangat presisi, sistematis, & komunikatif |
+| **Analisis Statistika** | Belum mampu menghitung rerata/peluang | Mengaplikasikan rumus matematika dengan 1-2 kekeliruan | Tepat menghitung pemusatan data & penyebaran | Sangat akurat & mampu menarik kesimpulan logis dari data |
+| **Kerjasama Kelompok** | Pasif dalam diskusi kelompok | Berpartisipasi jika diminta | Aktif berkontribusi memecahkan soal | Memimpin diskusi & membantu anggota tim lainnya |`;
+      } else {
+        return `\n\n---
+\n## III. ASESMEN & RUBRIK PENILAIAN ANALITIS (${subjectName.toUpperCase()})
+
+### 📊 Rubrik Unjuk Kerja Kelompok
+
+| Kriteria Penilaian | Skor 1 (Perlu Bimbingan) | Skor 2 (Cukup) | Skor 3 (Baik) | Skor 4 (Sangat Baik) |
+| :--- | :--- | :--- | :--- | :--- |
+| **Penguasaan Konsep** | Belum memahami materi dasar | Memahami konsep dengan sedikit bimbingan | Memahami & mengaplikasikan konsep dengan baik | Sangat menguasai & mampu mengaitkan dengan masalah nyata |
+| **Keaktifan Diskusi** | Pasif dalam kelompok | Cukup aktif | Aktif berdiskusi | Sangat solutif & memimpin kelompok |`;
+      }
+    } else if (isLKPD) {
+      return `\n\n---
+\n## IV. LEMBAR KERJA PESERTA DIDIK (LKPD) - ${subjectName.toUpperCase()}
+
+### 👥 Nama Kelompok: ____________________
+**Anggota**: 1. _______________ 2. _______________ 3. _______________
+
+#### A. TANTANGAN ANALISIS DATA (20 Menit)
+1. Kumpulkan data kuantitatif dari 10 responden di sekitar sekolah.
+2. Sajikan data tersebut ke dalam tabel frekuensi dan diagram batang di bawah ini:
+
+| Kategorisasi Data | Nilai / Frekuensi | Persentase Peluang |
+| :--- | :--- | :--- |
+| **Kategori A** | ____________ | ____ % |
+| **Kategori B** | ____________ | ____ % |
+| **Kategori C** | ____________ | ____ % |`;
     } else {
       return `\n\n---
-\n## VI. CATATAN & REVISI AI CO-PILOT
+\n## V. CATATAN & SUPLENEN REVISI AI CO-PILOT
 **Instruksi Diterapkan**: "${userInstruction}"
-- **Penguatan Mindful**: Mengajak siswa mengamati alam sekitar secara hening.
-- **Penguatan Meaningful**: Menghubungkan ekosistem dengan masalah lingkungan lokal.
-- **Penguatan Joyful**: Menggunakan kuis gambar interaktif.`;
+- **Penguatan Mindful**: Memberikan waktu berpikir hening 2 menit sebelum memulai analisis soal.
+- **Penguatan Meaningful**: Menghubungkan variabel data matematika dengan kasus kontekstual nyata.
+- **Penguatan Joyful**: Menggunakan kuis logika kelompok interaktif.`;
     }
   };
 
@@ -292,7 +298,7 @@ Perhatikan alur aliran energi pada ekosistem berikut:
   // ==========================================
 
   const handleDownloadWord = () => {
-    const docTitle = currentDoc.title || 'Modul_Ajar_IPAS_Deep_Learning';
+    const docTitle = currentDoc.title || 'Modul_Ajar_Deep_Learning';
     const parsedHtmlBody = parseMarkdownToHTML(docContent);
 
     const htmlContent = `
@@ -314,7 +320,7 @@ Perhatikan alur aliran energi pada ekosistem berikut:
       </head>
       <body>
         <h1>${docTitle}</h1>
-        <p style="text-align: center; font-style: italic; color: #64748B;">Perangkat Ajar Kurikulum Merdeka - IPAS Berbasis 3 Pilar Deep Learning</p>
+        <p style="text-align: center; font-style: italic; color: #64748B;">Perangkat Ajar Kurikulum Merdeka - Berbasis 3 Pilar Deep Learning</p>
         <hr style="border:0; border-top: 2px solid #D4AF37; margin-bottom: 25px;"/>
         <div>${parsedHtmlBody}</div>
       </body>
@@ -332,7 +338,7 @@ Perhatikan alur aliran energi pada ekosistem berikut:
     URL.revokeObjectURL(url);
 
     setIsExportModalOpen(false);
-    showToast('✅ Berkas Word (.doc) IPAS Lengkap dengan Gambar Berhasil Diunduh!');
+    showToast('✅ Berkas Word (.doc) Lengkap Berhasil Diunduh!');
   };
 
   const handleDownloadTxt = () => {
@@ -422,7 +428,7 @@ Perhatikan alur aliran energi pada ekosistem berikut:
 
           {isGenerating && (
             <div className="flex items-center gap-2 text-slate-400 text-xs italic pl-2">
-              <span className="animate-spin">⏳</span> AI sedang merancang & menyuntikkan dokumen IPAS...
+              <span className="animate-spin">⏳</span> AI sedang merancang & menyuntikkan dokumen...
             </div>
           )}
         </div>
@@ -431,16 +437,16 @@ Perhatikan alur aliran energi pada ekosistem berikut:
         <div className="p-3 border-t border-slate-800 bg-slate-900/60 space-y-2">
           <div className="flex items-center gap-2 overflow-x-auto pb-1">
             <button
-              onClick={() => handleSendMessage('Tolong tambahkan Asesmen & Rubrik Analitis IPAS')}
+              onClick={() => handleSendMessage(`Tolong buatkan Asesmen & Rubrik Penilaian ${currentDoc.subject || ''}`)}
               className="px-2.5 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-lg text-[11px] font-semibold transition-all shrink-0 cursor-pointer"
             >
               🎯 + Asesmen & Rubrik
             </button>
             <button
-              onClick={() => handleSendMessage('Tolong tambahkan LKPD IPAS Kelompok')}
+              onClick={() => handleSendMessage(`Tolong tambahkan LKPD Kelompok ${currentDoc.subject || ''}`)}
               className="px-2.5 py-1 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded-lg text-[11px] font-semibold transition-all shrink-0 cursor-pointer"
             >
-              📝 + LKPD IPAS
+              📝 + LKPD {currentDoc.subject || 'Kelompok'}
             </button>
           </div>
 
@@ -505,15 +511,15 @@ Perhatikan alur aliran energi pada ekosistem berikut:
         {/* Canvas Rendered Content */}
         <div className="flex-1 p-6 overflow-y-auto bg-slate-950/80">
           <div className="p-8 bg-white text-slate-800 rounded-2xl shadow-2xl border border-slate-200 min-h-full">
-            <div className="flex items-center justify-between border-b border-amber-400 pb-3 mb-4">
+            <div className="flex items-center justify-between border-b border-amber-400 pb-2 mb-4">
               <span className="text-[10px] px-2.5 py-0.5 rounded bg-amber-100 text-amber-800 font-bold border border-amber-300">
-                ✨ LIVE CANVAS PREVIEW - IPAS FASE C
+                ✨ LIVE CANVAS PREVIEW - {currentDoc.subject ? currentDoc.subject.toUpperCase() : 'DEEP LEARNING'}
               </span>
               <span className="text-[10px] text-emerald-600 font-bold">● Auto-Synced</span>
             </div>
 
             <div
-              className="prose prose-slate max-w-none text-xs leading-relaxed"
+              className="prose prose-slate max-w-none text-xs leading-relaxed pt-1"
               dangerouslySetInnerHTML={{ __html: parseMarkdownToHTML(docContent) }}
             />
           </div>
@@ -529,7 +535,7 @@ Perhatikan alur aliran energi pada ekosistem berikut:
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <div>
                 <h3 className="font-extrabold text-base text-white flex items-center gap-2">
-                  <span>📄</span> Export Center Dokumen IPAS
+                  <span>📄</span> Export Center Dokumen
                 </h3>
                 <p className="text-xs text-slate-400 mt-0.5">Pilih format unduhan untuk perangkat ajar Anda.</p>
               </div>
