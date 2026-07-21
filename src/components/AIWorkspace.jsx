@@ -1,85 +1,106 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { generateDeepLearningPrompt } from '../services/geminiService';
 
 /**
- * TRISULAPROMPT - AI Workspace Component v2.5 (Fully Patched Export & Table Styler Engine)
+ * TRISULAPROMPT - AIWorkspace Component v2.5 (Fully Patched with Image & Visual Diagram Parser Engine)
  * Author: TRISULACODER v8.7 - Lead Solution Architect
- * Features: Split-Screen Chat, Dynamic Auto-Append, Full Markdown/Table HTML Parser & Word/PDF Export Engine
+ * Split-Screen Layout (AI Co-Pilot Chat + Live Canvas Auto-Append & Full Export Engine)
  */
 
-export default function AIWorkspace({ activeDoc, onSaveDoc, onBackToDashboard }) {
-  // Local State Document & Chat
-  const [docTitle, setDocTitle] = useState(
-    activeDoc?.title || 'Modul Ajar Informatika - Tabel Input/Output & Flowchart'
-  );
-  const [docContent, setDocContent] = useState(
-    activeDoc?.content ||
-      `# MODUL AJAR DEEP LEARNING: INFORMATIKA FASE E (KELAS 10)
+export default function AIWorkspace({ activeDocument, onBackToDashboard, onUpdateDocument }) {
+  const [activeSubTab, setActiveSubTab] = useState('modul-ajar');
+  
+  // Default fallback data jika belum ada dokumen aktif (Spesimen IPAS SD Kelas 5)
+  const defaultDoc = {
+    id: 'doc-ipas-5',
+    title: 'Modul Ajar IPAS - Ekosistem & Keseimbangan Alam',
+    subject: 'IPAS (Ilmu Pengetahuan Alam dan Sosial)',
+    phase: 'Fase C (Kelas 5 SD)',
+    topic: 'Ekosistem, Rantai Makanan & Keseimbangan Alam',
+    status: 'In Progress',
+    content: `# MODUL AJAR DEEP LEARNING: IPAS FASE C (KELAS 5 SD)
 
 ## I. INFORMASI UMUM
-- **Mata Pelajaran**: Informatika
-- **Fase / Kelas**: Fase E (Kelas 10)
-- **Topik Utama**: Tabel Input/Output & Simbol Flowchart
-- **Alokasi Waktu**: 2 JP x 45 Menit
+- **Mata Pelajaran**: IPAS (Ilmu Pengetahuan Alam dan Sosial)
+- **Fase / Kelas**: Fase C (Kelas 5 SD)
+- **Topik Utama**: Ekosistem, Rantai Makanan & Keseimbangan Alam
+- **Alokasi Waktu**: 2 JP x 35 Menit
 
 ---
 
 ## II. INTEGRASI 3 PILAR DEEP LEARNING
 
 ### 1. Mindful Learning (Penyadaran Diri)
-- **Latihan Hening STOP**: Sebelum memulai pelajaran, murid diajak hening selama 3 menit untuk menyiapkan kestabilan mental & fokus belajar.
-- **Refleksi Awal**: Murid mengisi jurnal singkat mengenai harapan dan tingkat kesiapan memahami materi.
+- **Latihan Hening STOP**: Sebelum pembelajaran dimulai, murid diajak hening selama 3 menit untuk merasakan napas dan menyadari kebesaran alam penciptaan.
+- **Refleksi Awal**: Murid menuliskan pengamatan singkat tentang makhluk hidup yang sering mereka temui di halaman sekolah.
 
 ### 2. Meaningful Learning (Keterhubungan Masalah Nyata)
-- **Konteks Lokal**: Mengaitkan konsep Tabel Input/Output dengan masalah antrean di puskesmas/bank.
-- **Tugas Terapan**: Murid menganalisis studi kasus lokal dan merancang solusi praktis.
+- **Konteks Lokal**: Membahas fenomena populasi hama tikus yang meningkat di sawah dekat pemukiman akibat berkurangnya populasi ular/elang.
+- **Problem Solving**: Murid menganalisis dampak terputusnya salah satu rantai makanan terhadap keseimbangan alam lokal.
+
+### 3. Joyful Learning (Kolaboratif & Menggembirakan)
+- **Game Unplugged**: Simulation Game "Detektif Rantai Makanan" menggunakan kartu gambar hewan dan tumbuhan.
+- **Apresiasi Sebaya**: Sesi saling memberi umpan balik positif antar kelompok saat mempresentasikan diagram ekosistem.
 
 ---
 
-## III. MATRIKS SIMBOL FLOWCHART & PEMROGRAMAN
+## III. DIAGRAM VISUAL RANTAI MAKANAN EKOSISTEM SAWAH
 
-| Simbol Flowchart | Nama Simbol | Fungsi & Deskripsi Utama |
-| :--- | :--- | :--- |
-| **Oval / Capsule** | Terminator | Menandai titik awal (Start) dan akhir (End) dari sebuah algoritma |
-| **Jajaran Genjang** | Input / Output | Menerima masukan data atau menampilkan hasil keluaran |
-| **Persegi Panjang** | Process | Menjalankan perhitungan atau proses instruksi logika |
-| **Belah Ketupat** | Decision | Kondisi percabangan untuk mengambil keputusan (Ya / Tidak) |
+![Diagram Rantai Makanan Sawah](https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80)
+
+| Tingkat Tropik | Peran Makhluk Hidup | Contoh Organisme | Sumber Energi / Makanan |
+| :--- | :--- | :--- | :--- |
+| **Produsen** | Pembuat Makanan Sendiri | Padi / Rumput | Cahaya Matahari (Fotosintesis) |
+| **Konsumen I** | Herbivora (Pemakan Tumbuhan) | Belalang / Tikus | Padi / Tumbuhan |
+| **Konsumen II** | Karnivora (Pemakan Daging) | Katak / Ular | Belalang / Tikus |
+| **Konsumen III** | Predator Puncak | Burung Elang | Ular |
+| **Pengurai** | Dekomposer | Jamur / Bakteri | Bangkai Organisme |
 
 ---
 
-## IV. LEMBAR KERJA PESERTA DIDIK (LKPD)
+## IV. LEMBAR KERJA PESERTA DIDIK (LKPD) - IPAS
 
 ### 👥 Nama Kelompok: ____________________
 **Anggota**: 1. _______________ 2. _______________ 3. _______________
 
-#### A. TANTANGAN LOGIKA (15 Menit)
-Lengkapi tabel analisis variabel input dan output berdasarkan kasus antrean bank di bawah ini:
+#### A. ANALISIS BAGAN RANTAI MAKANAN (15 Menit)
+Perhatikan alur aliran energi pada ekosistem berikut:
+**[ Padi ] ➔ [ Belalang ] ➔ [ Katak ] ➔ [ Ular ] ➔ [ Elang ]**
 
-| Nama Kasus | Input Data | Proses Utama | Expected Output |
-| :--- | :--- | :--- | :--- |
-| Antrean Teller | Nomor Tiket | Penganggilan urutan | Dipanggil ke Loket |
-| Verifikasi Pin | 6 Digit PIN | Cek ke database | Akun Terverifikasi |`
-  );
+1. Apakah yang akan terjadi pada populasi Katak dan Padi jika pemburu membasmi seluruh Ular di Sawah?
+2. Buatlah rancangan solusi sederhana agar rantai makanan tetap seimbang!`
+  };
 
-  const [chatMessages, setChatMessages] = useState([
+  const currentDoc = activeDocument || defaultDoc;
+  
+  // State lokal untuk kanvas real-time
+  const [docContent, setDocContent] = useState(currentDoc.content);
+  
+  useEffect(() => {
+    if (activeDocument && activeDocument.content) {
+      setDocContent(activeDocument.content);
+    }
+  }, [activeDocument]);
+
+  const [messages, setMessages] = useState([
     {
       id: 1,
       sender: 'ai',
-      text: 'Halo Bapak/Ibu Guru! Saya **Deep Learning Engine v2.5**. Dokumen Anda siap ditinjau. Kirim instruksi seperti "Tambahkan LKPD" atau "Buat Asesmen" untuk menyempurnakan dokumen di kanvas kanan!'
+      text: 'Halo Bapak/Ibu Guru! Saya **Deep Learning Engine v2.5**. Dokumen IPAS Anda siap ditinjau. Kirim instruksi seperti "Tambahkan LKPD" atau "Buat Asesmen" untuk menyempurnakan dokumen di kanvas kanan!'
     }
   ]);
-  const [inputPrompt, setInputPrompt] = useState('');
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [activeTab, setActiveTab] = useState('Modul Ajar');
+  const [inputInstruction, setInputInstruction] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
 
   const showToast = (msg) => {
     setToastMessage(msg);
-    setTimeout(() => setToastMessage(''), 3000);
+    setTimeout(() => setToastMessage(''), 3500);
   };
 
   // ==========================================
-  // ADVANCED MARKDOWN & TABLE TO HTML PARSER ENGINE
+  // ADVANCED MARKDOWN, TABLE & IMAGE PARSER ENGINE
   // ==========================================
   const parseMarkdownToHTML = (markdown) => {
     if (!markdown) return '';
@@ -91,21 +112,18 @@ Lengkapi tabel analisis variabel input dan output berdasarkan kasus antrean bank
 
     const renderTable = (rows) => {
       if (rows.length === 0) return '';
-      let tableHtml = `<table style="width:100%; border-collapse:collapse; margin: 16px 0; font-size:12px;">`;
+      let tableHtml = `<table style="width:100%; border-collapse:collapse; margin: 16px 0; font-size:12px; font-family: 'Segoe UI', sans-serif;">`;
       
       rows.forEach((row, rowIndex) => {
-        // Strip leading/trailing pipes and split by pipe
         let cleanRow = row.trim();
         if (cleanRow.startsWith('|')) cleanRow = cleanRow.substring(1);
         if (cleanRow.endsWith('|')) cleanRow = cleanRow.substring(0, cleanRow.length - 1);
         
-        // Skip delimiter row (| :--- | :--- |)
         if (cleanRow.includes('---')) return;
 
         let cells = cleanRow.split('|').map(c => c.trim());
 
         if (rowIndex === 0) {
-          // Header Row
           tableHtml += `<tr style="background-color:#1E3A8A; color:#FFFFFF;">`;
           cells.forEach(cell => {
             let parsedCell = parseInlineMarkdown(cell);
@@ -113,7 +131,6 @@ Lengkapi tabel analisis variabel input dan output berdasarkan kasus antrean bank
           });
           tableHtml += `</tr>`;
         } else {
-          // Data Row
           let bg = rowIndex % 2 === 0 ? '#F8FAFC' : '#FFFFFF';
           tableHtml += `<tr style="background-color:${bg}; color:#1E293B;">`;
           cells.forEach(cell => {
@@ -137,13 +154,31 @@ Lengkapi tabel analisis variabel input dan output berdasarkan kasus antrean bank
     for (let i = 0; i < lines.length; i++) {
       let line = lines[i];
 
+      // Parse Gambar Markdown: ![alt](url)
+      const imgMatch = line.match(/!\[(.*?)\]\((.*?)\)/);
+      if (imgMatch) {
+        if (inTable) {
+          htmlResult.push(renderTable(tableBuffer));
+          tableBuffer = [];
+          inTable = false;
+        }
+        const altText = imgMatch[1];
+        const imgUrl = imgMatch[2];
+        htmlResult.push(`
+          <div style="margin: 20px 0; text-align: center;">
+            <img src="${imgUrl}" alt="${altText}" style="max-width: 100%; height: auto; border-radius: 12px; border: 2px solid #D4AF37; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" />
+            <p style="font-size: 11px; color: #64748B; font-style: italic; margin-top: 6px;">Gambar: ${altText}</p>
+          </div>
+        `);
+        continue;
+      }
+
       // Detect Table Line
       if (line.trim().startsWith('|')) {
         inTable = true;
         tableBuffer.push(line);
         continue;
       } else if (inTable) {
-        // End of Table Block
         htmlResult.push(renderTable(tableBuffer));
         tableBuffer = [];
         inTable = false;
@@ -174,90 +209,112 @@ Lengkapi tabel analisis variabel input dan output berdasarkan kasus antrean bank
     return htmlResult.join('');
   };
 
-  // Send Prompt & Append Content
-  const handleSendMessage = (e) => {
-    e?.preventDefault();
-    if (!inputPrompt.trim()) return;
+  // Helper Generator LKPD / Penambahan Konten Nyata
+  const generateLKPDBlock = (userInstruction) => {
+    const isLKPD = userInstruction.toLowerCase().includes('lkpd') || userInstruction.toLowerCase().includes('lembar kerja');
+    
+    if (isLKPD) {
+      return `\n\n---
+\n## V. ASESMEN & RUBRIK PENILAIAN ANALITIS IPAS
 
-    const userMsg = inputPrompt;
-    setChatMessages((prev) => [...prev, { id: Date.now(), sender: 'user', text: userMsg }]);
-    setInputPrompt('');
-    setIsProcessing(true);
+### 📊 Rubrik Observasi Unjuk Kerja Kelompok
 
-    setTimeout(() => {
-      let aiResponseText = '';
-      let appendedContent = '';
-
-      if (userMsg.toLowerCase().includes('lkpd')) {
-        aiResponseText = 'Siap! LKPD Kelompok berbasis studi kasus telah ditambahkan ke kanvas!';
-        appendedContent = `\n\n## IV. LEMBAR KERJA PESERTA DIDIK (LKPD)
-### 👥 Nama Kelompok: ____________________
-**Anggota**: 1. _______________ 2. _______________ 3. _______________
-
-| No | Langkah Aktivitas | Catatan Analisis | Status |
-| :---: | :--- | :--- | :---: |
-| 1 | Identifikasi Masalah | Diskusikan alur antrean | Selesai |
-| 2 | Buat Flowchart | Gambarkan simbol input & process | Draf |`;
-      } else if (userMsg.toLowerCase().includes('asesmen') || userMsg.toLowerCase().includes('rubrik')) {
-        aiResponseText = 'Asesmen Formatif & Rubrik Penilaian Analitis telah berhasil disuntikkan ke dokumen!';
-        appendedContent = `\n\n## V. ASESMEN & RUBRIK PENILAIAN
-### 📊 Rubrik Analitis Perancangan Flowchart
-
-| Kriteria | Skor 1 (Perlu Bimbingan) | Skor 2 (Cukup) | Skor 3 (Baik) | Skor 4 (Sangat Baik) |
+| Kriteria Penilaian | Skor 1 (Perlu Bimbingan) | Skor 2 (Cukup) | Skor 3 (Baik) | Skor 4 (Sangat Baik) |
 | :--- | :--- | :--- | :--- | :--- |
-| **Pemahaman Simbol** | Salah memilih simbol | Hanya 1-2 simbol benar | Mayoritas simbol tepat | Seluruh simbol presisi & logis |
-| **Kerjasama Kelompok** | Pasif | Cukup aktif | Aktif berdiskusi | Sangat solutif & memimpin |`;
-      } else {
-        aiResponseText = `Instruksi "${userMsg}" telah diproses dan diselaraskan ke dalam dokumen Kurikulum Merdeka Anda.`;
-        appendedContent = `\n\n### Catatan Tambahan Pembelajaran\n- **Catatan Guru**: ${userMsg}`;
-      }
-
-      setDocContent((prev) => prev + appendedContent);
-      setChatMessages((prev) => [
-        ...prev,
-        { id: Date.now() + 1, sender: 'ai', text: aiResponseText }
-      ]);
-      setIsProcessing(false);
-      showToast('✨ Dokumen kanvas berhasil diperbarui otomatis!');
-    }, 1200);
-  };
-
-  const handleSave = () => {
-    if (onSaveDoc) {
-      onSaveDoc({
-        ...activeDoc,
-        title: docTitle,
-        content: docContent,
-        updatedAt: 'Baru saja'
-      });
+| **Identifikasi Rantai Makanan** | Belum tepat membedakan produsen & konsumen | Mengidentifikasi produsen & konsumen dengan 1-2 kekeliruan | Tepat mengelompokkan produsen, konsumen, & pengurai | Sangat tepat & mampu menjelaskan aliran energi lengkap |
+| **Kolaborasi Tim** | Pasif dalam diskusi | Cukup berpartisipasi | Aktif berdiskusi | Sangat solutif & saling mengapresiasi kawan |`;
+    } else {
+      return `\n\n---
+\n## VI. CATATAN & REVISI AI CO-PILOT
+**Instruksi Diterapkan**: "${userInstruction}"
+- **Penguatan Mindful**: Mengajak siswa mengamati alam sekitar secara hening.
+- **Penguatan Meaningful**: Menghubungkan ekosistem dengan masalah lingkungan lokal.
+- **Penguatan Joyful**: Menggunakan kuis gambar interaktif.`;
     }
-    showToast('💾 Dokumen berhasil disimpan!');
   };
 
-  // EXPORT ENGINE FUNCTIONS
+  // Handler kirim instruksi ke AI Co-Pilot
+  const handleSendMessage = async (overridePrompt) => {
+    const textToSend = overridePrompt || inputInstruction;
+    if (!textToSend.trim() || isGenerating) return;
+
+    setInputInstruction('');
+    setMessages((prev) => [...prev, { id: Date.now(), sender: 'user', text: textToSend }]);
+    setIsGenerating(true);
+
+    try {
+      generateDeepLearningPrompt({
+        subject: currentDoc.subject,
+        phase: currentDoc.phase,
+        topic: currentDoc.topic,
+        instruction: textToSend
+      });
+
+      setTimeout(() => {
+        const newAddition = generateLKPDBlock(textToSend);
+        const updatedFullContent = docContent + newAddition;
+
+        setDocContent(updatedFullContent);
+
+        if (onUpdateDocument) {
+          onUpdateDocument({
+            ...currentDoc,
+            content: updatedFullContent
+          });
+        }
+
+        const aiResponseText = `✨ **[SINTESIS DEEP LEARNING SELESAI]**\n\nSaya telah menyusun draf baru berdasarkan instruksi: "${textToSend}".\n\n**Isi Tambahan yang Disuntikkan ke Kanvas Kanan:**${newAddition}`;
+
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now() + 1,
+            sender: 'ai',
+            text: aiResponseText
+          }
+        ]);
+
+        setIsGenerating(false);
+        showToast('⚡ Kanvas Kanan Berhasil Diperbarui oleh AI!');
+      }, 1000);
+
+    } catch (err) {
+      setIsGenerating(false);
+      setMessages((prev) => [
+        ...prev,
+        { id: Date.now() + 1, sender: 'ai', text: 'Maaf, terjadi kendala saat merespons. Silakan coba lagi.' }
+      ]);
+    }
+  };
+
+  // ==========================================
+  // REAL EXPORT & DOWNLOAD ENGINE
+  // ==========================================
+
   const handleDownloadWord = () => {
-    const rawTitle = docTitle || 'Modul_Ajar_Deep_Learning';
+    const docTitle = currentDoc.title || 'Modul_Ajar_IPAS_Deep_Learning';
     const parsedHtmlBody = parseMarkdownToHTML(docContent);
 
     const htmlContent = `
       <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
       <head>
         <meta charset='utf-8'>
-        <title>${rawTitle}</title>
+        <title>${docTitle}</title>
         <style>
           body { font-family: 'Segoe UI', 'Arial', sans-serif; line-height: 1.6; padding: 30px; color: #1E293B; }
-          h1 { color: #1E3A8A; border-bottom: 2px solid #D4AF37; padding-bottom: 6px; font-size: 22px; }
+          h1 { color: #1E3A8A; border-bottom: 2px solid #D4AF37; padding-bottom: 6px; font-size: 22px; text-align: center; }
           h2 { color: #1E3A8A; border-bottom: 1px solid #CBD5E1; padding-bottom: 4px; margin-top: 20px; font-size: 18px; }
           h3 { color: #2563EB; margin-top: 15px; font-size: 15px; }
           table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 12px; }
           th { background-color: #1E3A8A; color: #FFFFFF; border: 1px solid #CBD5E1; padding: 10px; text-align: left; }
           td { border: 1px solid #CBD5E1; padding: 8px; }
+          img { max-width: 100%; height: auto; border-radius: 8px; display: block; margin: 15px auto; }
           ul, ol { margin-left: 20px; }
         </style>
       </head>
       <body>
-        <h1 style="text-align: center; color: #1E3A8A;">${rawTitle}</h1>
-        <p style="text-align: center; font-style: italic; color: #64748B;">Perangkat Ajar Kurikulum Merdeka - Berbasis 3 Pilar Deep Learning</p>
+        <h1>${docTitle}</h1>
+        <p style="text-align: center; font-style: italic; color: #64748B;">Perangkat Ajar Kurikulum Merdeka - IPAS Berbasis 3 Pilar Deep Learning</p>
         <hr style="border:0; border-top: 2px solid #D4AF37; margin-bottom: 25px;"/>
         <div>${parsedHtmlBody}</div>
       </body>
@@ -268,14 +325,32 @@ Lengkapi tabel analisis variabel input dan output berdasarkan kasus antrean bank
     const url = URL.createObjectURL(blob);
     const downloadAnchor = document.createElement('a');
     downloadAnchor.href = url;
-    downloadAnchor.download = `${rawTitle.replace(/[^a-zA-Z0-9]/g, '_')}.doc`;
+    downloadAnchor.download = `${docTitle.replace(/[^a-zA-Z0-9]/g, '_')}.doc`;
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     document.body.removeChild(downloadAnchor);
     URL.revokeObjectURL(url);
 
     setIsExportModalOpen(false);
-    showToast('✅ Berkas Word (.doc) rapi berhasil diunduh!');
+    showToast('✅ Berkas Word (.doc) IPAS Lengkap dengan Gambar Berhasil Diunduh!');
+  };
+
+  const handleDownloadTxt = () => {
+    const docTitle = currentDoc.title || 'Modul_Ajar_Deep_Learning';
+    const rawContent = `${docTitle}\nMata Pelajaran: ${currentDoc.subject} | Phase: ${currentDoc.phase}\n\n=========================================\n\n${docContent}`;
+
+    const blob = new Blob([rawContent], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.href = url;
+    downloadAnchor.download = `${docTitle.replace(/[^a-zA-Z0-9]/g, '_')}.txt`;
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    document.body.removeChild(downloadAnchor);
+    URL.revokeObjectURL(url);
+
+    setIsExportModalOpen(false);
+    showToast('✅ Berkas Dokumen (.txt) berhasil diunduh!');
   };
 
   const handlePrintPDF = () => {
@@ -287,173 +362,166 @@ Lengkapi tabel analisis variabel input dan output berdasarkan kasus antrean bank
   };
 
   return (
-    <div className="h-full flex flex-col bg-[#0F172A]/80 rounded-3xl border border-slate-800 shadow-2xl overflow-hidden relative">
+    <div className="h-full flex flex-col md:flex-row gap-4 relative">
       
       {/* TOAST NOTIFICATION */}
       {toastMessage && (
-        <div className="fixed top-16 right-6 z-50 bg-[#D4AF37] text-black font-bold px-4 py-2.5 rounded-xl shadow-2xl text-xs border border-amber-300 animate-bounce">
+        <div className="fixed top-16 right-6 z-50 bg-[#D4AF37] text-black font-bold px-4 py-2.5 rounded-xl shadow-2xl text-xs animate-bounce border border-amber-300">
           {toastMessage}
         </div>
       )}
 
-      {/* HEADER BAR */}
-      <div className="p-4 bg-slate-900/90 border-b border-slate-800 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-3 flex-1 min-w-[280px]">
-          {onBackToDashboard && (
+      {/* LEFT PANEL: AI CO-PILOT CHAT */}
+      <div className="w-full md:w-5/12 bg-[#0F172A]/90 border border-slate-800 rounded-2xl flex flex-col overflow-hidden shadow-xl">
+        
+        {/* Chat Header */}
+        <div className="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/50">
+          <div className="flex items-center gap-2.5">
             <button
               onClick={onBackToDashboard}
-              className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold transition-all cursor-pointer"
+              className="p-1.5 hover:bg-slate-800 text-slate-400 hover:text-white rounded-lg transition-colors text-xs cursor-pointer"
+              title="Kembali ke Beranda Utama"
             >
               ← Kembali
             </button>
+            <div>
+              <h3 className="font-bold text-xs text-slate-100 flex items-center gap-1.5">
+                <span>🤖</span> AI Co-Pilot (Deep Learning v2.5)
+              </h3>
+              <p className="text-[10px] text-slate-400">Pilar: Mindful • Meaningful • Joyful</p>
+            </div>
+          </div>
+          <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">
+            ● Connected
+          </span>
+        </div>
+
+        {/* Chat Stream Messages */}
+        <div className="flex-1 p-4 overflow-y-auto space-y-4 text-xs">
+          {messages.map((msg) => (
+            <div
+              key={msg.id}
+              className={`flex gap-3 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+            >
+              {msg.sender === 'ai' && (
+                <div className="w-7 h-7 rounded-lg bg-indigo-600/30 border border-indigo-500/40 flex items-center justify-center shrink-0 font-bold text-indigo-300">
+                  🤖
+                </div>
+              )}
+              <div
+                className={`max-w-[85%] p-3.5 rounded-2xl whitespace-pre-wrap leading-relaxed ${
+                  msg.sender === 'user'
+                    ? 'bg-indigo-600 text-white rounded-tr-none shadow-md'
+                    : 'bg-slate-900/90 border border-slate-800 text-slate-200 rounded-tl-none shadow-md'
+                }`}
+              >
+                {msg.text}
+              </div>
+            </div>
+          ))}
+
+          {isGenerating && (
+            <div className="flex items-center gap-2 text-slate-400 text-xs italic pl-2">
+              <span className="animate-spin">⏳</span> AI sedang merancang & menyuntikkan dokumen IPAS...
+            </div>
           )}
-          <div className="flex-1">
+        </div>
+
+        {/* Quick Action Bar & Chat Input */}
+        <div className="p-3 border-t border-slate-800 bg-slate-900/60 space-y-2">
+          <div className="flex items-center gap-2 overflow-x-auto pb-1">
+            <button
+              onClick={() => handleSendMessage('Tolong tambahkan Asesmen & Rubrik Analitis IPAS')}
+              className="px-2.5 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-lg text-[11px] font-semibold transition-all shrink-0 cursor-pointer"
+            >
+              🎯 + Asesmen & Rubrik
+            </button>
+            <button
+              onClick={() => handleSendMessage('Tolong tambahkan LKPD IPAS Kelompok')}
+              className="px-2.5 py-1 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded-lg text-[11px] font-semibold transition-all shrink-0 cursor-pointer"
+            >
+              📝 + LKPD IPAS
+            </button>
+          </div>
+
+          <div className="flex items-center gap-2">
             <input
               type="text"
-              value={docTitle}
-              onChange={(e) => setDocTitle(e.target.value)}
-              className="w-full bg-transparent font-extrabold text-sm md:text-base text-white focus:outline-none focus:border-b focus:border-[#D4AF37] pb-0.5"
-              placeholder="Judul Dokumen..."
+              value={inputInstruction}
+              onChange={(e) => setInputInstruction(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+              placeholder="Ketik instruksi, misal: 'Tambahkan LKPD SD'..."
+              className="flex-1 px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-[#D4AF37]"
             />
-            <div className="text-[10px] text-slate-400 flex items-center gap-2">
-              <span className="text-[#D4AF37]">🤖 Ruang Bantu AI (Split Workspace)</span>
-              <span>•</span>
-              <span className="text-emerald-400">● Live Auto-Sync</span>
-            </div>
+            <button
+              onClick={() => handleSendMessage()}
+              disabled={isGenerating}
+              className="p-2 bg-[#D4AF37] hover:bg-amber-500 text-black font-bold rounded-xl transition-all shadow-md disabled:opacity-50 cursor-pointer"
+            >
+              ✈️
+            </button>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+      </div>
+
+      {/* RIGHT PANEL: LIVE CANVAS PREVIEW (WHITE PAPER A4 STYLE) */}
+      <div className="w-full md:w-7/12 bg-[#0F172A]/90 border border-slate-800 rounded-2xl flex flex-col overflow-hidden shadow-xl">
+        
+        {/* Canvas Toolbar & Tabs */}
+        <div className="p-4 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3 bg-slate-900/50">
+          <div className="flex items-center gap-1 overflow-x-auto pb-1 md:pb-0">
+            {[
+              { id: 'modul-ajar', label: 'Modul Ajar' },
+              { id: 'cp', label: 'CP' },
+              { id: 'tp', label: 'TP' },
+              { id: 'atp', label: 'ATP' },
+              { id: 'kktp', label: 'KKTP' },
+              { id: 'prota', label: 'Prota' },
+              { id: 'prosem', label: 'Prosem' }
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveSubTab(tab.id)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+                  activeSubTab === tab.id
+                    ? 'bg-[#D4AF37] text-black shadow-md'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
           <button
             onClick={() => setIsExportModalOpen(true)}
-            className="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl shadow-lg transition-all cursor-pointer flex items-center gap-1.5"
+            className="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white border border-indigo-400/30 rounded-xl font-bold text-xs transition-all shadow-md flex items-center gap-1.5 shrink-0 cursor-pointer"
           >
             <span>🖨️ Cetak / Export Dokumen</span>
           </button>
-          <button
-            onClick={handleSave}
-            className="px-4 py-1.5 bg-[#D4AF37] hover:bg-amber-500 text-black font-bold text-xs rounded-xl shadow-lg transition-all cursor-pointer"
-          >
-            💾 Simpan Dokumen
-          </button>
         </div>
-      </div>
 
-      {/* SPLIT SCREEN WORKSPACE AREA */}
-      <div className="flex-1 flex overflow-hidden">
-        
-        {/* LEFT PANEL: CHAT CO-PILOT */}
-        <div className="w-1/2 border-r border-slate-800 flex flex-col bg-slate-950/60">
-          <div className="p-3 bg-slate-900/50 border-b border-slate-800 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="text-base">🤖</span>
-              <span className="text-xs font-bold text-slate-200">AI Co-Pilot Assistant</span>
+        {/* Canvas Rendered Content */}
+        <div className="flex-1 p-6 overflow-y-auto bg-slate-950/80">
+          <div className="p-8 bg-white text-slate-800 rounded-2xl shadow-2xl border border-slate-200 min-h-full">
+            <div className="flex items-center justify-between border-b border-amber-400 pb-3 mb-4">
+              <span className="text-[10px] px-2.5 py-0.5 rounded bg-amber-100 text-amber-800 font-bold border border-amber-300">
+                ✨ LIVE CANVAS PREVIEW - IPAS FASE C
+              </span>
+              <span className="text-[10px] text-emerald-600 font-bold">● Auto-Synced</span>
             </div>
-            <span className="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full font-bold">
-              • Connected
-            </span>
-          </div>
 
-          <div className="flex-1 p-4 overflow-y-auto space-y-3">
-            {chatMessages.map((msg) => (
-              <div
-                key={msg.id}
-                className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-              >
-                <div
-                  className={`max-w-[85%] p-3 rounded-2xl text-xs leading-relaxed ${
-                    msg.sender === 'user'
-                      ? 'bg-[#D4AF37] text-black font-semibold rounded-br-none'
-                      : 'bg-slate-900 text-slate-200 border border-slate-800 rounded-bl-none shadow-md'
-                  }`}
-                >
-                  {msg.text}
-                </div>
-              </div>
-            ))}
-            {isProcessing && (
-              <div className="flex justify-start">
-                <div className="bg-slate-900 text-amber-400 border border-slate-800 p-3 rounded-2xl text-xs animate-pulse">
-                  🤖 AI sedang meracik & menyuntikkan dokumen...
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* QUICK PROMPT SUGGESTIONS */}
-          <div className="p-2 bg-slate-900/80 border-t border-slate-800 flex gap-2 overflow-x-auto">
-            <button
-              onClick={() => {
-                setInputPrompt('Tolong tambahkan LKPD kelompok sederhana');
-              }}
-              className="px-2.5 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-[#D4AF37] border border-amber-500/30 rounded-lg text-[10px] font-bold whitespace-nowrap cursor-pointer"
-            >
-              + Tambah LKPD Kelompok
-            </button>
-            <button
-              onClick={() => {
-                setInputPrompt('Tolong tambahkan Asesmen & Rubrik Analitis');
-              }}
-              className="px-2.5 py-1 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded-lg text-[10px] font-bold whitespace-nowrap cursor-pointer"
-            >
-              + Asesmen & Rubrik
-            </button>
-          </div>
-
-          {/* INPUT FORM */}
-          <form onSubmit={handleSendMessage} className="p-3 bg-slate-900 border-t border-slate-800 flex gap-2">
-            <input
-              type="text"
-              value={inputPrompt}
-              onChange={(e) => setInputPrompt(e.target.value)}
-              placeholder="Ketik instruksi, misal: 'Tambahkan LKPD SD'..."
-              className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#D4AF37]"
+            <div
+              className="prose prose-slate max-w-none text-xs leading-relaxed"
+              dangerouslySetInnerHTML={{ __html: parseMarkdownToHTML(docContent) }}
             />
-            <button
-              type="submit"
-              disabled={isProcessing}
-              className="px-4 py-2 bg-[#D4AF37] hover:bg-amber-500 text-black font-bold text-xs rounded-xl shadow-lg transition-all cursor-pointer disabled:opacity-50"
-            >
-              Kirim
-            </button>
-          </form>
-        </div>
-
-        {/* RIGHT PANEL: LIVE CANVAS PREVIEW (RENDERED BEAUTIFULLY) */}
-        <div className="w-1/2 flex flex-col bg-slate-900/40">
-          <div className="p-3 bg-slate-950 border-b border-slate-800 flex items-center justify-between">
-            <div className="flex gap-2">
-              {['Modul Ajar', 'CP', 'TP', 'ATP', 'KKTP', 'Prota', 'Prosem'].map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all cursor-pointer ${
-                    activeTab === tab
-                      ? 'bg-[#D4AF37] text-black'
-                      : 'text-slate-400 hover:text-white bg-slate-900'
-                  }`}
-                >
-                  {tab}
-                </button>
-              ))}
-            </div>
-            <span className="text-[10px] font-bold text-emerald-400 uppercase">● Live Canvas Preview</span>
-          </div>
-
-          {/* RENDERED DOCUMENT VIEW */}
-          <div className="flex-1 p-6 overflow-y-auto bg-slate-950/80">
-            <div className="p-8 bg-white text-slate-800 rounded-2xl shadow-2xl border border-slate-200 min-h-full">
-              <div
-                className="prose prose-slate max-w-none text-xs leading-relaxed"
-                dangerouslySetInnerHTML={{ __html: parseMarkdownToHTML(docContent) }}
-              />
-            </div>
           </div>
         </div>
 
       </div>
 
-      {/* EXPORT CENTER MODAL */}
+      {/* EXPORT CENTER MODAL REAL */}
       {isExportModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-[#0F172A] border border-slate-800 w-full max-w-md rounded-3xl p-6 space-y-5 shadow-2xl animate-in fade-in zoom-in duration-200">
@@ -461,9 +529,9 @@ Lengkapi tabel analisis variabel input dan output berdasarkan kasus antrean bank
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <div>
                 <h3 className="font-extrabold text-base text-white flex items-center gap-2">
-                  <span>📄</span> Export Center Dokumen
+                  <span>📄</span> Export Center Dokumen IPAS
                 </h3>
-                <p className="text-xs text-slate-400 mt-0.5">Pilih format cetak/unduhan untuk perangkat ajar Anda.</p>
+                <p className="text-xs text-slate-400 mt-0.5">Pilih format unduhan untuk perangkat ajar Anda.</p>
               </div>
               <button
                 onClick={() => setIsExportModalOpen(false)}
@@ -484,7 +552,23 @@ Lengkapi tabel analisis variabel input dan output berdasarkan kasus antrean bank
                     <div className="font-bold text-xs text-slate-100 group-hover:text-[#D4AF37]">
                       Unduh Berkas Word (.doc)
                     </div>
-                    <div className="text-[10px] text-slate-400">Termasuk Tabel & Format Rapih Berwarna</div>
+                    <div className="text-[10px] text-slate-400">Termasuk Gambar, Tabel & Color Style</div>
+                  </div>
+                </div>
+                <span className="text-xs text-[#D4AF37] font-bold">Unduh →</span>
+              </button>
+
+              <button
+                onClick={handleDownloadTxt}
+                className="w-full p-3.5 bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-[#D4AF37] rounded-2xl flex items-center justify-between transition-all group cursor-pointer"
+              >
+                <div className="flex items-center gap-3 text-left">
+                  <span className="text-2xl">📄</span>
+                  <div>
+                    <div className="font-bold text-xs text-slate-100 group-hover:text-[#D4AF37]">
+                      Unduh Teks Polos (.txt)
+                    </div>
+                    <div className="text-[10px] text-slate-400">Format markdown murni tanpa format visual</div>
                   </div>
                 </div>
                 <span className="text-xs text-[#D4AF37] font-bold">Unduh →</span>
@@ -500,7 +584,7 @@ Lengkapi tabel analisis variabel input dan output berdasarkan kasus antrean bank
                     <div className="font-bold text-xs text-slate-100 group-hover:text-[#D4AF37]">
                       Cetak / Simpan PDF
                     </div>
-                    <div className="text-[10px] text-slate-400">Format cetak langsung dari browser</div>
+                    <div className="text-[10px] text-slate-400">Dialog cetak sistem browser</div>
                   </div>
                 </div>
                 <span className="text-xs text-[#D4AF37] font-bold">Cetak →</span>
