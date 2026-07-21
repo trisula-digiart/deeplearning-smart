@@ -2,7 +2,7 @@
  * TRISULAPROMPT - API Endpoint Configuration v2.5
  * Author: TRISULACODER v8.7 - Lead Solution Architect
  * Module: Google Apps Script (GAS) Web App Endpoint & Environment Resolver
- */
+ */ 
 
 // URL Web App Google Apps Script (GAS) untuk integrasi Google Sheets Database
 // Diambil secara otomatis dari .env (VITE_GAS_API_URL) atau fallback string kosong jika belum di-set
