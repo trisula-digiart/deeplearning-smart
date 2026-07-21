@@ -119,7 +119,7 @@ export default function ProjectHub(props) {
         <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
           <Filter className="w-4 h-4 text-slate-400 ml-2 shrink-0" />
           <span className="text-xs text-slate-400 font-medium shrink-0">Filter Status:</span>
-          {['All', 'In Progress', 'Completed'].map((st) => (
+          {['Semua Berkas', 'Belum Selesai', 'Selesai'].map((st) => (
             <button
               key={st}
               onClick={() => setStatusFilter(st)}
