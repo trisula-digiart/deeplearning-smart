@@ -16,7 +16,7 @@ const genAI = apiKey ? new GoogleGenerativeAI(apiKey) : null;
 export const generateDeepLearningPrompt = ({ subject, phase, topic, instruction }) => {
   return `
 Role: Anda adalah Pakar Kurikulum Merdeka & Senior Educational Prompt Engineer (TRISULA AI Engine).
-Tugas: Buat/Revisi modul ajar untuk mata pelajaran "${subject}", ${phase}, topik "${topic}".
+Tugas: Buat/Revisi modul ajar untuk mata pelajaran "${subject || 'Mata Pelajaran'}", ${phase || 'Fase E'}, topik "${topic || 'Materi Utama'}".
 
 Instruksi Tambahan Pengguna:
 "${instruction || 'Tingkatkan kualitas modul dengan prinsip 3 pilar Deep Learning.'}"
@@ -31,8 +31,7 @@ Sajikan respons secara terstruktur, jelas, dan profesional.
 };
 
 /**
- * Fungsi Utama Sintesis Perangkat Ajar dari Gemini AI / Smart Mock
- * Aliased untuk generatePerangkatAjar & generateTeachingMaterial
+ * Fungsi Utama Sintesis Perangkat Ajar dari Gemini AI / Smart Mock Engine
  */
 export const generateTeachingMaterial = async (payload) => {
   const { subject, phase, topic, instruction } = payload || {};
@@ -89,7 +88,7 @@ export const generateTeachingMaterial = async (payload) => {
   });
 };
 
-// Alias ekspor dinamik agar DeepLearningWizard.jsx & AIWorkspace.jsx keduanya terlayani 100%
+// Alias ekspor dinamik agar kompatibel penuh dengan DeepLearningWizard.jsx & AIWorkspace.jsx
 export const generatePerangkatAjar = generateTeachingMaterial;
 
 export default {
