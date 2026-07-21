@@ -14,7 +14,7 @@ export default function Toast({ toast, onClose }) {
   // Return null if no active toast notification
   if (!toast) return null;
 
-  const message = typeof toast === 'string' ? toast : toast.message;
+  const message = typeof toast === 'string' ? toast : toast.message; 
   const type = typeof toast === 'object' && toast.type ? toast.type : 'info';
 
   const getStyles = () => {
