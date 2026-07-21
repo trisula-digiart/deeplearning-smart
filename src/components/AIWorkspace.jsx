@@ -33,7 +33,7 @@ export default function AIWorkspace({ activeDocument, onBackToDashboard }) {
 - **Mata Pelajaran**: Bahasa Indonesia
 - **Kelas / Semester**: Kelas 3 / Semester 1 (Ganjil)
 - **Gaya Belajar Dominan**: Visual & Kinestetik Dominan
-
+ 
 ---
 
 ## II. TIGA PILAR DEEP LEARNING INTEGRATION
