@@ -8,14 +8,13 @@ import {
   Check,
   FileText,
   Sparkles,
-  Layers,
-  Link
+  Layers
 } from 'lucide-react';
 
 /**
- * TRISULAPROMPT - Export Center Modal Component
- * Multi-format export dialog allowing teachers to select specific document components
- * for PDF export, Microsoft Word (.docx), Direct Printing, or Share Link generation.
+ * TRISULAPROMPT - Export Center Modal Component v2.5
+ * Author: TRISULACODER v8.7 - Lead Solution Architect
+ * Module: Multi-format export dialog for printing & exporting Kurikulum Merdeka teaching materials
  * 
  * @param {Object} props
  * @param {boolean} props.isOpen - Modal visibility flag
@@ -29,7 +28,7 @@ import {
 export default function ExportCenterModal({
   isOpen,
   onClose,
-  exportOptions,
+  exportOptions = {},
   setExportOptions,
   onExportPDF,
   onExportWord,
@@ -49,8 +48,8 @@ export default function ExportCenterModal({
 
   const handleToggleAll = (status) => {
     const updated = {};
-    Object.keys(exportOptions).forEach((k) => {
-      updated[k] = status;
+    componentItems.forEach((item) => {
+      updated[item.key] = status;
     });
     setExportOptions(updated);
   };
@@ -63,7 +62,7 @@ export default function ExportCenterModal({
         {/* Modal Header */}
         <div className="flex items-center justify-between border-b border-slate-800 pb-4">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
+            <div className="w-9 h-9 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 shadow-md">
               <Download className="w-5 h-5" />
             </div>
             <div>
@@ -77,14 +76,14 @@ export default function ExportCenterModal({
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl transition"
+            className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl transition cursor-pointer"
             aria-label="Close Export Modal"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Selection Toolbar */}
+        {/* Selection Control Bar */}
         <div className="flex items-center justify-between text-xs pt-1">
           <span className="text-slate-300 font-semibold flex items-center gap-1.5">
             <Layers className="w-4 h-4 text-amber-400" />
@@ -92,22 +91,24 @@ export default function ExportCenterModal({
           </span>
           <div className="flex gap-2 text-[11px]">
             <button
+              type="button"
               onClick={() => handleToggleAll(true)}
-              className="text-indigo-400 hover:underline font-semibold"
+              className="text-indigo-400 hover:underline font-semibold cursor-pointer"
             >
               Pilih Semua
             </button>
             <span className="text-slate-600">•</span>
             <button
+              type="button"
               onClick={() => handleToggleAll(false)}
-              className="text-slate-400 hover:underline"
+              className="text-slate-400 hover:underline cursor-pointer"
             >
               Reset
             </button>
           </div>
         </div>
 
-        {/* Component Checkboxes Grid */}
+        {/* Component Checkboxes Container */}
         <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
           {componentItems.map((item) => {
             const isChecked = !!exportOptions[item.key];
@@ -145,17 +146,19 @@ export default function ExportCenterModal({
         <div className="pt-3 border-t border-slate-800 space-y-2">
           <div className="grid grid-cols-2 gap-2.5">
             <button
+              type="button"
               onClick={onExportPDF}
               disabled={selectedCount === 0}
-              className="bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white text-xs py-3 rounded-xl font-bold transition flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/30 border border-indigo-400/20 active:scale-95 disabled:opacity-50"
+              className="bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white text-xs py-3 rounded-xl font-bold transition flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/30 border border-indigo-400/20 active:scale-95 disabled:opacity-50 cursor-pointer"
             >
               <FileDown className="w-4 h-4" /> Download PDF
             </button>
 
             <button
+              type="button"
               onClick={onExportWord}
               disabled={selectedCount === 0}
-              className="bg-slate-800 hover:bg-slate-700 text-slate-100 text-xs py-3 rounded-xl font-bold border border-slate-700 transition flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50"
+              className="bg-slate-800 hover:bg-slate-700 text-slate-100 text-xs py-3 rounded-xl font-bold border border-slate-700 transition flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50 cursor-pointer"
             >
               <FileText className="w-4 h-4 text-indigo-400" /> Export Word (.docx)
             </button>
@@ -163,20 +166,22 @@ export default function ExportCenterModal({
 
           <div className="grid grid-cols-2 gap-2.5 pt-1">
             <button
+              type="button"
               onClick={onPrint}
               disabled={selectedCount === 0}
-              className="bg-slate-950 hover:bg-slate-800 text-slate-300 text-xs py-2.5 rounded-xl font-semibold border border-slate-800 transition flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50"
+              className="bg-slate-950 hover:bg-slate-800 text-slate-300 text-xs py-2.5 rounded-xl font-semibold border border-slate-800 transition flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50 cursor-pointer"
             >
               <Printer className="w-3.5 h-3.5 text-amber-400" /> Direct Print
             </button>
 
             <button
+              type="button"
               onClick={() => {
                 if (navigator.clipboard) {
                   navigator.clipboard.writeText(window.location.href);
                 }
               }}
-              className="bg-slate-950 hover:bg-slate-800 text-slate-300 text-xs py-2.5 rounded-xl font-semibold border border-slate-800 transition flex items-center justify-center gap-2 active:scale-95"
+              className="bg-slate-950 hover:bg-slate-800 text-slate-300 text-xs py-2.5 rounded-xl font-semibold border border-slate-800 transition flex items-center justify-center gap-2 active:scale-95 cursor-pointer"
             >
               <Share2 className="w-3.5 h-3.5 text-emerald-400" /> Salin Link Berbagi
             </button>
