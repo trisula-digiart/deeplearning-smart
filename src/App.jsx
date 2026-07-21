@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 
-// Google Apps Script Webhook URL (Ganti dengan Web App URL dari Deployment Google Apps Script kamu)
+// Google Apps Script Webhook URL (Ganti dengan Web App URL Deployment Google Apps Script kamu)
 const GOOGLE_SHEETS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyJJp3CVGiAEkCQ-6zDTgS1Rz2Fz2vQYCvpn_hB-JkN13q9aWQOAFfAtpWH3cHnby6LEg/exec";
 
 const syncUserToGoogleSheets = async (userData, action = 'SYNC_USER') => {
@@ -103,7 +103,129 @@ const Icons = {
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
     </svg>
+  ),
+  Printer: ({ className = "w-4 h-4" }) => (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+    </svg>
+  ),
+  FileText: ({ className = "w-4 h-4" }) => (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+    </svg>
   )
+};
+
+// Helper sanitasi LaTeX formula ke teks simbol visual cantik
+const formatMathFormula = (formulaStr) => {
+  return formulaStr
+    .replace(/\\mathbf\{(.*?)\}/g, '$1')
+    .replace(/\\bar\{x\}/g, 'x̄')
+    .replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, '($1 / $2)')
+    .replace(/\\sum_\{([^}]+)\}\^\{([^}]+)\}/g, 'Σ($1..$2)')
+    .replace(/\\sum/g, 'Σ')
+    .replace(/\\sqrt\{([^}]+)\}/g, '√($1)')
+    .replace(/\\log/g, 'log')
+    .replace(/\\times/g, '×')
+    .replace(/\\div/g, '÷');
+};
+
+// Parser Markdown & LaTeX ke HTML Premium untuk Kanvas Dokumen
+const parseMarkdownToHTML = (markdown) => {
+  if (!markdown) return '';
+
+  let content = markdown;
+
+  // 1. LATEX DISPLAY PARSER ($$...$$)
+  content = content.replace(/\$\$(.*?)\$\$/gs, (match, formula) => {
+    const cleanFormula = formatMathFormula(formula.trim());
+    return `<div style="margin:14px 0; padding:12px 16px; background-color:#F1F5F9; border-left:4px solid #1E3A8A; border-radius:8px; text-align:center;">
+      <div style="color:#D4AF37; font-size:10px; font-weight:bold; margin-bottom:4px; font-family:'Segoe UI', sans-serif; text-transform:uppercase;">[ FORMULA DEEP LEARNING ]</div>
+      <div style="font-family:'Courier New', monospace; font-weight:bold; font-size:14px; color:#0F172A;">${cleanFormula}</div>
+    </div>`;
+  });
+
+  // 2. LATEX INLINE PARSER ($...$)
+  content = content.replace(/\$(.*?)\$/g, (match, formula) => {
+    const cleanFormula = formatMathFormula(formula.trim());
+    return `<code style="background-color:#F8FAFC; color:#1E3A8A; border:1px solid #CBD5E1; padding:2px 6px; border-radius:4px; font-family:'Courier New', monospace; font-weight:bold;">${cleanFormula}</code>`;
+  });
+
+  let lines = content.split('\n');
+  let htmlResult = [];
+  let inTable = false;
+  let tableBuffer = [];
+
+  const renderTable = (rows) => {
+    if (rows.length === 0) return '';
+    let tableHtml = `<table border="1" cellpadding="8" cellspacing="0" style="width:100%; border-collapse:collapse; margin: 16px 0; font-size:12px; font-family: 'Segoe UI', sans-serif; border-color:#CBD5E1;">`;
+    
+    rows.forEach((row, rowIndex) => {
+      let cleanRow = row.trim();
+      if (cleanRow.startsWith('|')) cleanRow = cleanRow.substring(1);
+      if (cleanRow.endsWith('|')) cleanRow = cleanRow.substring(0, cleanRow.length - 1);
+      
+      if (cleanRow.includes('---')) return;
+
+      let cells = cleanRow.split('|').map(c => c.trim());
+
+      if (rowIndex === 0) {
+        tableHtml += `<tr style="background-color:#1E3A8A; color:#FFFFFF;">`;
+        cells.forEach(cell => {
+          let parsedCell = cell.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+          tableHtml += `<th style="border:1px solid #CBD5E1; padding:10px 12px; text-align:left; font-weight:bold; color:#FFFFFF;">${parsedCell}</th>`;
+        });
+        tableHtml += `</tr>`;
+      } else {
+        let bg = rowIndex % 2 === 0 ? '#F8FAFC' : '#FFFFFF';
+        tableHtml += `<tr style="background-color:${bg}; color:#1E293B;">`;
+        cells.forEach(cell => {
+          let parsedCell = cell.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+          tableHtml += `<td style="border:1px solid #CBD5E1; padding:8px 12px;">${parsedCell}</td>`;
+        });
+        tableHtml += `</tr>`;
+      }
+    });
+
+    tableHtml += `</table>`;
+    return tableHtml;
+  };
+
+  for (let i = 0; i < lines.length; i++) {
+    let line = lines[i];
+
+    if (line.trim().startsWith('|')) {
+      inTable = true;
+      tableBuffer.push(line);
+      continue;
+    } else if (inTable) {
+      htmlResult.push(renderTable(tableBuffer));
+      tableBuffer = [];
+      inTable = false;
+    }
+
+    if (line.startsWith('# ')) {
+      htmlResult.push(`<h1 style="color:#1E3A8A; border-bottom:2px solid #D4AF37; padding-bottom:6px; font-size:18px; font-weight:bold; margin-top:18px; margin-bottom:12px;">${line.replace('# ', '').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</h1>`);
+    } else if (line.startsWith('## ')) {
+      htmlResult.push(`<h2 style="color:#1E3A8A; border-bottom:1px solid #E2E8F0; padding-bottom:4px; font-size:15px; font-weight:bold; margin-top:18px; margin-bottom:10px;">${line.replace('## ', '').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</h2>`);
+    } else if (line.startsWith('### ')) {
+      htmlResult.push(`<h3 style="color:#2563EB; font-size:13px; font-weight:bold; margin-top:14px; margin-bottom:8px;">${line.replace('### ', '').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</h3>`);
+    } else if (line.trim() === '---') {
+      htmlResult.push(`<hr style="border:0; border-top:1px solid #CBD5E1; margin:16px 0;"/>`);
+    } else if (line.trim().startsWith('> ')) {
+      htmlResult.push(`<blockquote style="border-left:4px solid #D4AF37; background:#FEF3C7; padding:8px 12px; margin:10px 0; color:#78350F; font-size:11px;">${line.replace('> ', '')}</blockquote>`);
+    } else if (line.trim().startsWith('- ')) {
+      htmlResult.push(`<li style="margin-left:20px; margin-bottom:4px; color:#334155;">${line.replace('- ', '').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</li>`);
+    } else if (line.trim().length > 0 && line.trim() !== '#') {
+      htmlResult.push(`<p style="margin-bottom:8px; color:#334155; line-height:1.6;">${line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</p>`);
+    }
+  }
+
+  if (inTable) {
+    htmlResult.push(renderTable(tableBuffer));
+  }
+
+  return htmlResult.join('');
 };
 
 function LoginPage({ onLoginSuccess }) {
@@ -247,7 +369,7 @@ function LoginPage({ onLoginSuccess }) {
               key={r.id}
               type="button"
               onClick={() => setSelectedRole(r.id)}
-              className={`flex-1 py-2 text-center rounded-xl transition-all ${
+              className={`flex-1 py-2 text-center rounded-xl transition-all cursor-pointer ${
                 selectedRole === r.id
                   ? 'bg-gradient-to-r from-[#D4AF37] to-amber-500 text-slate-950 font-bold shadow-md'
                   : 'text-slate-400 hover:text-slate-200'
@@ -338,7 +460,7 @@ function LoginPage({ onLoginSuccess }) {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
               >
                 {showPassword ? <Icons.EyeOff /> : <Icons.Eye />}
               </button>
@@ -352,7 +474,7 @@ function LoginPage({ onLoginSuccess }) {
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="rounded border-slate-700 bg-slate-900 text-[#D4AF37] focus:ring-0"
+                  className="rounded border-slate-700 bg-slate-900 text-[#D4AF37] focus:ring-0 cursor-pointer"
                 />
                 Ingat Saya
               </label>
@@ -777,7 +899,7 @@ function AdminDashboard({ usersData, onUpdateUserStatus, onAddCredits, onAddUser
   );
 }
 
-function AIWorkspace({ onBackToDashboard, externalUserStatus }) {
+function AIWorkspace({ activeDocument, onBackToDashboard, externalUserStatus }) {
   const [activeSubTab, setActiveSubTab] = useState('modul-ajar');
   const [userStatus, setUserStatus] = useState(externalUserStatus || {
     is_premium: false,
@@ -787,7 +909,7 @@ function AIWorkspace({ onBackToDashboard, externalUserStatus }) {
 
   const [isPaywallOpen, setIsPaywallOpen] = useState(false);
   const [paywallReason, setPaywallReason] = useState('');
-  const [selectedPlan, setSelectedPlan] = useState(null);
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
   const defaultDoc = {
     title: 'Modul Ajar STEM & Informatika - Model Matematika, Algoritma & Prosem',
@@ -862,7 +984,7 @@ Peserta didik mampu menerapkan konsep analisis data, menyusun algoritma pemroses
 
 ### 2. Meaningful Learning (Keterhubungan Masalah Nyata)
 - **Konteks Lokal**: Membahas data statistik hasil panen lokal dan grafik tren fluktuasi harga pasar daerah.
-- **Problem Solving**: Merancang model algoritma untuk mempredict keuntungan hasil tani.
+- **Problem Solving**: Merancang model algoritma untuk memprediksi keuntungan hasil tani.
 
 ### 3. Joyful Learning (Kolaboratif & Menggembirakan)
 - **Game Simulasi**: Tantangan logika "Tebak Algoritma & Diagram Alir" berbasis kelompok.
@@ -870,18 +992,33 @@ Peserta didik mampu menerapkan konsep analisis data, menyusun algoritma pemroses
 
 ---
 
-## IX. LEMBAR KERJA PESERTA DIDIK (LKPD)
+## IX. DUKUNGAN RUMUS MATEMATIKA (LATEX FORMULA)
+
+Berikut adalah formula dasar perhitungan efisiensi algoritma dan statistika:
+- **Rata-rata Kompleksitas**: $\\bar{x} = \\frac{\\sum_{i=1}^{n} x_i}{n}$
+- **Persamaan Laju Pertumbuhan**: $$T(n) = 2 T\\left(\\frac{n}{2}\\right) + O(n)$$
+
+---
+
+## X. LEMBAR KERJA PESERTA DIDIK (LKPD)
 ### 👥 Nama Kelompok: ____________________
 1. Hitunglah nilai $T(n)$ jika diketahui $n = 16$!
 2. Analisis diagram alir di atas dan tuliskan langkah perbaikannya!`
   };
 
-  const [docContent, setDocContent] = useState(defaultDoc.content);
+  const currentDocument = activeDocument || defaultDoc;
+  const [docContent, setDocContent] = useState(currentDocument.content);
   const [inputInstruction, setInputInstruction] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [messages, setMessages] = useState([
-    { id: 1, sender: 'ai', text: 'Halo Bapak/Ibu Guru! Saya Deep Learning Engine v3.0. Dokumen Matematika & STEM Anda siap disempurnakan!' }
+    { id: 1, sender: 'ai', text: `Halo Bapak/Ibu Guru! Saya Deep Learning Engine v3.0. Dokumen ${currentDocument.subject || 'STEM'} Anda siap disempurnakan!` }
   ]);
+
+  useEffect(() => {
+    if (activeDocument && activeDocument.content) {
+      setDocContent(activeDocument.content);
+    }
+  }, [activeDocument]);
 
   const handleSendMessage = (customPrompt) => {
     const textToSend = customPrompt || inputInstruction;
@@ -915,7 +1052,56 @@ Peserta didik mampu menerapkan konsep analisis data, menyusun algoritma pemroses
       setIsPaywallOpen(true);
       return;
     }
-    alert('Dokumen berhasil diekspor!');
+    setIsExportModalOpen(true);
+  };
+
+  const handleDownloadWord = () => {
+    const parsedHtmlBody = parseMarkdownToHTML(docContent);
+    const htmlContent = `
+      <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+      <head>
+        <meta charset='utf-8'>
+        <title>${currentDocument.title || 'Modul_Ajar'}</title>
+        <style>
+          body { font-family: 'Segoe UI', sans-serif; padding: 20px; color: #1E293B; }
+          h1 { color: #1E3A8A; border-bottom: 2px solid #D4AF37; }
+          h2 { color: #1E3A8A; border-bottom: 1px solid #CBD5E1; }
+          table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+          th { background-color: #1E3A8A; color: #FFFFFF; padding: 8px; }
+          td { border: 1px solid #CBD5E1; padding: 8px; }
+        </style>
+      </head>
+      <body><div>${parsedHtmlBody}</div></body>
+      </html>
+    `;
+    const blob = new Blob(['\ufeff' + htmlContent], { type: 'application/msword' });
+    const url = URL.createObjectURL(blob);
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.href = url;
+    downloadAnchor.download = `${(currentDocument.title || 'Modul_Ajar').replace(/[^a-zA-Z0-9]/g, '_')}.doc`;
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    document.body.removeChild(downloadAnchor);
+    URL.revokeObjectURL(url);
+    setIsExportModalOpen(false);
+  };
+
+  const handleDownloadTxt = () => {
+    const blob = new Blob([docContent], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.href = url;
+    downloadAnchor.download = `${(currentDocument.title || 'Modul_Ajar').replace(/[^a-zA-Z0-9]/g, '_')}.txt`;
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    document.body.removeChild(downloadAnchor);
+    URL.revokeObjectURL(url);
+    setIsExportModalOpen(false);
+  };
+
+  const handlePrintPDF = () => {
+    setIsExportModalOpen(false);
+    setTimeout(() => window.print(), 300);
   };
 
   const filterContentByTab = (fullContent, tabId) => {
@@ -1000,16 +1186,73 @@ Peserta didik mampu menerapkan konsep analisis data, menyusun algoritma pemroses
             ))}
           </div>
 
-          <button onClick={handleOpenExportModal} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs cursor-pointer">
-            🖨️ Cetak / Export Dokumen
+          <button onClick={handleOpenExportModal} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs cursor-pointer flex items-center gap-1.5">
+            <Icons.Printer className="w-4 h-4" />
+            <span>🖨️ Cetak / Export Dokumen</span>
           </button>
         </div>
 
-        <div className="flex-1 bg-white text-slate-900 p-6 rounded-xl overflow-y-auto font-mono text-xs leading-relaxed whitespace-pre-wrap shadow-2xl">
-          {filterContentByTab(docContent, activeSubTab)}
+        {/* CANVAS PREVIEW RICH TEXT */}
+        <div className="flex-1 bg-white text-slate-900 p-8 rounded-2xl overflow-y-auto shadow-2xl">
+          <div
+            className="prose prose-slate max-w-none text-xs leading-relaxed"
+            dangerouslySetInnerHTML={{ __html: parseMarkdownToHTML(filterContentByTab(docContent, activeSubTab)) }}
+          />
         </div>
       </div>
 
+      {/* EXPORT MODAL CENTER */}
+      {isExportModalOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-[#0B192C] border border-[#D4AF37]/50 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl text-white">
+            <div className="flex justify-between items-center border-b border-slate-800 pb-3">
+              <h3 className="font-bold text-base text-[#D4AF37] flex items-center gap-2">
+                <Icons.FileText /> Export Center Dokumen
+              </h3>
+              <button onClick={() => setIsExportModalOpen(false)} className="text-slate-400 hover:text-white cursor-pointer">✕</button>
+            </div>
+            
+            <p className="text-xs text-slate-300">Pilih format unduhan untuk dokumen perangkat ajar Anda:</p>
+
+            <div className="space-y-2.5">
+              <button
+                onClick={handleDownloadWord}
+                className="w-full p-3 bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-[#D4AF37] rounded-xl text-left text-xs font-bold transition-all flex items-center justify-between cursor-pointer"
+              >
+                <div>
+                  <div className="text-white">🟦 Unduh Berkas Word (.doc)</div>
+                  <div className="text-[10px] text-slate-400 font-normal">Layout Tabel Native Presisi</div>
+                </div>
+                <span className="text-[#D4AF37]">Unduh →</span>
+              </button>
+
+              <button
+                onClick={handleDownloadTxt}
+                className="w-full p-3 bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-[#D4AF37] rounded-xl text-left text-xs font-bold transition-all flex items-center justify-between cursor-pointer"
+              >
+                <div>
+                  <div className="text-white">📄 Unduh Teks Polos (.txt)</div>
+                  <div className="text-[10px] text-slate-400 font-normal">Format Markdown murni</div>
+                </div>
+                <span className="text-[#D4AF37]">Unduh →</span>
+              </button>
+
+              <button
+                onClick={handlePrintPDF}
+                className="w-full p-3 bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-[#D4AF37] rounded-xl text-left text-xs font-bold transition-all flex items-center justify-between cursor-pointer"
+              >
+                <div>
+                  <div className="text-white">🖨️ Cetak / Simpan PDF</div>
+                  <div className="text-[10px] text-slate-400 font-normal">Mencetak kanvas dokumen A4</div>
+                </div>
+                <span className="text-[#D4AF37]">Cetak →</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* PAYWALL LOCK MODAL */}
       {isPaywallOpen && (
         <div className="fixed inset-0 z-50 bg-black/85 flex items-center justify-center p-4">
           <div className="bg-[#0B192C] border border-[#D4AF37] rounded-3xl max-w-lg w-full p-6 space-y-4 text-white">
@@ -1037,6 +1280,153 @@ Peserta didik mampu menerapkan konsep analisis data, menyusun algoritma pemroses
   );
 }
 
+function WizardModal({ isOpen, onClose, onCreateDocument }) {
+  const [subject, setSubject] = useState('IPA & Biologi');
+  const [phase, setPhase] = useState('Fase E (Kelas 10 SMA)');
+  const [topic, setTopic] = useState('Ekosistem, Keanekaragaman Hayati & Perubahan Lingkungan');
+  const [hours, setHours] = useState('2 JP x 45 Menit');
+  const [pillars, setPillars] = useState({ mindful: true, meaningful: true, joyful: true });
+
+  if (!isOpen) return null;
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const newDoc = {
+      id: `doc_${Date.now()}`,
+      title: `Modul Ajar ${subject} - ${topic}`,
+      subject: subject,
+      phase: phase,
+      topic: topic,
+      status: 'In Progress',
+      content: `# MODUL AJAR DEEP LEARNING: ${subject.toUpperCase()} ${phase.toUpperCase()}
+
+## I. INFORMASI UMUM
+- **Mata Pelajaran**: ${subject}
+- **Fase / Kelas**: ${phase}
+- **Topik Utama**: ${topic}
+- **Alokasi Waktu**: ${hours}
+
+---
+
+## II. CAPAIAN PEMBELAJARAN (CP)
+### 📘 Analisis Capaian Pembelajaran Elemen (${subject.toUpperCase()})
+Peserta didik mampu memahami konsep utama ${topic}, mengaitkan dengan fenomena nyata, serta merancang solusi kreatif melalui pendekatan penyelidikan ilmiah.
+
+---
+
+## III. TUJUAN PEMBELAJARAN (TP)
+### 🎯 Poin Tujuan Pembelajaran ABCD (${subject.toUpperCase()})
+- **TP1**: Menganalisis struktur dan dinamika ${topic}.
+- **TP2**: Menyusun model matematika/logika sederhana terkait ${topic}.
+- **TP3**: Mempresentasikan hasil analisis proyek kelompok secara kolaboratif.
+
+---
+
+## IV. INTEGRASI 3 PILAR DEEP LEARNING
+${pillars.mindful ? '- **Mindful Learning**: Siswa diajak melakukan sesi hening STOP untuk membangun kesadaran belajar.' : ''}
+${pillars.meaningful ? '- **Meaningful Learning**: Menganalisis isu lingkungan lokal di sekitar lingkungan sekolah.' : ''}
+${pillars.joyful ? '- **Joyful Learning**: Kuis interaktif berbasis kelompok dan presentasi solutif.' : ''}
+
+---
+
+## V. DUKUNGAN RUMUS MATEMATIKA (LATEX FORMULA)
+- **Model Laju Pertumbuhan Populasi**: $$P(t) = P_0 e^{rt}$$
+- **Rata-rata Sampel**: $\\bar{x} = \\frac{\\sum x_i}{n}$`
+    };
+
+    onCreateDocument(newDoc);
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className="bg-[#0B192C] border border-[#D4AF37]/50 rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl text-white">
+        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+          <h3 className="text-base font-bold text-[#D4AF37] flex items-center gap-2">
+            <span>✨</span> Wizard Generator Perangkat Ajar Deep Learning
+          </h3>
+          <button onClick={onClose} className="text-slate-400 hover:text-white cursor-pointer font-bold">✕</button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-3.5">
+          <div>
+            <label className="block text-xs font-semibold text-slate-300 mb-1">Mata Pelajaran</label>
+            <input
+              type="text"
+              required
+              value={subject}
+              onChange={(e) => setSubject(e.target.value)}
+              placeholder="Contoh: Fisika / Matematika / Bahasa Indonesia"
+              className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-[#D4AF37]"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-300 mb-1">Fase / Kelas</label>
+            <select
+              value={phase}
+              onChange={(e) => setPhase(e.target.value)}
+              className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-[#D4AF37]"
+            >
+              <option value="Fase A (Kelas 1-2 SD)">Fase A (Kelas 1-2 SD)</option>
+              <option value="Fase B (Kelas 3-4 SD)">Fase B (Kelas 3-4 SD)</option>
+              <option value="Fase C (Kelas 5-6 SD)">Fase C (Kelas 5-6 SD)</option>
+              <option value="Fase D (Kelas 7-9 SMP)">Fase D (Kelas 7-9 SMP)</option>
+              <option value="Fase E (Kelas 10 SMA)">Fase E (Kelas 10 SMA)</option>
+              <option value="Fase F (Kelas 11-12 SMA)">Fase F (Kelas 11-12 SMA)</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-300 mb-1">Topik / Materi Utama</label>
+            <input
+              type="text"
+              required
+              value={topic}
+              onChange={(e) => setTopic(e.target.value)}
+              placeholder="Contoh: Analisis Data & Statistika"
+              className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-[#D4AF37]"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-300 mb-1">Alokasi Waktu</label>
+            <input
+              type="text"
+              value={hours}
+              onChange={(e) => setHours(e.target.value)}
+              className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-[#D4AF37]"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-300 mb-1">Integrasi 3 Pilar Deep Learning</label>
+            <div className="flex gap-4 text-xs text-slate-300 pt-1">
+              <label className="flex items-center gap-1.5 cursor-pointer">
+                <input type="checkbox" checked={pillars.mindful} onChange={(e) => setPillars({ ...pillars, mindful: e.target.checked })} className="rounded bg-slate-900 text-[#D4AF37]" />
+                Mindful
+              </label>
+              <label className="flex items-center gap-1.5 cursor-pointer">
+                <input type="checkbox" checked={pillars.meaningful} onChange={(e) => setPillars({ ...pillars, meaningful: e.target.checked })} className="rounded bg-slate-900 text-[#D4AF37]" />
+                Meaningful
+              </label>
+              <label className="flex items-center gap-1.5 cursor-pointer">
+                <input type="checkbox" checked={pillars.joyful} onChange={(e) => setPillars({ ...pillars, joyful: e.target.checked })} className="rounded bg-slate-900 text-[#D4AF37]" />
+                Joyful
+              </label>
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-2 pt-3 border-t border-slate-800">
+            <button type="button" onClick={onClose} className="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl text-xs font-semibold cursor-pointer">Batal</button>
+            <button type="submit" className="px-5 py-2 bg-gradient-to-r from-[#D4AF37] to-amber-500 text-slate-950 font-bold text-xs rounded-xl hover:brightness-110 cursor-pointer">✨ Generasikan Dokumen</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const [currentUser, setCurrentUser] = useState({
     id: 'usr_premium_01',
@@ -1056,6 +1446,8 @@ export default function App() {
   ]);
 
   const [currentView, setCurrentView] = useState('dashboard'); // 'dashboard', 'workspace', 'admin'
+  const [activeDocument, setActiveDocument] = useState(null);
+  const [isWizardOpen, setIsWizardOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
 
   const showToast = (msg) => {
@@ -1103,6 +1495,12 @@ export default function App() {
     setAllUsers(prev => [newUserPayload, ...prev]);
   };
 
+  const handleCreateDocument = (newDoc) => {
+    setActiveDocument(newDoc);
+    setCurrentView('workspace');
+    showToast(`Perangkat Ajar "${newDoc.title}" berhasil dibuat!`);
+  };
+
   if (!currentUser) {
     return <LoginPage onLoginSuccess={handleLoginSuccess} />;
   }
@@ -1137,7 +1535,7 @@ export default function App() {
 
         <div className="flex items-center gap-3">
           <button
-            onClick={() => setCurrentView('workspace')}
+            onClick={() => setIsWizardOpen(true)}
             className="px-4 py-2 bg-[#D4AF37] hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-xs flex items-center gap-1.5 transition-all shadow-md shadow-amber-500/10 cursor-pointer"
           >
             <Icons.Plus className="w-4 h-4 text-slate-950" />
@@ -1262,7 +1660,7 @@ export default function App() {
 
                   <div className="flex flex-wrap items-center gap-3 pt-2">
                     <button
-                      onClick={() => setCurrentView('workspace')}
+                      onClick={() => setIsWizardOpen(true)}
                       className="px-5 py-2.5 bg-gradient-to-r from-[#D4AF37] to-amber-500 text-slate-950 font-bold text-xs rounded-xl hover:brightness-110 shadow-lg shadow-amber-500/20 transition-all flex items-center gap-2 cursor-pointer"
                     >
                       <span>✨ Mulai Wizard Deep Learning</span>
@@ -1372,6 +1770,7 @@ export default function App() {
           {currentView === 'workspace' && (
             <div className="p-2 w-full h-[calc(100vh-4rem)]">
               <AIWorkspace 
+                activeDocument={activeDocument}
                 onBackToDashboard={() => setCurrentView('dashboard')} 
                 externalUserStatus={currentUser}
               />
@@ -1390,6 +1789,13 @@ export default function App() {
           )}
         </main>
       </div>
+
+      {/* WIZARD MODAL BUAT PERANGKAT BARU */}
+      <WizardModal
+        isOpen={isWizardOpen}
+        onClose={() => setIsWizardOpen(false)}
+        onCreateDocument={handleCreateDocument}
+      />
     </div>
   );
 }
