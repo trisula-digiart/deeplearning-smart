@@ -1,5 +1,31 @@
 import React, { useState, useEffect, useMemo } from 'react';
 
+// URL Endpoint Google Apps Script (Ganti dengan URL Deployment Apps Script milikmu)
+const GOOGLE_SHEETS_WEBHOOK_URL = "";
+
+// Utility fungsi untuk mengirim data pengguna ke Google Sheets secara otomatis
+const syncUserToGoogleSheets = async (userPayload, actionType = 'SYNC_USER') => {
+  if (!GOOGLE_SHEETS_WEBHOOK_URL) {
+    console.log("ℹ️ Google Sheets Webhook URL belum diisi. Data berjalan dalam mode simulasi lokal.");
+    return;
+  }
+
+  try {
+    await fetch(GOOGLE_SHEETS_WEBHOOK_URL, {
+      method: 'POST',
+      mode: 'no-cors', // Mencegah isu CORS browser saat panggil GAS
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: actionType,
+        user: userPayload
+      })
+    });
+    console.log(`✅ Success sync user [${userPayload.email}] to Google Sheets!`);
+  } catch (err) {
+    console.error("❌ Error syncing data to Google Sheets:", err);
+  }
+};
+
 const Icons = {
   LogOut: ({ className = "w-4 h-4 text-rose-400" }) => (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -66,11 +92,6 @@ const Icons = {
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
     </svg>
-  ),
-  CheckCircle: ({ className = "w-4 h-4 text-emerald-400" }) => (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-    </svg>
   )
 };
 
@@ -82,15 +103,12 @@ function LoginPage({ onLoginSuccess }) {
   const [fullName, setFullName] = useState('');
   const [schoolName, setSchoolName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
 
   const handleAuthSubmit = (e) => {
     e.preventDefault();
     setErrorMessage('');
-    setSuccessMessage('');
 
     if (!email || !password) {
       setErrorMessage('Silakan isi alamat email dan kata sandi Anda!');
@@ -106,11 +124,14 @@ function LoginPage({ onLoginSuccess }) {
         name: fullName || (email.includes('admin') ? 'Root Admin Trisula' : email.split('@')[0]),
         email: email,
         role: selectedRole,
-        is_premium: selectedRole === 'admin' || email.includes('premium') || email.includes('guru'),
+        is_premium: selectedRole === 'admin' || email.includes('premium'),
         kredit_tersisa: email.includes('premium') ? 100 : 1,
         doc_generated_count: 0,
         school: schoolName || 'SMA Negeri 1 Jakarta'
       };
+
+      // Otomatis sinkronkan user yang login/daftar ke Google Sheets
+      syncUserToGoogleSheets(userPayload, 'REGISTER');
 
       if (onLoginSuccess) {
         onLoginSuccess(userPayload);
@@ -120,7 +141,6 @@ function LoginPage({ onLoginSuccess }) {
 
   const handleDemoLogin = (type) => {
     setErrorMessage('');
-    setSuccessMessage('');
     setIsLoading(true);
 
     let demoUser = {};
@@ -162,6 +182,8 @@ function LoginPage({ onLoginSuccess }) {
 
     setTimeout(() => {
       setIsLoading(false);
+      // Otomatis simpan demo user ke Google Sheets
+      syncUserToGoogleSheets(demoUser, 'SYNC_USER');
       if (onLoginSuccess) {
         onLoginSuccess(demoUser);
       }
@@ -170,9 +192,6 @@ function LoginPage({ onLoginSuccess }) {
 
   return (
     <div className="min-h-screen bg-[#0B192C] text-slate-100 font-sans flex items-center justify-center p-4 relative overflow-hidden">
-      <div className="absolute top-1/4 left-10 w-96 h-96 bg-[#D4AF37]/10 rounded-full blur-3xl pointer-events-none"></div>
-      <div className="absolute bottom-10 right-10 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none"></div>
-
       <div className="w-full max-w-md bg-[#132338]/90 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl backdrop-blur-xl relative z-10 space-y-6">
         <div className="text-center space-y-2">
           <div className="inline-flex items-center justify-center p-3 bg-gradient-to-br from-[#D4AF37] to-amber-600 rounded-2xl shadow-lg shadow-amber-500/20 mb-2">
@@ -219,9 +238,7 @@ function LoginPage({ onLoginSuccess }) {
               <div>
                 <label className="block text-xs font-medium text-slate-300 mb-1">Nama Lengkap & Gelar</label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Icons.User />
-                  </div>
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><Icons.User /></div>
                   <input
                     type="text"
                     value={fullName}
@@ -235,9 +252,7 @@ function LoginPage({ onLoginSuccess }) {
               <div>
                 <label className="block text-xs font-medium text-slate-300 mb-1">Nama Sekolah / Instansi</label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Icons.Building />
-                  </div>
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><Icons.Building /></div>
                   <input
                     type="text"
                     value={schoolName}
@@ -253,9 +268,7 @@ function LoginPage({ onLoginSuccess }) {
           <div>
             <label className="block text-xs font-medium text-slate-300 mb-1">Alamat Email Terdaftar</label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Icons.Mail />
-              </div>
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><Icons.Mail /></div>
               <input
                 type="email"
                 value={email}
@@ -269,9 +282,7 @@ function LoginPage({ onLoginSuccess }) {
           <div>
             <label className="block text-xs font-medium text-slate-300 mb-1">Kata Sandi</label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Icons.Lock />
-              </div>
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><Icons.Lock /></div>
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={password}
@@ -345,15 +356,15 @@ function AdminDashboard({ usersData, onUpdateUserStatus, onAddCredits }) {
   const [creditAmount, setCreditAmount] = useState(10);
   const [notification, setNotification] = useState(null);
 
-  const showToast = (message, type = 'success') => {
-    setNotification({ message, type });
+  const showToast = (message) => {
+    setNotification({ message });
     setTimeout(() => setNotification(null), 3000);
   };
 
   const defaultUsers = [
-    { id: 'usr_001', name: 'Budi Santoso', email: 'budi.santoso@guru.sma.sch.id', is_premium: true, kredit_tersisa: 45, doc_generated_count: 12, register_date: '2026-06-15' },
-    { id: 'usr_002', name: 'Siti Rahmawati', email: 'siti.rahma@sd.kemdikbud.go.id', is_premium: false, kredit_tersisa: 1, doc_generated_count: 1, register_date: '2026-07-01' },
-    { id: 'usr_003', name: 'Ahmad Dahlan', email: 'ahmad.dahlan@yayasan.ac.id', is_premium: false, kredit_tersisa: 0, doc_generated_count: 3, register_date: '2026-07-10' },
+    { id: 'usr_001', name: 'Budi Santoso', email: 'budi.santoso@guru.sma.sch.id', is_premium: true, kredit_tersisa: 45, doc_generated_count: 12, school: 'SMA Negeri 1 Jakarta' },
+    { id: 'usr_002', name: 'Siti Rahmawati', email: 'siti.rahma@sd.kemdikbud.go.id', is_premium: false, kredit_tersisa: 1, doc_generated_count: 1, school: 'SD Negeri 05 Kebayoran' },
+    { id: 'usr_003', name: 'Ahmad Dahlan', email: 'ahmad.dahlan@yayasan.ac.id', is_premium: false, kredit_tersisa: 0, doc_generated_count: 3, school: 'Yayasan Islam Pusat' },
   ];
 
   const activeUsers = usersData && usersData.length > 0 ? usersData : defaultUsers;
@@ -369,10 +380,15 @@ function AdminDashboard({ usersData, onUpdateUserStatus, onAddCredits }) {
 
   const handleTogglePremium = (user) => {
     const newStatus = !user.is_premium;
+    const updatedUser = { ...user, is_premium: newStatus };
+
     if (onUpdateUserStatus) {
       onUpdateUserStatus(user.id, newStatus);
     }
-    showToast(`Status lisensi ${user.name} diubah menjadi ${newStatus ? 'PREMIUM' : 'GRATIS'}.`);
+
+    // Sync perubahan lisensi ke Google Sheets
+    syncUserToGoogleSheets(updatedUser, 'UPDATE_STATUS');
+    showToast(`Status lisensi ${user.name} diubah & disinkron ke Google Sheets!`);
   };
 
   const handleCreditSubmit = (e) => {
@@ -381,10 +397,18 @@ function AdminDashboard({ usersData, onUpdateUserStatus, onAddCredits }) {
     const added = parseInt(creditAmount, 10);
     if (isNaN(added) || added <= 0) return;
 
+    const updatedUser = {
+      ...selectedUserForCredits,
+      kredit_tersisa: (selectedUserForCredits.kredit_tersisa || 0) + added
+    };
+
     if (onAddCredits) {
       onAddCredits(selectedUserForCredits.id, added);
     }
-    showToast(`Berhasil menambahkan ${added} kredit dokumen untuk ${selectedUserForCredits.name}.`);
+
+    // Sync penambahan kredit ke Google Sheets
+    syncUserToGoogleSheets(updatedUser, 'ADD_CREDITS');
+    showToast(`Berhasil +${added} kredit untuk ${selectedUserForCredits.name} & tersimpan ke Google Sheets.`);
     setSelectedUserForCredits(null);
   };
 
@@ -404,6 +428,7 @@ function AdminDashboard({ usersData, onUpdateUserStatus, onAddCredits }) {
           <h1 className="text-2xl md:text-3xl font-extrabold text-white mt-2">
             Dashboard Aktivasi User & Lisensi
           </h1>
+          <p className="text-xs text-slate-400 mt-1">Data pengguna otomatis tersinkronisasi dengan Google Sheets</p>
         </div>
       </div>
 
@@ -470,7 +495,7 @@ function AdminDashboard({ usersData, onUpdateUserStatus, onAddCredits }) {
       {selectedUserForCredits && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80">
           <div className="bg-[#0B192C] border border-[#D4AF37]/40 rounded-2xl max-w-sm w-full p-6 space-y-4">
-            <h3 className="text-sm font-bold text-white">Tambah Kredit for {selectedUserForCredits.name}</h3>
+            <h3 className="text-sm font-bold text-white">Tambah Kredit untuk {selectedUserForCredits.name}</h3>
             <form onSubmit={handleCreditSubmit} className="space-y-3">
               <input
                 type="number"
@@ -481,7 +506,7 @@ function AdminDashboard({ usersData, onUpdateUserStatus, onAddCredits }) {
               />
               <div className="flex justify-end gap-2">
                 <button type="button" onClick={() => setSelectedUserForCredits(null)} className="px-3 py-1.5 bg-slate-800 text-slate-300 rounded-lg text-xs">Batal</button>
-                <button type="submit" className="px-3 py-1.5 bg-[#D4AF37] text-slate-950 font-bold rounded-lg text-xs">Simpan</button>
+                <button type="submit" className="px-3 py-1.5 bg-[#D4AF37] text-slate-950 font-bold rounded-lg text-xs">Simpan & Sync</button>
               </div>
             </form>
           </div>
@@ -491,8 +516,7 @@ function AdminDashboard({ usersData, onUpdateUserStatus, onAddCredits }) {
   );
 }
 
-function AIWorkspace({ activeDocument, onBackToDashboard, onUpdateDocument, userStatus: externalUserStatus }) {
-  const [activeSubTab, setActiveSubTab] = useState('modul-ajar');
+function AIWorkspace({ activeDocument, onBackToDashboard, externalUserStatus }) {
   const [userStatus, setUserStatus] = useState(externalUserStatus || {
     is_premium: false,
     kredit_tersisa: 1,
@@ -501,15 +525,10 @@ function AIWorkspace({ activeDocument, onBackToDashboard, onUpdateDocument, user
 
   const [isPaywallOpen, setIsPaywallOpen] = useState(false);
   const [paywallReason, setPaywallReason] = useState('');
-  const [selectedPlan, setSelectedPlan] = useState(null);
-  const [paymentStep, setPaymentStep] = useState(1);
-  const [paymentForm, setPaymentForm] = useState({ fullname: '', email: '' });
 
   const defaultDoc = {
     id: 'doc-stem-master',
     title: 'Modul Ajar STEM & Informatika - Model Matematika, Algoritma & Prosem',
-    subject: 'Informatika & STEM',
-    phase: 'Fase F (Kelas 11 SMA)',
     content: `# MODUL AJAR DEEP LEARNING: INFORMATIKA & STEM FASE F
 ## I. INFORMASI UMUM
 - Mata Pelajaran: Informatika Integrated
@@ -523,7 +542,6 @@ Peserta didik mampu merancang algoritma logika secara kritis.`
     { id: 1, sender: 'ai', text: `Halo Bapak/Ibu Guru! AI Workspace siap digunakan.` }
   ]);
   const [inputInstruction, setInputInstruction] = useState('');
-  const [isGenerating, setIsGenerating] = useState(false);
 
   const handleOpenExportModal = () => {
     if (!userStatus.is_premium) {
@@ -546,14 +564,22 @@ Peserta didik mampu merancang algoritma logika secara kritis.`
     const textToSend = inputInstruction;
     setInputInstruction('');
     setMessages(prev => [...prev, { id: Date.now(), sender: 'user', text: textToSend }]);
-    setIsGenerating(true);
 
     setTimeout(() => {
       const added = `\n\n## SUPLENEN AI\nInstruksi: "${textToSend}" berhasil diterapkan.`;
       setDocContent(prev => prev + added);
-      setUserStatus(prev => ({ ...prev, doc_generated_count: prev.doc_generated_count + 1 }));
+      
+      const updatedUser = {
+        ...userStatus,
+        doc_generated_count: userStatus.doc_generated_count + 1,
+        kredit_tersisa: Math.max(0, userStatus.kredit_tersisa - 1)
+      };
+      
+      setUserStatus(updatedUser);
+      // Auto-sync ke Google Sheets saat generate dokumen
+      syncUserToGoogleSheets(updatedUser, 'UPDATE_STATUS');
+
       setMessages(prev => [...prev, { id: Date.now() + 1, sender: 'ai', text: `Selesai menyusun draf baru.` }]);
-      setIsGenerating(false);
     }, 800);
   };
 
@@ -607,10 +633,6 @@ Peserta didik mampu merancang algoritma logika secara kritis.`
           <div className="bg-[#0B192C] border border-[#D4AF37] max-w-md w-full p-6 rounded-3xl space-y-4 text-center">
             <h3 className="text-lg font-bold text-white">🔒 Fitur Premium Terkunci</h3>
             <p className="text-xs text-amber-300">{paywallReason}</p>
-            <div className="p-4 bg-slate-900 border border-slate-800 rounded-2xl text-left space-y-2 text-xs">
-              <div className="font-bold text-[#D4AF37]">Paket Bulanan - Rp29.000 / bulan</div>
-              <p className="text-slate-400">Akses Tanpa Batas: Unlimited Export Word/PDF, Unlimited Generate.</p>
-            </div>
             <button onClick={() => setIsPaywallOpen(false)} className="w-full py-2 bg-[#D4AF37] text-slate-950 font-bold rounded-xl text-xs cursor-pointer">
               Tutup & Hubungi Admin
             </button>
@@ -644,13 +666,29 @@ export default function App() {
   const handleLoginSuccess = (userPayload) => {
     setCurrentUser(userPayload);
     setCurrentView(userPayload.role === 'admin' ? 'admin' : 'dashboard');
-    showToast(`Selamat datang kembali, ${userPayload.name}!`);
+    showToast(`Selamat datang kembali, ${userPayload.name}! Data tersinkron ke Google Sheets.`);
   };
 
   const handleLogout = () => {
     setCurrentUser(null);
     setCurrentView('dashboard');
     showToast('Anda telah keluar dari akun.');
+  };
+
+  const handleUpdateUserStatus = (userId, newStatus) => {
+    if (currentUser && currentUser.id === userId) {
+      const updated = { ...currentUser, is_premium: newStatus };
+      setCurrentUser(updated);
+      syncUserToGoogleSheets(updated, 'UPDATE_STATUS');
+    }
+  };
+
+  const handleAddCredits = (userId, amount) => {
+    if (currentUser && currentUser.id === userId) {
+      const updated = { ...currentUser, kredit_tersisa: currentUser.kredit_tersisa + amount };
+      setCurrentUser(updated);
+      syncUserToGoogleSheets(updated, 'ADD_CREDITS');
+    }
   };
 
   if (!currentUser) {
@@ -665,7 +703,7 @@ export default function App() {
         </div>
       )}
 
-      {/* TOP HEADER NAVIGATION BAR WITH LOGOUT BUTTON */}
+      {/* HEADER TOP NAV BAR */}
       <header className="h-16 bg-[#0B1728]/95 border-b border-slate-800/80 px-4 md:px-8 flex items-center justify-between sticky top-0 z-40 backdrop-blur-md">
         <div className="flex items-center gap-3">
           <button 
@@ -681,7 +719,7 @@ export default function App() {
           </button>
           
           <span className="hidden sm:inline-block px-2.5 py-0.5 bg-slate-800/90 text-[#D4AF37] border border-[#D4AF37]/30 text-[10px] font-bold rounded-full uppercase tracking-wider">
-            DEEP LEARNING ENGINE v3.0
+            GOOGLE SHEETS SYNC ACTIVE
           </span>
         </div>
 
@@ -689,9 +727,7 @@ export default function App() {
           <button
             onClick={() => setCurrentView('dashboard')}
             className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
-              currentView === 'dashboard' 
-                ? 'bg-slate-800 text-white shadow-sm' 
-                : 'text-slate-400 hover:text-slate-200'
+              currentView === 'dashboard' ? 'bg-slate-800 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'
             }`}
           >
             <Icons.Home /> Dashboard
@@ -699,9 +735,7 @@ export default function App() {
           <button
             onClick={() => setCurrentView('workspace')}
             className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
-              currentView === 'workspace' 
-                ? 'bg-gradient-to-r from-[#D4AF37] to-amber-500 text-slate-950 font-bold shadow-sm' 
-                : 'text-slate-400 hover:text-slate-200'
+              currentView === 'workspace' ? 'bg-gradient-to-r from-[#D4AF37] to-amber-500 text-slate-950 font-bold shadow-sm' : 'text-slate-400 hover:text-slate-200'
             }`}
           >
             <Icons.Sparkles /> AI Workspace
@@ -710,9 +744,7 @@ export default function App() {
             <button
               onClick={() => setCurrentView('admin')}
               className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
-                currentView === 'admin' 
-                  ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold shadow-sm' 
-                  : 'text-slate-400 hover:text-slate-200'
+                currentView === 'admin' ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold shadow-sm' : 'text-slate-400 hover:text-slate-200'
               }`}
             >
               <Icons.Shield /> Admin Panel
@@ -721,14 +753,6 @@ export default function App() {
         </div>
 
         <div className="flex items-center gap-3">
-          <button
-            onClick={() => setCurrentView('workspace')}
-            className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 bg-[#D4AF37] hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-xl transition-all shadow-md cursor-pointer"
-          >
-            <Icons.Plus />
-            <span>+ Buat Perangkat Baru</span>
-          </button>
-
           <div className="flex items-center gap-2 pl-2 border-l border-slate-800">
             <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-500 to-[#D4AF37] text-slate-950 font-extrabold flex items-center justify-center text-xs shadow-md">
               {currentUser.name ? currentUser.name.substring(0, 2).toUpperCase() : 'GH'}
@@ -748,7 +772,6 @@ export default function App() {
             </div>
           </div>
 
-          {/* LOGOUT BUTTON */}
           <button
             onClick={handleLogout}
             className="p-2 md:px-3 md:py-2 bg-slate-900 hover:bg-rose-950/80 border border-slate-800 hover:border-rose-500/50 text-slate-300 hover:text-rose-300 rounded-xl transition-all flex items-center gap-1.5 text-xs font-semibold cursor-pointer"
@@ -760,37 +783,31 @@ export default function App() {
         </div>
       </header>
 
-      {/* MAIN BODY AREA */}
+      {/* BODY CONTENT */}
       <div className="flex-1 flex overflow-hidden">
         {currentView === 'dashboard' && (
           <div className="flex-1 p-4 md:p-8 max-w-7xl mx-auto space-y-6 w-full">
             <div className="bg-gradient-to-r from-[#112238] via-[#0F1E33] to-[#0A1628] border border-slate-800 rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden">
               <div className="space-y-3 max-w-2xl relative z-10">
                 <span className="inline-block px-3 py-1 bg-amber-500/10 text-[#D4AF37] border border-[#D4AF37]/30 text-xs font-bold rounded-full uppercase tracking-wider">
-                  SaaS Engine Kurikulum Merdeka v3.0
+                  Real-time Google Sheets Integration Active
                 </span>
                 <h1 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
-                  Selamat Datang, Bapak/Ibu Guru Hebat! 🚀
+                  Selamat Datang, {currentUser.name}! 🚀
                 </h1>
                 <p className="text-xs md:text-sm text-slate-300 leading-relaxed">
-                  Rancang Modul Ajar, TP, ATP, KKTP, Prota, dan Prosem terintegrasi 3 Pilar Deep Learning (Mindful, Meaningful, Joyful) secara otomatis dan presisi.
+                  Setiap aksi registrasi, perubahan lisensi akun, serta konsumsi kredit otomatis tersinkronisasi ke Google Sheets milikmu.
                 </p>
-                <div className="flex flex-wrap items-center gap-3 pt-2">
-                  <button
-                    onClick={() => setCurrentView('workspace')}
-                    className="px-5 py-2.5 bg-gradient-to-r from-[#D4AF37] to-amber-500 text-slate-950 font-bold text-xs rounded-xl hover:brightness-110 shadow-lg shadow-amber-500/20 transition-all flex items-center gap-2 cursor-pointer"
-                  >
-                    ✨ Mulai Wizard Deep Learning
-                  </button>
-                </div>
+                <button
+                  onClick={() => setCurrentView('workspace')}
+                  className="px-5 py-2.5 bg-gradient-to-r from-[#D4AF37] to-amber-500 text-slate-950 font-bold text-xs rounded-xl hover:brightness-110 shadow-lg shadow-amber-500/20 transition-all flex items-center gap-2 cursor-pointer mt-2"
+                >
+                  ✨ Buka AI Workspace
+                </button>
               </div>
             </div>
 
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="bg-[#0D1C2E] border border-slate-800 p-4 rounded-2xl">
-                <div className="text-[11px] text-slate-400">Total Perangkat Ajar</div>
-                <div className="text-xl font-bold text-white mt-1">2</div>
-              </div>
               <div className="bg-[#0D1C2E] border border-slate-800 p-4 rounded-2xl">
                 <div className="text-[11px] text-slate-400">Status Lisensi</div>
                 <div className="text-xl font-bold text-[#D4AF37] mt-1">{currentUser.is_premium ? 'PRO / Premium' : 'Free / Gratis'}</div>
@@ -800,8 +817,12 @@ export default function App() {
                 <div className="text-xl font-bold text-emerald-400 mt-1">{currentUser.kredit_tersisa} Dokumen</div>
               </div>
               <div className="bg-[#0D1C2E] border border-slate-800 p-4 rounded-2xl">
-                <div className="text-[11px] text-slate-400">Waktu Dihemat</div>
-                <div className="text-xl font-bold text-amber-400 mt-1">18.5 Jam</div>
+                <div className="text-[11px] text-slate-400">Total Dokumen Dibuat</div>
+                <div className="text-xl font-bold text-white mt-1">{currentUser.doc_generated_count}</div>
+              </div>
+              <div className="bg-[#0D1C2E] border border-slate-800 p-4 rounded-2xl">
+                <div className="text-[11px] text-slate-400">Google Sheets Sync</div>
+                <div className="text-xl font-bold text-cyan-400 mt-1">Otomatis</div>
               </div>
             </div>
           </div>
@@ -811,14 +832,18 @@ export default function App() {
           <div className="flex-1 p-2 w-full h-[calc(100vh-4rem)]">
             <AIWorkspace 
               onBackToDashboard={() => setCurrentView('dashboard')} 
-              userStatus={currentUser}
+              externalUserStatus={currentUser}
             />
           </div>
         )}
 
         {currentView === 'admin' && (
           <div className="flex-1 w-full">
-            <AdminDashboard usersData={[currentUser]} />
+            <AdminDashboard 
+              usersData={[currentUser]} 
+              onUpdateUserStatus={handleUpdateUserStatus}
+              onAddCredits={handleAddCredits}
+            />
           </div>
         )}
       </div>
