@@ -8,7 +8,7 @@ import {
   User,
   Sparkles
 } from 'lucide-react';
-
+ 
 /**
  * TRISULAPROMPT - Navbar Component v2.5
  * Author: TRISULACODER v8.7 - Lead Solution Architect
