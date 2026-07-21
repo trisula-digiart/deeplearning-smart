@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 
 /**
- * TRISULAPROMPT - AIWorkspace Component v2.6 (Enterprise Production Edition - Word & PDF Export Fix)
+ * TRISULAPROMPT - AIWorkspace Component v2.7 (Dynamic Sub-Tab Router & Standalone Engine)
  * Author: TRISULACODER v8.7 - Lead Solution Architect
  * Stack: React / Vite / Tailwind CSS
  * Features:
+ *  - Dynamic Sub-Tab Content Router (Filters & Renders CP, TP, ATP, KKTP, Prota, Prosem dynamically)
+ *  - Interactive Empty-State Generator Actions Per Sub-Tab
  *  - Word-Compatible Table Engine for Mermaid Diagrams & Data Charts (No Flexbox Breakage in MS Word)
  *  - High-Fidelity Math/LaTeX Pretty Renderer Engine
  *  - Print-Isolated Canvas Engine (@media print CSS Fix for Clean PDF Export)
- *  - Interactive Deep Learning Context Generator
  *  - Full Modular Single-File Isolation Standard
  */
 
@@ -38,7 +39,41 @@ export default function AIWorkspace({ activeDocument, onBackToDashboard, onUpdat
 
 ---
 
-## II. INTEGRASI 3 PILAR DEEP LEARNING
+## II. CAPAIAN PEMBELAJARAN (CP)
+Peserta didik mampu menerapkan konsep analisis data, menyusun persamaan matematika kuadrat untuk gerak fisika, serta merancang diagram alir logika pemecahan masalah kontekstual.
+
+---
+
+## III. TUJUAN PEMBELAJARAN (TP)
+- **TP1**: Menganalisis lintasan parabola menggunakan persamaan $y = v_0 t \\sin(\\theta) - \\frac{1}{2}gt^2$.
+- **TP2**: Menyusun diagram alir logika pemrosesan data menggunakan sintaks flowchart.
+- **TP3**: Memprediksi tren data hasil panen berdasarkan grafik frekuensi statistika.
+
+---
+
+## IV. ALUR TUJUAN PEMBELAJARAN (ATP)
+| Kode ATP | Alokasi Waktu | Indikator Ketercapaian | Rencana Asesmen |
+| :--- | :--- | :--- | :--- |
+| **ATP.11.1** | 2 JP | Mampu mengoperasikan variabel rumus parabola | Formatif Latihan Soal |
+| **ATP.11.2** | 2 JP | Mampu membuat diagram alir logika terstruktur | Unjuk Kerja Kelompok |
+
+---
+
+## V. KRITERIA KETERCAPAIAN TUJUAN PEMBELAJARAN (KKTP)
+| Kriteria Penilaian | Belum Memenuhi (1) | Memenuhi (2-3) | Sangat Baik (4) |
+| :--- | :--- | :--- | :--- |
+| **Penerapan Rumus** | Salah mengoperasikan variabel | Tepat menghitung 80% variabel | Tepat 100% & menganalisis fisikanya |
+| **Diagram Logika** | Diagram tidak terstruktur | Diagram rapi dan alur benar | Diagram sangat presisi & solutif |
+
+---
+
+## VI. PROGRAM TAHUNAN & PROGRAM SEMESTER (PROTA & PROSEM)
+- **Semester 1**: Analisis Data & Model Matematika Parabola (12 JP)
+- **Semester 2**: Simulasi Diagram Logika & Proyek STEM Terpadu (16 JP)
+
+---
+
+## VII. INTEGRASI 3 PILAR DEEP LEARNING
 
 ### 1. Mindful Learning (Penyadaran Diri)
 - **Latihan Hening STOP**: Siswa diajak hening selama 3 menit untuk menyadarkan fokus pikiran sebelum memecahkan rumus matematika kompleks.
@@ -54,7 +89,7 @@ export default function AIWorkspace({ activeDocument, onBackToDashboard, onUpdat
 
 ---
 
-## III. DUKUNGAN RUMUS MATEMATIKA (LATEX FORMULA)
+## VIII. DUKUNGAN RUMUS MATEMATIKA (LATEX FORMULA)
 
 Berikut adalah formula dasar perhitungan statistika dan persamaan kuadrat gerak parabola:
 
@@ -64,7 +99,7 @@ Berikut adalah formula dasar perhitungan statistika dan persamaan kuadrat gerak 
 
 ---
 
-## IV. DIAGRAM ALIR PROSES (MERMAID FLOWCHART)
+## IX. DIAGRAM ALIR PROSES (MERMAID FLOWCHART)
 
 \`\`\`mermaid
 graph TD
@@ -78,7 +113,7 @@ graph TD
 
 ---
 
-## V. GRAFIK DATA INTERAKTIF (CHART VISUALIZER)
+## X. GRAFIK DATA INTERAKTIF (CHART VISUALIZER)
 
 \`\`\`chart
 {
@@ -91,20 +126,7 @@ graph TD
 
 ---
 
-## VI. ILUSTRASI VISUAL EKOSISTEM & LINGKUNGAN
-
-![Diagram Anatomi Siklus Air & Daur Hujan](https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?auto=format&fit=crop&w=800&q=80)
-
-| Tahapan Siklus Air | Istilah Ilmiah | Deskripsi & Fenomena Alam |
-| :--- | :--- | :--- |
-| **Penguapan Air Laut/Danau** | Evaporasi | Air menguap menjadi uap air akibat panas sinar matahari |
-| **Penguapan Tumbuhan** | Transpirasi | Pelepasan uap air dari jaringan daun dan tumbuhan ke atmosfer |
-| **Pembentukan Awan** | Kondensasi | Perubahan uap air menjadi titik-titik air kecil pembentuk awan |
-| **Turunnya Hujan** | Presipitasi | Awan jenuh mencair dan jatuh ke bumi sebagai hujan/salju |
-
----
-
-## VII. LEMBAR KERJA PESERTA DIDIK (LKPD)
+## XI. LEMBAR KERJA PESERTA DIDIK (LKPD)
 
 ### 👥 Nama Kelompok: ____________________
 **Anggota**: 1. _______________ 2. _______________ 3. _______________
@@ -127,7 +149,7 @@ graph TD
     {
       id: 1,
       sender: 'ai',
-      text: `Halo Bapak/Ibu Guru! Saya **Deep Learning Engine v2.6**. Dokumen ${currentDoc.subject || 'Pembelajaran'} Anda lengkap dengan LaTeX Math, Diagram Mermaid, Grafik Data, dan Gambar siap ditinjau. Kirim instruksi seperti "Tambahkan LKPD" atau "Buat Asesmen" untuk menyempurnakannya!`
+      text: `Halo Bapak/Ibu Guru! Saya **Deep Learning Engine v2.7**. Dokumen ${currentDoc.subject || 'Pembelajaran'} Anda lengkap dengan LaTeX Math, Diagram Mermaid, Grafik Data, dan Router Sub-Tab siap ditinjau!`
     }
   ]);
   const [inputInstruction, setInputInstruction] = useState('');
@@ -158,6 +180,41 @@ graph TD
       .replace(/\\circ/g, '°')
       .replace(/\\times/g, '×')
       .replace(/\\div/g, '÷');
+  };
+
+  // Dynamic Sub-Tab Content Filter Engine
+  const filterContentByTab = (fullContent, tabId) => {
+    if (!fullContent) return '';
+    if (tabId === 'modul-ajar') return fullContent;
+
+    const sections = fullContent.split(/(?=##\s+)/g);
+    let keyword = '';
+
+    switch (tabId) {
+      case 'cp': keyword = 'CAPAIAN PEMBELAJARAN'; break;
+      case 'tp': keyword = 'TUJUAN PEMBELAJARAN'; break;
+      case 'atp': keyword = 'ALUR TUJUAN'; break;
+      case 'kktp': keyword = 'KRITERIA KETERCAPAIAN'; break;
+      case 'prota': keyword = 'PROGRAM TAHUNAN'; break;
+      case 'prosem': keyword = 'PROGRAM SEMESTER'; break;
+      default: return fullContent;
+    }
+
+    const matchedSection = sections.find(sec => sec.toUpperCase().includes(keyword));
+
+    if (matchedSection) {
+      return matchedSection;
+    } else {
+      // Empty State Draf Jika Seksi Belum Ditemukan
+      return `# SEKSI ${tabId.toUpperCase()} BELUM TERSEDIA
+
+> ℹ️ Seksi **${tabId.toUpperCase()}** belum ditemukan di dalam dokumen saat ini. 
+> Anda dapat meminta AI Co-Pilot di sebelah kiri untuk menyusun drafnya secara otomatis.
+
+---
+### ⚡ Draf Cepat AI Generator
+Gunakan tombol di bawah ini untuk menginstruksikan AI menyusun seksi ini secara otomatis:`;
+    }
   };
 
   const parseMarkdownToHTML = (markdown) => {
@@ -235,7 +292,7 @@ graph TD
       </table>`;
     });
 
-    // 4. CHART JSON CODE BLOCK PARSER (WORD TABLE NATIVE HORIZONTAL COMPATIBLE)
+    // 4. CHART JSON CODE BLOCK PARSER
     content = content.replace(/```chart\s*([\s\S]*?)\s*```/g, (match, chartJsonStr) => {
       try {
         const chartData = JSON.parse(chartJsonStr.trim());
@@ -374,6 +431,8 @@ graph TD
         htmlResult.push(`<h4 style="color:#D4AF37; font-size:12px; font-weight:bold; margin-top:12px; margin-bottom:6px;">${parseInlineMarkdown(line.replace('#### ', ''))}</h4>`);
       } else if (line.trim() === '---') {
         htmlResult.push(`<hr style="border:0; border-top:1px solid #CBD5E1; margin:16px 0;"/>`);
+      } else if (line.trim().startsWith('> ')) {
+        htmlResult.push(`<blockquote style="border-left:4px solid #D4AF37; background:#FEF3C7; padding:8px 12px; margin:10px 0; color:#78350F; font-size:11px;">${parseInlineMarkdown(line.replace('> ', ''))}</blockquote>`);
       } else if (line.trim().startsWith('- ')) {
         htmlResult.push(`<li style="margin-left:20px; margin-bottom:4px; color:#334155;">${parseInlineMarkdown(line.replace('- ', ''))}</li>`);
       } else if (line.trim().length > 0) {
@@ -395,9 +454,9 @@ graph TD
 
     if (isAsesmen) {
       return `\n\n---
-\n## VIII. ASESMEN & RUBRIK PENILAIAN ANALITIS ${subjectName.toUpperCase()}
+\n## V. KRITERIA KETERCAPAIAN TUJUAN PEMBELAJARAN (KKTP)
 
-### 📊 Rubrik Observasi Unjuk Kerja Pemecahan Masalah
+### 📊 Rubrik Observasi Unjuk Kerja Pemecahan Masalah (${subjectName.toUpperCase()})
 
 | Kriteria Penilaian | Skor 1 (Perlu Bimbingan) | Skor 2 (Cukup) | Skor 3 (Baik) | Skor 4 (Sangat Baik) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -406,7 +465,7 @@ graph TD
 | **Kerjasama Kelompok** | Pasif dalam diskusi | Berpartisipasi jika diminta | Aktif berdiskusi kelompok | Sangat memimpin & mengapresiasi karya kawan |`;
     } else if (isLKPD) {
       return `\n\n---
-\n## IX. LEMBAR KERJA PESERTA DIDIK (LKPD) - ${subjectName.toUpperCase()}
+\n## XI. LEMBAR KERJA PESERTA DIDIK (LKPD) - ${subjectName.toUpperCase()}
 
 ### 👥 Nama Kelompok: ____________________
 **Anggota**: 1. _______________ 2. _______________ 3. _______________
@@ -420,7 +479,7 @@ Lengkapi tabel analisis formula dan diagram alir berikut:
 | **Pemusatan Data** | $\\bar{x} = \\frac{\\sum x_i}{n}$ | Grafik Batang Frekuensi | Valid |`;
     } else {
       return `\n\n---
-\n## X. CATATAN & SUPLENEN REVISI AI CO-PILOT
+\n## XII. CATATAN & SUPLENEN REVISI AI CO-PILOT
 **Instruksi Diterapkan**: "${userInstruction}"
 - **Penguatan Mindful**: Siswa diajak hening 3 menit sebelum memecahkan rumus.
 - **Penguatan Meaningful**: Menghubungkan variabel data dengan kasus nyata.
@@ -552,6 +611,9 @@ Lengkapi tabel analisis formula dan diagram alir berikut:
     }, 500);
   };
 
+  // Dynamically Filtered Content Based on Active Sub-Tab
+  const activeTabContent = filterContentByTab(docContent, activeSubTab);
+
   return (
     <div className="h-full flex flex-col md:flex-row gap-4 relative">
       
@@ -603,7 +665,7 @@ Lengkapi tabel analisis formula dan diagram alir berikut:
             </button>
             <div>
               <h3 className="font-bold text-xs text-slate-100 flex items-center gap-1.5">
-                <span>🤖</span> AI Co-Pilot (Deep Learning v2.6)
+                <span>🤖</span> AI Co-Pilot (Deep Learning v2.7)
               </h3>
               <p className="text-[10px] text-slate-400">Pilar: Mindful • Meaningful • Joyful</p>
             </div>
@@ -723,16 +785,28 @@ Lengkapi tabel analisis formula dan diagram alir berikut:
         <div className="flex-1 p-6 overflow-y-auto bg-slate-950/80">
           <div id="printable-canvas" className="p-8 bg-white text-slate-800 rounded-2xl shadow-2xl border border-slate-200 min-h-full">
             <div className="no-print flex items-center justify-between border-b border-amber-400 pb-2 mb-4">
-              <span className="text-[10px] px-2.5 py-0.5 rounded bg-amber-100 text-amber-800 font-bold border border-amber-300">
-                ✨ LIVE CANVAS PREVIEW - ULTRA VISUAL ENGINE v2.6 READY
+              <span className="text-[10px] px-2.5 py-0.5 rounded bg-amber-100 text-amber-800 font-bold border border-amber-300 uppercase">
+                ✨ Sub-Tab Active: {activeSubTab.replace('-', ' ')}
               </span>
-              <span className="text-[10px] text-emerald-600 font-bold">● Auto-Synced</span>
+              <span className="text-[10px] text-emerald-600 font-bold">● Live Filtered</span>
             </div>
 
             <div
               className="prose prose-slate max-w-none text-xs leading-relaxed pt-1"
-              dangerouslySetInnerHTML={{ __html: parseMarkdownToHTML(docContent) }}
+              dangerouslySetInnerHTML={{ __html: parseMarkdownToHTML(activeTabContent) }}
             />
+
+            {/* Quick Interactive Button If Sub-Tab Section Is Empty */}
+            {activeTabContent.includes('BELUM TERSEDIA') && (
+              <div className="no-print mt-4 pt-3 border-t border-slate-200 text-center">
+                <button
+                  onClick={() => handleSendMessage(`Tolong buatkan seksi ${activeSubTab.toUpperCase()} secara lengkap dan rinci untuk ${currentDoc.subject || 'mata pelajaran ini'}`)}
+                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs transition-all shadow-md cursor-pointer"
+                >
+                  ⚡ Buatkan Draf {activeSubTab.toUpperCase()} Sekarang
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
