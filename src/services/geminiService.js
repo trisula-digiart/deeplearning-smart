@@ -31,11 +31,17 @@ Sajikan respons secara terstruktur, jelas, dan profesional.
 };
 
 /**
- * Fungsi Utama Sintesis Dokumen/Respon dari Gemini AI
+ * Fungsi Utama Sintesis Perangkat Ajar dari Gemini AI / Smart Mock
+ * Aliased untuk generatePerangkatAjar & generateTeachingMaterial
  */
 export const generateTeachingMaterial = async (payload) => {
-  const { subject, phase, topic, instruction } = payload;
-  const prompt = generateDeepLearningPrompt({ subject, phase, topic, instruction });
+  const { subject, phase, topic, instruction } = payload || {};
+  const prompt = generateDeepLearningPrompt({
+    subject: subject || 'Mata Pelajaran',
+    phase: phase || 'Fase E',
+    topic: topic || 'Materi Utama',
+    instruction
+  });
 
   // Jika API Key tersedia, gunakan Real Gemini AI API
   if (genAI) {
@@ -56,12 +62,12 @@ export const generateTeachingMaterial = async (payload) => {
       resolve({
         success: true,
         source: 'mock-engine',
-        data: `# MODUL AJAR DEEP LEARNING: ${subject.toUpperCase()} ${phase.toUpperCase()}
+        data: `# MODUL AJAR DEEP LEARNING: ${(subject || 'UMUM').toUpperCase()} ${(phase || 'FASE E').toUpperCase()}
 
 ## I. INFORMASI UMUM
-- **Mata Pelajaran**: ${subject}
-- **Fase / Kelas**: ${phase}
-- **Topik Utama**: ${topic}
+- **Mata Pelajaran**: ${subject || 'Informatika'}
+- **Fase / Kelas**: ${phase || 'Fase E (Kelas 10)'}
+- **Topik Utama**: ${topic || 'Algoritma & Pemrograman'}
 
 ---
 
@@ -69,10 +75,10 @@ export const generateTeachingMaterial = async (payload) => {
 
 ### 1. Mindful Learning (Penyadaran Diri)
 - **Latihan Hening STOP**: Sebelum memulai pelajaran, murid diajak hening selama 3 menit untuk menyiapkan kestabilan mental & fokus belajar.
-- **Refleksi Awal**: Murid mengisi jurnal singkat mengenai harapan dan tingkat kesiapan memahami materi ${topic}.
+- **Refleksi Awal**: Murid mengisi jurnal singkat mengenai harapan dan tingkat kesiapan memahami materi ${topic || 'pembelajaran'}.
 
 ### 2. Meaningful Learning (Keterhubungan Masalah Nyata)
-- **Kontekstualisasi**: Mengaitkan konsep ${topic} dengan permasalahan nyata kehidupan sehari-hari di lingkungan murid.
+- **Kontekstualisasi**: Mengaitkan konsep ${topic || 'pembelajaran'} dengan permasalahan nyata kehidupan sehari-hari di lingkungan murid.
 - **Tugas Terapan**: Murid menganalisis studi kasus lokal dan merancang solusi praktis.
 
 ### 3. Joyful Learning (Kolaboratif & Menggembirakan)
@@ -83,7 +89,11 @@ export const generateTeachingMaterial = async (payload) => {
   });
 };
 
+// Alias ekspor dinamik agar DeepLearningWizard.jsx & AIWorkspace.jsx keduanya terlayani 100%
+export const generatePerangkatAjar = generateTeachingMaterial;
+
 export default {
   generateDeepLearningPrompt,
-  generateTeachingMaterial
+  generateTeachingMaterial,
+  generatePerangkatAjar
 };
