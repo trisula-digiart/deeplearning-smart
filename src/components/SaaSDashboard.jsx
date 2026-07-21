@@ -6,7 +6,7 @@ import {
   CheckCircle2,
   Zap,
   FileText,
-  ChevronRight
+  ChevronRight 
 } from 'lucide-react';
 
 /**
