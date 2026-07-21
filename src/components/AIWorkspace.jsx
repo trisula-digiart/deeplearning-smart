@@ -1,20 +1,15 @@
 import React, { useState, useEffect } from 'react';
 
 /**
- * TRISULAPROMPT - AIWorkspace Component v2.5 (Enterprise Master Edition - Standalone Ready)
+ * TRISULAPROMPT - AIWorkspace Component v2.6 (Enterprise Production Edition - Word & PDF Export Fix)
  * Author: TRISULACODER v8.7 - Lead Solution Architect
  * Stack: React / Vite / Tailwind CSS
  * Features:
- *  - Self-contained Gemini Prompt Synthesis Engine
- *  - Split-Screen Layout (AI Co-Pilot Left + Live Canvas Preview Right)
- *  - Full Markdown & Custom Table HTML Parser Engine
- *  - Native Image Parser Engine ![alt](url)
- *  - LaTeX Math Parser Engine ($inline$ & $$display$$)
- *  - Mermaid.js Diagram Code Block Parser Engine
- *  - SVG Data Chart Visualizer Code Block Parser Engine
- *  - Dynamic Subject Generator Context (IPAS, Matematika, STEM, Bahasa Indonesia)
- *  - Anti-Clipping Top Margin Heading Fix
- *  - Full Enterprise Export Engine (Word .doc with styles, Plain .txt, & PDF Print Dialog)
+ *  - Word-Compatible Table Engine for Mermaid Diagrams & Data Charts (No Flexbox Breakage in MS Word)
+ *  - High-Fidelity Math/LaTeX Pretty Renderer Engine
+ *  - Print-Isolated Canvas Engine (@media print CSS Fix for Clean PDF Export)
+ *  - Interactive Deep Learning Context Generator
+ *  - Full Modular Single-File Isolation Standard
  */
 
 // Self-contained Deep Learning prompt generator service
@@ -132,7 +127,7 @@ graph TD
     {
       id: 1,
       sender: 'ai',
-      text: `Halo Bapak/Ibu Guru! Saya **Deep Learning Engine v2.5**. Dokumen ${currentDoc.subject || 'Pembelajaran'} Anda lengkap dengan LaTeX Math, Diagram Mermaid, Grafik Data, dan Gambar siap ditinjau. Kirim instruksi seperti "Tambahkan LKPD" atau "Buat Asesmen" untuk menyempurnakannya!`
+      text: `Halo Bapak/Ibu Guru! Saya **Deep Learning Engine v2.6**. Dokumen ${currentDoc.subject || 'Pembelajaran'} Anda lengkap dengan LaTeX Math, Diagram Mermaid, Grafik Data, dan Gambar siap ditinjau. Kirim instruksi seperti "Tambahkan LKPD" atau "Buat Asesmen" untuk menyempurnakannya!`
     }
   ]);
   const [inputInstruction, setInputInstruction] = useState('');
@@ -145,75 +140,139 @@ graph TD
     setTimeout(() => setToastMessage(''), 3500);
   };
 
+  // Helper Sanitasi Ekspresi LaTeX ke Simbol Visual Cantik
+  const formatMathFormula = (formulaStr) => {
+    return formulaStr
+      .replace(/\\mathbf\{(.*?)\}/g, '$1')
+      .replace(/\\bar\{x\}/g, 'x̄')
+      .replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, '($1 / $2)')
+      .replace(/\\sum_\{([^}]+)\}\^\{([^}]+)\}/g, 'Σ($1..$2)')
+      .replace(/\\sum/g, 'Σ')
+      .replace(/\\sqrt\{([^}]+)\}/g, '√($1)')
+      .replace(/\\sin/g, 'sin')
+      .replace(/\\cos/g, 'cos')
+      .replace(/\\tan/g, 'tan')
+      .replace(/\\theta/g, 'θ')
+      .replace(/\\alpha/g, 'α')
+      .replace(/\\beta/g, 'β')
+      .replace(/\\circ/g, '°')
+      .replace(/\\times/g, '×')
+      .replace(/\\div/g, '÷');
+  };
+
   const parseMarkdownToHTML = (markdown) => {
     if (!markdown) return '';
 
     let content = markdown;
 
-    // 1. LATEX DISPLAY PARSER ($$...$$)
+    // 1. LATEX DISPLAY PARSER ($$...$$) - CLEAN VISUAL
     content = content.replace(/\$\$(.*?)\$\$/gs, (match, formula) => {
-      return `<div style="background-color:#F1F5F9; border-left:4px solid #1E3A8A; padding:12px 16px; margin:14px 0; border-radius:8px; font-family:'Courier New', monospace; font-weight:bold; color:#0F172A; text-align:center; overflow-x:auto;">
-        <span style="color:#D4AF37; font-size:10px; display:block; margin-bottom:4px; font-family:'Segoe UI', sans-serif;">[ FORMULA MATEMATIKA / FISIKA ]</span>
-        $$\\mathbf{${formula.trim()}}$$
-      </div>`;
+      const cleanFormula = formatMathFormula(formula.trim());
+      return `<table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin:14px 0; background-color:#F1F5F9; border-left:4px solid #1E3A8A; border-radius:8px;">
+        <tr>
+          <td style="padding:12px 16px; text-align:center;">
+            <div style="color:#D4AF37; font-size:10px; font-weight:bold; margin-bottom:4px; font-family:'Segoe UI', sans-serif; text-transform:uppercase;">[ FORMULA EKSPLISIT DEEP LEARNING ]</div>
+            <div style="font-family:'Courier New', monospace; font-weight:bold; font-size:14px; color:#0F172A;">${cleanFormula}</div>
+          </td>
+        </tr>
+      </table>`;
     });
 
     // 2. LATEX INLINE PARSER ($...$)
     content = content.replace(/\$(.*?)\$/g, (match, formula) => {
-      return `<code style="background-color:#F8FAFC; color:#1E3A8A; border:1px solid #CBD5E1; padding:2px 6px; border-radius:4px; font-family:'Courier New', monospace; font-weight:bold;">${formula}</code>`;
+      const cleanFormula = formatMathFormula(formula.trim());
+      return `<code style="background-color:#F8FAFC; color:#1E3A8A; border:1px solid #CBD5E1; padding:2px 6px; border-radius:4px; font-family:'Courier New', monospace; font-weight:bold;">${cleanFormula}</code>`;
     });
 
-    // 3. MERMAID CODE BLOCK PARSER (```mermaid ... ```)
+    // 3. MERMAID CODE BLOCK PARSER (WORD TABLE NATIVE COMPATIBLE)
     content = content.replace(/```mermaid\s*([\s\S]*?)\s*```/g, (match, mermaidCode) => {
       const cleanCode = mermaidCode.trim();
       const lines = cleanCode.split('\n').filter(l => l.trim().length > 0);
       
-      let nodesHtml = lines.map((line) => {
+      let tableRowsHtml = lines.map((line) => {
         if (line.includes('-->') || line.includes('---')) {
           const parts = line.split(/-->|---/);
-          const from = parts[0].trim().replace(/\[|\]|\{|\}/g, '');
-          const to = parts[1] ? parts[1].trim().replace(/\[|\]|\{|\}/g, '') : '';
-          return `<div style="display:flex; align-items:center; justify-content:center; gap:10px; margin:8px 0;">
-            <span style="background-color:#1E3A8A; color:white; padding:6px 14px; border-radius:8px; font-weight:bold; font-size:11px;">${from}</span>
-            <span style="color:#D4AF37; font-weight:bold; font-size:14px;">➔</span>
-            <span style="background-color:#0F172A; color:white; padding:6px 14px; border-radius:8px; font-weight:bold; font-size:11px;">${to}</span>
-          </div>`;
+          let from = parts[0].trim().replace(/[\[\]\{\}\(\)]/g, '');
+          let to = parts[1] ? parts[1].trim().replace(/[\[\]\{\}\(\)]/g, '') : '';
+
+          if (from.includes(' ')) from = from.substring(from.indexOf(' ') + 1);
+          if (to.includes(' ')) to = to.substring(to.indexOf(' ') + 1);
+
+          return `<tr>
+            <td align="center" style="padding:6px;">
+              <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color:#F8FAFC; border:1px solid #CBD5E1; border-radius:8px;">
+                <tr>
+                  <td align="center" width="42%" style="background-color:#1E3A8A; color:#FFFFFF; padding:8px 12px; font-weight:bold; font-size:11px; border-radius:6px; font-family:'Segoe UI', sans-serif;">
+                    ${from}
+                  </td>
+                  <td align="center" width="16%" style="color:#D4AF37; font-weight:bold; font-size:16px;">
+                    ➔
+                  </td>
+                  <td align="center" width="42%" style="background-color:#0F172A; color:#FFFFFF; padding:8px 12px; font-weight:bold; font-size:11px; border-radius:6px; font-family:'Segoe UI', sans-serif;">
+                    ${to}
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>`;
         }
         return '';
       }).join('');
 
-      return `<div style="background:#F8FAFC; border:2px dashed #1E3A8A; border-radius:12px; padding:16px; margin:18px 0; text-align:center;">
-        <div style="font-size:11px; font-weight:bold; color:#1E3A8A; margin-bottom:12px; text-transform:uppercase; letter-spacing:1px; font-family:'Segoe UI', sans-serif;">📊 Diagram Alir Visual (Mermaid.js Engine)</div>
-        <div style="background:white; padding:14px; border-radius:8px; border:1px solid #E2E8F0;">
-          ${nodesHtml || `<pre style="font-size:11px; text-align:left; color:#334155;">${cleanCode}</pre>`}
-        </div>
-      </div>`;
+      return `<table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin:18px 0; background-color:#F8FAFC; border:2px dashed #1E3A8A; border-radius:12px; padding:12px;">
+        <tr>
+          <td align="center" style="padding-bottom:10px; font-size:11px; font-weight:bold; color:#1E3A8A; text-transform:uppercase; letter-spacing:1px; font-family:'Segoe UI', sans-serif;">
+            📊 Diagram Alir Visual (Mermaid Flowchart Engine)
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+              ${tableRowsHtml || `<tr><td style="font-size:11px; color:#334155;">${cleanCode}</td></tr>`}
+            </table>
+          </td>
+        </tr>
+      </table>`;
     });
 
-    // 4. CHART JSON CODE BLOCK PARSER (```chart ... ```)
+    // 4. CHART JSON CODE BLOCK PARSER (WORD TABLE NATIVE HORIZONTAL COMPATIBLE)
     content = content.replace(/```chart\s*([\s\S]*?)\s*```/g, (match, chartJsonStr) => {
       try {
         const chartData = JSON.parse(chartJsonStr.trim());
         const maxVal = Math.max(...chartData.data, 1);
 
-        const barsHtml = chartData.labels.map((label, idx) => {
+        const columnsHtml = chartData.labels.map((label, idx) => {
           const val = chartData.data[idx] || 0;
-          const heightPct = Math.round((val / maxVal) * 100);
-          return `<div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:6px;">
-            <span style="font-size:10px; font-weight:bold; color:#1E3A8A;">${val}</span>
-            <div style="width:100%; max-width:32px; background-color:#E2E8F0; height:90px; display:flex; align-items:flex-end; border-radius:6px; overflow:hidden;">
-              <div style="width:100%; height:${heightPct}%; background:linear-gradient(to top, #1E3A8A, #D4AF37); border-radius:4px;"></div>
-            </div>
-            <span style="font-size:9px; font-weight:600; color:#64748B;">${label}</span>
-          </div>`;
+          const heightPct = Math.round((val / maxVal) * 80) + 10;
+          return `<td align="center" valign="bottom" style="padding:4px;">
+            <div style="font-size:10px; font-weight:bold; color:#1E3A8A; margin-bottom:4px;">${val}</div>
+            <table border="0" cellpadding="0" cellspacing="0" width="24" height="90" style="background-color:#E2E8F0; border-radius:4px;">
+              <tr>
+                <td valign="bottom" align="center">
+                  <div style="width:100%; height:${heightPct}px; background-color:#1E3A8A; border-radius:3px;"></div>
+                </td>
+              </tr>
+            </table>
+            <div style="font-size:9px; font-weight:bold; color:#64748B; margin-top:6px;">${label}</div>
+          </td>`;
         }).join('');
 
-        return `<div style="background:#F8FAFC; border:1px solid #CBD5E1; border-radius:12px; padding:16px; margin:18px 0;">
-          <div style="font-size:12px; font-weight:bold; color:#1E3A8A; margin-bottom:14px; text-align:center; font-family:'Segoe UI', sans-serif;">📈 ${chartData.title || 'Grafik Data Visual'}</div>
-          <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:8px; background:white; padding:16px; border-radius:8px; border:1px solid #E2E8F0;">
-            ${barsHtml}
-          </div>
-        </div>`;
+        return `<table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin:18px 0; background-color:#F8FAFC; border:1px solid #CBD5E1; border-radius:12px; padding:14px;">
+          <tr>
+            <td align="center" style="font-size:12px; font-weight:bold; color:#1E3A8A; padding-bottom:12px; font-family:'Segoe UI', sans-serif;">
+              📈 ${chartData.title || 'Grafik Data Visual'}
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color:#FFFFFF; border:1px solid #E2E8F0; border-radius:8px; padding:10px;">
+                <tr>
+                  ${columnsHtml}
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>`;
       } catch (e) {
         return `<pre style="background:#FFF1F2; color:#9F1239; padding:10px; border-radius:6px; font-size:11px;">Error parsing chart data</pre>`;
       }
@@ -227,7 +286,7 @@ graph TD
 
     const renderTable = (rows) => {
       if (rows.length === 0) return '';
-      let tableHtml = `<table style="width:100%; border-collapse:collapse; margin: 16px 0; font-size:12px; font-family: 'Segoe UI', sans-serif;">`;
+      let tableHtml = `<table border="1" cellpadding="8" cellspacing="0" style="width:100%; border-collapse:collapse; margin: 16px 0; font-size:12px; font-family: 'Segoe UI', sans-serif; border-color:#CBD5E1;">`;
       
       rows.forEach((row, rowIndex) => {
         let cleanRow = row.trim();
@@ -242,7 +301,7 @@ graph TD
           tableHtml += `<tr style="background-color:#1E3A8A; color:#FFFFFF;">`;
           cells.forEach(cell => {
             let parsedCell = parseInlineMarkdown(cell);
-            tableHtml += `<th style="border:1px solid #CBD5E1; padding:10px 12px; text-align:left; font-weight:bold;">${parsedCell}</th>`;
+            tableHtml += `<th style="border:1px solid #CBD5E1; padding:10px 12px; text-align:left; font-weight:bold; color:#FFFFFF;">${parsedCell}</th>`;
           });
           tableHtml += `</tr>`;
         } else {
@@ -280,10 +339,14 @@ graph TD
         const altText = imgMatch[1];
         const imgUrl = imgMatch[2];
         htmlResult.push(`
-          <div style="margin: 20px 0; text-align: center;">
-            <img src="${imgUrl}" alt="${altText}" style="max-width: 100%; height: 220px; object-fit: cover; border-radius: 12px; border: 2px solid #D4AF37; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: inline-block;" />
-            <p style="font-size: 11px; color: #64748B; font-style: italic; margin-top: 6px;">📷 ${altText}</p>
-          </div>
+          <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin: 20px 0;">
+            <tr>
+              <td align="center">
+                <img src="${imgUrl}" alt="${altText}" width="500" style="max-width: 100%; height: auto; border-radius: 12px; border: 2px solid #D4AF37;" />
+                <div style="font-size: 11px; color: #64748B; font-style: italic; margin-top: 6px;">📷 ${altText}</div>
+              </td>
+            </tr>
+          </table>
         `);
         continue;
       }
@@ -492,15 +555,41 @@ Lengkapi tabel analisis formula dan diagram alir berikut:
   return (
     <div className="h-full flex flex-col md:flex-row gap-4 relative">
       
+      {/* PRINT-ONLY CSS STYLESHEET FOR CLEAN PDF EXPORT */}
+      <style>{`
+        @media print {
+          body * {
+            visibility: hidden !important;
+          }
+          #printable-canvas, #printable-canvas * {
+            visibility: visible !important;
+          }
+          #printable-canvas {
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            background: white !important;
+            box-shadow: none !important;
+            border: none !important;
+          }
+          .no-print {
+            display: none !important;
+          }
+        }
+      `}</style>
+
       {/* TOAST NOTIFICATION */}
       {toastMessage && (
-        <div className="fixed top-16 right-6 z-50 bg-[#D4AF37] text-black font-bold px-4 py-2.5 rounded-xl shadow-2xl text-xs animate-bounce border border-amber-300">
+        <div className="no-print fixed top-16 right-6 z-50 bg-[#D4AF37] text-black font-bold px-4 py-2.5 rounded-xl shadow-2xl text-xs animate-bounce border border-amber-300">
           {toastMessage}
         </div>
       )}
 
       {/* LEFT PANEL: AI CO-PILOT CHAT */}
-      <div className="w-full md:w-5/12 bg-[#0F172A]/90 border border-slate-800 rounded-2xl flex flex-col overflow-hidden shadow-xl">
+      <div className="no-print w-full md:w-5/12 bg-[#0F172A]/90 border border-slate-800 rounded-2xl flex flex-col overflow-hidden shadow-xl">
         
         {/* Chat Header */}
         <div className="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/50">
@@ -514,7 +603,7 @@ Lengkapi tabel analisis formula dan diagram alir berikut:
             </button>
             <div>
               <h3 className="font-bold text-xs text-slate-100 flex items-center gap-1.5">
-                <span>🤖</span> AI Co-Pilot (Deep Learning v2.5)
+                <span>🤖</span> AI Co-Pilot (Deep Learning v2.6)
               </h3>
               <p className="text-[10px] text-slate-400">Pilar: Mindful • Meaningful • Joyful</p>
             </div>
@@ -597,7 +686,7 @@ Lengkapi tabel analisis formula dan diagram alir berikut:
       <div className="w-full md:w-7/12 bg-[#0F172A]/90 border border-slate-800 rounded-2xl flex flex-col overflow-hidden shadow-xl">
         
         {/* Canvas Toolbar & Tabs */}
-        <div className="p-4 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3 bg-slate-900/50">
+        <div className="no-print p-4 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3 bg-slate-900/50">
           <div className="flex items-center gap-1 overflow-x-auto pb-1 md:pb-0">
             {[
               { id: 'modul-ajar', label: 'Modul Ajar' },
@@ -632,10 +721,10 @@ Lengkapi tabel analisis formula dan diagram alir berikut:
 
         {/* Canvas Rendered Content */}
         <div className="flex-1 p-6 overflow-y-auto bg-slate-950/80">
-          <div className="p-8 bg-white text-slate-800 rounded-2xl shadow-2xl border border-slate-200 min-h-full">
-            <div className="flex items-center justify-between border-b border-amber-400 pb-2 mb-4">
+          <div id="printable-canvas" className="p-8 bg-white text-slate-800 rounded-2xl shadow-2xl border border-slate-200 min-h-full">
+            <div className="no-print flex items-center justify-between border-b border-amber-400 pb-2 mb-4">
               <span className="text-[10px] px-2.5 py-0.5 rounded bg-amber-100 text-amber-800 font-bold border border-amber-300">
-                ✨ LIVE CANVAS PREVIEW - ULTRA VISUAL ENGINE READY
+                ✨ LIVE CANVAS PREVIEW - ULTRA VISUAL ENGINE v2.6 READY
               </span>
               <span className="text-[10px] text-emerald-600 font-bold">● Auto-Synced</span>
             </div>
@@ -651,7 +740,7 @@ Lengkapi tabel analisis formula dan diagram alir berikut:
 
       {/* EXPORT CENTER MODAL REAL */}
       {isExportModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="no-print fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-[#0F172A] border border-slate-800 w-full max-w-md rounded-3xl p-6 space-y-5 shadow-2xl animate-in fade-in zoom-in duration-200">
             
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
@@ -680,7 +769,7 @@ Lengkapi tabel analisis formula dan diagram alir berikut:
                     <div className="font-bold text-xs text-slate-100 group-hover:text-[#D4AF37]">
                       Unduh Berkas Word (.doc)
                     </div>
-                    <div className="text-[10px] text-slate-400">Termasuk Gambar, Diagram, Formula & Color Style</div>
+                    <div className="text-[10px] text-slate-400">Layout Tabel Native (Mermaid & Chart Presisi)</div>
                   </div>
                 </div>
                 <span className="text-xs text-[#D4AF37] font-bold">Unduh →</span>
@@ -712,7 +801,7 @@ Lengkapi tabel analisis formula dan diagram alir berikut:
                     <div className="font-bold text-xs text-slate-100 group-hover:text-[#D4AF37]">
                       Cetak / Simpan PDF
                     </div>
-                    <div className="text-[10px] text-slate-400">Dialog cetak sistem browser</div>
+                    <div className="text-[10px] text-slate-400">Hanya mencetak kanvas dokumen A4 (UI Terisolasi)</div>
                   </div>
                 </div>
                 <span className="text-xs text-[#D4AF37] font-bold">Cetak →</span>
