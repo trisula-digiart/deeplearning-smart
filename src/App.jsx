@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import DeepLearningWizard from './components/DeepLearningWizard';
 import AIWorkspace from './components/AIWorkspace';
+import ProjectHub from './components/ProjectHub';
+import NotionStudio from './components/NotionStudio';
 
 /**
- * TRISULAPROMPT - Root Application Shell v2.5
+ * TRISULAPROMPT - Root Application Shell v2.5 (Fully Integrated)
  * UI Layout dengan Deep Navy (#0B192C) & Gold (#D4AF37) Theme
  */
 
@@ -24,28 +26,28 @@ export default function App() {
       progress: 65,
       updatedAt: '2 jam yang lalu',
       summary: 'Peserta didik mampu menerapkan strategi algoritmik standar untuk menghasilkan beberapa solusi persoalan dengan data diskrit volume besar.',
-      components: [
-        {
-          id: 'comp-1',
-          section: '1. Identitas & Informasi Umum',
-          content: '• Mata Pelajaran: Informatika\n• Fase / Kelas: Fase E (Kelas 10)\n• Alokasi Waktu: 2 JP\n• Target Peserta Didik: Reguler'
-        },
-        {
-          id: 'comp-2',
-          section: '2. Capaian & Tujuan Pembelajaran (TP)',
-          content: '• CP: Memahami strategi algoritmik standar.\n• TP 1.1: Mendesain flowchart dan pseudo-code kasus nyata.'
-        },
-        {
-          id: 'comp-3',
-          section: '3. Kegiatan Pembelajaran (3 Pilar Deep Learning)',
-          content: '• Mindful Learning: Sesi "Hening Sejenak" & Refleksi Awal.\n• Meaningful Learning: Menganalisis studi kasus nyata "Sistem Antrean".\n• Joyful Learning: Gamifikasi "BONGKAR LOGIKA".'
-        },
-        {
-          id: 'comp-4',
-          section: '4. Rencana Asesmen & Evaluasi',
-          content: '• Asesmen Formatif: Lembar Observasi Kelompok.\n• Asesmen Sumatif: Tugas Praktik Flowchart Solusi.'
-        }
-      ]
+      content: `# MODUL AJAR DEEP LEARNING: INFORMATIKA FASE E
+
+## I. INFORMASI UMUM
+- **Mata Pelajaran**: Informatika
+- **Fase / Kelas**: Fase E (Kelas 10)
+- **Alokasi Waktu**: 2 JP x 45 Menit
+
+---
+
+## II. INTEGRASI 3 PILAR DEEP LEARNING
+
+### 1. Mindful Learning (Penyadaran Diri)
+- **Latihan Hening STOP**: Sebelum pembelajaran dimulai, murid diajak hening selama 3 menit untuk menyiapkan fokus mental.
+- **Refleksi Awal**: Murid menuliskan harapan dan tingkat kepercayaan diri dalam menguasai algoritma.
+
+### 2. Meaningful Learning (Keterhubungan Masalah Nyata)
+- **Konteks Lokal**: Menganalisis studi kasus nyata "Sistem Antrean Puskesmas/Bank".
+- **Problem Solving**: Murid merancang flowchart solusi terapan.
+
+### 3. Joyful Learning (Kolaboratif & Menggembirakan)
+- **Game Unplugged**: Gamifikasi "BONGKAR LOGIKA" tantangan antar kelompok.
+- **Peer Feedback**: Saling memberikan apresiasi dan saran terhadap diagram kawan.`
     },
     {
       id: 'draft-2',
@@ -57,13 +59,25 @@ export default function App() {
       progress: 100,
       updatedAt: '1 hari yang lalu',
       summary: 'Peserta didik mampu melakukan evaluasi kritis terhadap penyajian data statistik.',
-      components: [
-        {
-          id: 'comp-1',
-          section: '1. Identitas & Informasi Umum',
-          content: '• Mata Pelajaran: Matematika\n• Fase / Kelas: Fase F (Kelas 11)\n• Alokasi Waktu: 4 JP'
-        }
-      ]
+      content: `# MODUL AJAR DEEP LEARNING: MATEMATIKA FASE F
+
+## I. INFORMASI UMUM
+- **Mata Pelajaran**: Matematika
+- **Fase / Kelas**: Fase F (Kelas 11)
+- **Alokasi Waktu**: 4 JP
+
+---
+
+## II. INTEGRASI 3 PILAR DEEP LEARNING
+
+### 1. Mindful Learning
+- Murid menyadari pentingnya kejujuran data statistik dalam kehidupan sehari-hari.
+
+### 2. Meaningful Learning
+- Menganalisis berita hoaks berbasis manipulasi data grafik di media sosial.
+
+### 3. Joyful Learning
+- Simulasi pengambilan sampel eksperimen statistik interaktif.`
     }
   ]);
 
@@ -71,7 +85,7 @@ export default function App() {
   const handleWizardSuccess = (newDocData) => {
     const newDraft = {
       id: `draft-${Date.now()}`,
-      title: newDocData.title || `Perangkat Ajar - ${newDocData.topic}`,
+      title: newDocData.title || `Perangkat Ajar - ${newDocData.topic || 'Baru'}`,
       subject: newDocData.subject || 'Mata Pelajaran',
       phase: newDocData.phase || 'Fase E',
       topic: newDocData.topic || 'Topik Utama',
@@ -79,7 +93,7 @@ export default function App() {
       progress: 80,
       updatedAt: 'Baru saja',
       summary: newDocData.summary || 'Dokumen hasil sintesis AI Kurikulum Merdeka terintegrasi 3 Pilar.',
-      components: newDocData.components || []
+      content: newDocData.content || `# MODUL AJAR BARU: ${newDocData.topic || 'Kurikulum Merdeka'}\n\nDokumen disintesis oleh TRISULA AI Engine.`
     };
 
     setDraftList([newDraft, ...draftList]);
@@ -91,6 +105,27 @@ export default function App() {
   const handleOpenWorkspace = (doc = null) => {
     setActiveDocument(doc);
     setActiveTab('workspace');
+  };
+
+  // Switch ke Notion Studio
+  const handleOpenNotionStudio = (doc = null) => {
+    setActiveDocument(doc || draftList[0]);
+    setActiveTab('notion-studio');
+  };
+
+  // Handler Simpan Dokumen dari Notion Studio
+  const handleSaveFromNotion = (updatedDoc) => {
+    setDraftList((prev) =>
+      prev.map((d) => (d.id === updatedDoc.id ? { ...d, ...updatedDoc } : d))
+    );
+    setActiveDocument(updatedDoc);
+  };
+
+  // Handler Hapus Proyek di Project Hub
+  const handleDeleteProject = (docId) => {
+    if (window.confirm('Apakah Anda yakin ingin menghapus perangkat ajar ini?')) {
+      setDraftList((prev) => prev.filter((d) => d.id !== docId));
+    }
   };
 
   return (
@@ -112,17 +147,8 @@ export default function App() {
           </div>
         </div>
 
-        {/* Global Search & Action */}
+        {/* Global Action */}
         <div className="flex items-center gap-4">
-          <div className="relative hidden md:block w-64">
-            <input
-              type="text"
-              placeholder="Cari perangkat ajar..."
-              className="w-full pl-9 pr-4 py-1.5 bg-slate-900 border border-slate-700/70 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-[#D4AF37] transition-all"
-            />
-            <span className="absolute left-3 top-2 text-slate-500 text-xs">🔍</span>
-          </div>
-
           <button
             onClick={() => setIsWizardOpen(true)}
             className="px-4 py-2 bg-gradient-to-r from-[#D4AF37] to-amber-500 hover:from-amber-400 hover:to-amber-600 text-black font-bold text-xs rounded-xl transition-all shadow-lg shadow-[#D4AF37]/15 flex items-center gap-1.5"
@@ -212,10 +238,10 @@ export default function App() {
                       <span>✨ Mulai Wizard Deep Learning</span>
                     </button>
                     <button
-                      onClick={() => handleOpenWorkspace(draftList[0])}
+                      onClick={() => setActiveTab('project-hub')}
                       className="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold transition-all"
                     >
-                      Lihat Semua Proyek
+                      Lihat Semua Proyek ({draftList.length})
                     </button>
                   </div>
                 </div>
@@ -273,22 +299,13 @@ export default function App() {
                         {draft.summary}
                       </p>
 
-                      {/* Progress bar */}
-                      <div className="space-y-1">
-                        <div className="flex items-center justify-between text-[11px] text-slate-400">
-                          <span>Kelengkapan Dokumen</span>
-                          <span>{draft.progress}%</span>
-                        </div>
-                        <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-gradient-to-r from-[#D4AF37] to-amber-500 rounded-full"
-                            style={{ width: `${draft.progress}%` }}
-                          />
-                        </div>
-                      </div>
-
                       <div className="pt-2 flex items-center justify-between border-t border-slate-800/60 text-xs">
-                        <span className="text-slate-500 text-[10px]">Diedit {draft.updatedAt}</span>
+                        <button
+                          onClick={() => handleOpenNotionStudio(draft)}
+                          className="text-slate-400 hover:text-slate-200 text-xs"
+                        >
+                          📝 Edit di Notion Studio
+                        </button>
                         <button
                           onClick={() => handleOpenWorkspace(draft)}
                           className="text-[#D4AF37] hover:underline font-semibold text-xs flex items-center gap-1"
@@ -314,20 +331,24 @@ export default function App() {
             </div>
           )}
 
-          {/* TAB 3 & 4 PLACEHOLDER */}
-          {(activeTab === 'project-hub' || activeTab === 'notion-studio') && (
-            <div className="p-12 text-center bg-[#0F172A]/50 border border-slate-800 rounded-2xl max-w-xl mx-auto space-y-3">
-              <div className="text-3xl">🚀</div>
-              <h3 className="text-lg font-bold text-white">Modul {activeTab === 'project-hub' ? 'Project Hub' : 'Notion Studio'} Siap Diaktifkan</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Fitur ini siap dikembangkan pada langkah berikutnya untuk penyuntingan tingkat lanjut.
-              </p>
-              <button
-                onClick={() => setActiveTab('dashboard')}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 rounded-xl border border-slate-700"
-              >
-                Kembali ke Dashboard
-              </button>
+          {/* TAB 3: PROJECT HUB */}
+          {activeTab === 'project-hub' && (
+            <ProjectHub
+              projects={draftList}
+              onSelectProject={handleOpenWorkspace}
+              onCreateNew={() => setIsWizardOpen(true)}
+              onDeleteProject={handleDeleteProject}
+            />
+          )}
+
+          {/* TAB 4: NOTION STUDIO */}
+          {activeTab === 'notion-studio' && (
+            <div className="h-[calc(100vh-100px)]">
+              <NotionStudio
+                activeDoc={activeDocument || draftList[0]}
+                onSaveDoc={handleSaveFromNotion}
+                onBackToDashboard={() => setActiveTab('dashboard')}
+              />
             </div>
           )}
 
