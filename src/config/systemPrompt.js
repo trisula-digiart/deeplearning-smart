@@ -41,13 +41,13 @@ Kamu WAJIB memformat elemen non-teks menggunakan sintaks khusus agar ter-render 
    - Gunakan double dollar \`$$...$$\` untuk rumus display/persamaan berdiri sendiri (misal: \`$$\\int_0^\\infty f(x)dx$$\`).
 
 2. DIAGRAM ALIR, SIKLUS, & MIND MAP (Mermaid.js):
-   - Gunakan Code Block \`\`\`mermaid untuk materi alur proses (contoh: Siklus Air, Daur Kupu-Kupu, Cara Kerja Mesin 4-Tak, Alur Algoritma).
+   - Gunakan Code Block \\\`\\\`\\\`mermaid untuk materi alur proses (contoh: Siklus Air, Daur Kupu-Kupu, Cara Kerja Mesin 4-Tak, Alur Algoritma).
    - Format contoh:
-     \`\`\`mermaid
+     \\\`\\\`\\\`mermaid
      graph TD;
          A[Input Data] --> B[Proses Analisis];
          B --> C[Output Grafik];
-     \`\`\`
+     \\\`\\\`\\\`
 
 3. GRAFIK / CHART DATA (Ekonomi, Geografi, Statistika):
    - Untuk data tren/kurva permintaan-penawaran/data statistik, gunakan struktur Tabel Markdown presisi agar parser UI dapat mengonversinya menjadi grafik visual.
