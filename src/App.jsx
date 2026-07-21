@@ -7,7 +7,7 @@ export default function App() {
   const [isWizardOpen, setIsWizardOpen] = useState(false);
   const [activeDocument, setActiveDocument] = useState(null);
 
-  // Mock Data Draft Perangkat Ajar Terbaru
+  // Realistic Mock Data - Draft Perangkat Ajar Terbaru
   const [draftList, setDraftList] = useState([
     {
       id: 'draft-1',
@@ -18,7 +18,7 @@ export default function App() {
       status: 'In Progress',
       progress: 65,
       updatedAt: '2 jam yang lalu',
-      summary: 'Peserta didik mampu menerapkan strategi algortimik standar untuk menghasilkan beberapa solusi persoalan dengan data diskrit volume besar.',
+      summary: 'Peserta didik mampu menerapkan strategi algoritmik standar untuk menghasilkan beberapa solusi persoalan dengan data diskrit volume besar.',
       components: [
         {
           id: 'comp-1',
@@ -29,6 +29,16 @@ export default function App() {
           id: 'comp-2',
           section: '2. Capaian & Tujuan Pembelajaran (TP)',
           content: '• CP: Memahami strategi algoritmik standar.\n• TP 1.1: Mendesain flowchart dan pseudo-code kasus nyata.'
+        },
+        {
+          id: 'comp-3',
+          section: '3. Kegiatan Pembelajaran (3 Pilar Deep Learning)',
+          content: '• Mindful Learning: Sesi "Hening Sejenak" & Refleksi Awal.\n• Meaningful Learning: Menganalisis studi kasus nyata "Sistem Antrean".\n• Joyful Learning: Gamifikasi "BONGKAR LOGIKA".'
+        },
+        {
+          id: 'comp-4',
+          section: '4. Rencana Asesmen & Evaluasi',
+          content: '• Asesmen Formatif: Lembar Observasi Kelompok.\n• Asesmen Sumatif: Tugas Praktik Flowchart Solusi.'
         }
       ]
     },
@@ -57,13 +67,13 @@ export default function App() {
     const newDraft = {
       id: `draft-${Date.now()}`,
       title: newDocData.title || `Perangkat Ajar - ${newDocData.topic}`,
-      subject: newDocData.subject,
-      phase: newDocData.phase,
-      topic: newDocData.topic,
+      subject: newDocData.subject || 'Mata Pelajaran',
+      phase: newDocData.phase || 'Fase E',
+      topic: newDocData.topic || 'Topik Utama',
       status: 'In Progress',
       progress: 80,
       updatedAt: 'Baru saja',
-      summary: newDocData.summary,
+      summary: newDocData.summary || 'Dokumen hasil sintesis AI Kurikulum Merdeka terintegrasi 3 Pilar.',
       components: newDocData.components || []
     };
 
@@ -79,7 +89,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B192C] text-slate-100 font-sans flex flex-col">
+    <div className="min-h-screen bg-[#0B192C] text-slate-100 font-sans flex flex-col selection:bg-[#D4AF37] selection:text-black">
       
       {/* HEADER / NAVIGATION BAR */}
       <header className="sticky top-0 z-40 bg-[#0F172A]/90 backdrop-blur-md border-b border-slate-800/80 px-6 py-3 flex items-center justify-between">
