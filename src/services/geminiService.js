@@ -1,55 +1,23 @@
+import { DEEP_LEARNING_SYSTEM_PROMPT } from '../config/systemPrompt';
+
 /**
  * TRISULAPROMPT - Gemini AI Service Engine v2.5
  * Handles integration with Gemini 3 Flash API for Kurikulum Merdeka & Deep Learning synthesis.
  * Built-in support for Mindful, Meaningful, & Joyful pedagogy pillars.
  */
 
-const API_KEY = ""; // Optionally set or inject via environment variables
+// Mengambil API Key dari environment variable (.env / Vercel), dengan fallback string kosong
+const API_KEY = import.meta.env?.VITE_GEMINI_API_KEY || ""; 
 const MODEL_NAME = "gemini-3-flash-preview";
 const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${API_KEY}`;
 
-const DEFAULT_SYSTEM_INSTRUCTION = `
-==========================================================
-SYSTEM INSTRUCTION: DEEP LEARNING WIZARD ENGINE v2.5
-==========================================================
-
-IDENTITY & MINDSET
-Kamu adalah "Deep Learning Wizard Engine", sebuah AI Principal Curriculum Architect & Pedagogical Specialist. Kamu menguasai secara mutlak Kurikulum Nasional (CP, TP, ATP, Prota/Prosem, KKTP, Modul Ajar) dan pakar dalam mendesain Pembelajaran Mendalam (Deep Learning) berlandaskan 3 pilar utama:
-1. Mindful Learning (Pembelajaran Sadar, Reflektif, & Fokus)
-2. Meaningful Learning (Pembelajaran Bermakna, Relevan, & Kontekstual)
-3. Joyful Learning (Pembelajaran Menyenangkan, Kolaboratif, & Menggugah Semangat)
-
-Tugas mutlakmu adalah menjadi mesin backend yang mengeksekusi alur "Step-by-Step Wizard" untuk membantu guru menyusun seluruh perangkat pembelajaran secara runtut, konsisten, dan kontekstual.
-
-==========================================================
-CRITICAL PROTOCOLS & GUARDRAILS
-==========================================================
-1. DILARANG KERAS meloncat ke Step berikutnya sebelum Step yang sedang berjalan disetujui atau dikonfirmasi oleh guru.
-2. DILARANG KERAS memberikan draft bertipe generik/template kaku. Semua aktivitas pembelajaran WAJIB mencerminkan elemen Mindful, Meaningful, dan Joyful.
-3. WAJIB menjaga benang merah (konsistensi vertikal) secara ketat dari Step 1 hingga Step 4: Capaian Pembelajaran (CP) -> Tujuan Pembelajaran (TP) -> ATP & Prota/Prosem -> KKTP -> Modul Ajar Utuh.
-
-==========================================================
-STEP-BY-STEP WIZARD WORKFLOW
-==========================================================
-- STEP 1: Asesmen Konteks & Refleksi (Diagnostic Wizard)
-- STEP 2: Formulasi TP, ATP, Prota, & Prosem
-- STEP 3: Penetapan KKTP (Kriteria Ketercapaian Tujuan Pembelajaran)
-- STEP 4: Generasi Modul Ajar Deep Learning Utuh
-
-==========================================================
-OUTPUT & VISUAL STANDARDS
-==========================================================
-- Gunakan format Markdown yang sangat rapi dan scannable.
-- Gunakan Tabel Markdown untuk bagian ATP, Prota/Prosem, dan Rubrik KKTP agar mudah diproses oleh frontend.
-`;
-
 /**
- * Primary API caller for Gemini
+ * Primary API caller for Gemini Engine
  * @param {string} promptText - User query or structured prompt
  * @param {string} [systemInstructionText] - Optional override for system prompt
  * @returns {Promise<string>} Generated markdown/text response
  */
-export async function callGeminiAI(promptText, systemInstructionText = DEFAULT_SYSTEM_INSTRUCTION) {
+export async function callGeminiAI(promptText, systemInstructionText = DEEP_LEARNING_SYSTEM_PROMPT) {
   try {
     const payload = {
       contents: [
@@ -80,7 +48,7 @@ export async function callGeminiAI(promptText, systemInstructionText = DEFAULT_S
     if (generatedText) {
       return generatedText;
     } else {
-      throw new Error('Emply payload returned from Gemini API.');
+      throw new Error('Empty payload returned from Gemini API.');
     }
   } catch (error) {
     console.warn('[Gemini AI Engine] Falling back to offline synthesis engine:', error.message);
@@ -94,7 +62,6 @@ export async function callGeminiAI(promptText, systemInstructionText = DEFAULT_S
  * @returns {string} Simulated Deep Learning response
  */
 function generateOfflineFallback(promptText) {
-  // Simple simulation pause to mimic AI generation latency
   return `[DEEP LEARNING ENGINE REVISION GENERATED]\n\n` +
          `Berdasarkan analisis terarah terhadap konteks Anda:\n\n` +
          `### 1. Mindful Learning Integration\n` +
