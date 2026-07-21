@@ -4,22 +4,27 @@ import {
   Search,
   Plus,
   Sparkles,
-  FileText
+  FileText,
+  Layers,
+  Clock,
+  CheckCircle2,
+  ChevronRight
 } from 'lucide-react';
 
 /**
- * TRISULAPROMPT - Project Hub View Component
- * Filterable & searchable card grid for managing all Kurikulum Merdeka teaching materials.
+ * TRISULAPROMPT - Project Hub View Component v2.5
+ * Author: TRISULACODER v8.7 - Lead Solution Architect
+ * Module: Filterable & Searchable Grid for Kurikulum Merdeka Teaching Materials
  * 
  * @param {Object} props
- * @param {Array} props.projects - Array of project objects
- * @param {string} props.searchQuery - Current search query string
- * @param {Function} props.setSearchQuery - Setter for search query
+ * @param {Array} props.projects - Array of teaching material project objects
+ * @param {string} props.searchQuery - Active search query string
+ * @param {Function} props.setSearchQuery - Setter function for global search
  * @param {string} props.statusFilter - Active status filter ('All' | 'In Progress' | 'Completed')
- * @param {Function} props.setStatusFilter - Setter for status filter
- * @param {Function} props.setActiveProject - Setter for selected active project
- * @param {Function} props.setActiveTab - Setter for switching main workspace tabs
- * @param {Function} props.onOpenWizard - Callback to trigger the Deep Learning Wizard
+ * @param {Function} props.setStatusFilter - Setter function for status filter
+ * @param {Function} props.setActiveProject - Setter function for selected active project
+ * @param {Function} props.setActiveTab - Setter function for switching main workspace tabs
+ * @param {Function} props.onOpenWizard - Callback trigger for the Deep Learning Wizard
  */
 export default function ProjectHub({
   projects = [],
@@ -31,6 +36,7 @@ export default function ProjectHub({
   setActiveTab,
   onOpenWizard
 }) {
+  // Apply status and text search filtering
   const filteredProjects = projects
     .filter((p) => (statusFilter === 'All' ? true : p.status === statusFilter))
     .filter((p) =>
@@ -40,8 +46,8 @@ export default function ProjectHub({
     );
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
-      {/* Header Section with CTA */}
+    <div className="p-6 max-w-7xl mx-auto space-y-6 animate-fadeIn">
+      {/* Header Section with CTA Button */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-black text-white tracking-tight">
@@ -53,14 +59,13 @@ export default function ProjectHub({
         </div>
         <button
           onClick={onOpenWizard}
-          className="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-4 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-indigo-600/30 transition active:scale-95"
+          className="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-4 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-indigo-600/30 transition active:scale-95 cursor-pointer"
         >
-          <Plus className="w-4 h-4" /> Proyek Baru
+          <Plus className="w-4 h-4 text-amber-300" /> Proyek Baru
         </button>
       </div>
 
-      {/* Filter and Search Bar Panel */}
-      {}
+      {/* Filter and Search Bar Control Panel */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-900/80 p-3 border border-slate-800 rounded-2xl shadow-md">
         <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
           <Filter className="w-4 h-4 text-slate-400 ml-2 shrink-0" />
@@ -69,7 +74,7 @@ export default function ProjectHub({
             <button
               key={st}
               onClick={() => setStatusFilter(st)}
-              className={`text-xs px-3 py-1.5 rounded-xl font-semibold transition whitespace-nowrap ${
+              className={`text-xs px-3 py-1.5 rounded-xl font-semibold transition whitespace-nowrap cursor-pointer ${
                 statusFilter === st
                   ? 'bg-indigo-600 text-white shadow-md'
                   : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
@@ -80,7 +85,7 @@ export default function ProjectHub({
           ))}
         </div>
 
-        <div className="flex items-center bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 w-full sm:w-64 text-xs focus-within:border-indigo-500 transition">
+        <div className="flex items-center bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 w-full sm:w-64 text-xs focus-within:border-indigo-500/80 transition">
           <Search className="w-4 h-4 text-slate-500 mr-2 shrink-0" />
           <input
             type="text"
@@ -92,11 +97,11 @@ export default function ProjectHub({
         </div>
       </div>
 
-      {/* Projects Grid Display */}
-      {}
+      {/* Projects Grid Display Area */}
       {filteredProjects.length === 0 ? (
-        <div className="text-center py-12 bg-slate-900/40 rounded-3xl border border-slate-800 space-y-3">
-          <p className="text-sm font-semibold text-slate-400">
+        <div className="text-center py-16 bg-slate-900/40 rounded-3xl border border-slate-800/80 space-y-3">
+          <Layers className="w-10 h-10 text-slate-600 mx-auto" />
+          <p className="text-xs font-semibold text-slate-400">
             Tidak ada perangkat ajar yang cocok dengan filter.
           </p>
           <button
@@ -104,9 +109,9 @@ export default function ProjectHub({
               setStatusFilter('All');
               setSearchQuery('');
             }}
-            className="text-xs text-indigo-400 hover:underline font-medium"
+            className="text-xs text-indigo-400 hover:underline font-medium cursor-pointer"
           >
-            Reset Filter Search
+            Reset Filter & Search
           </button>
         </div>
       ) : (
@@ -141,11 +146,10 @@ export default function ProjectHub({
                 </p>
               </div>
 
-              {/* Progress & Quick Actions */}
-              {}
+              {/* Document Progress & Direct Navigation CTA */}
               <div className="space-y-3 pt-3 border-t border-slate-800/80">
-                <div className="flex justify-between text-[11px] text-slate-400">
-                  <span>Progres Pembentukan AI</span>
+                <div className="flex justify-between text-[11px] text-slate-400 font-medium">
+                  <span>Progres Kelengkapan</span>
                   <span className="font-bold text-indigo-400">{proj.progress}%</span>
                 </div>
                 <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
@@ -161,18 +165,18 @@ export default function ProjectHub({
                       setActiveProject(proj);
                       setActiveTab('workspace');
                     }}
-                    className="flex-1 bg-indigo-600/20 hover:bg-indigo-600 text-indigo-300 hover:text-white border border-indigo-500/30 text-xs py-2 rounded-xl font-bold transition flex items-center justify-center gap-1.5 active:scale-95"
+                    className="flex-1 bg-indigo-600/20 hover:bg-indigo-600 text-indigo-300 hover:text-white border border-indigo-500/30 text-xs py-2 rounded-xl font-bold transition flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer"
                   >
-                    <Sparkles className="w-3.5 h-3.5" /> Split AI
+                    <Sparkles className="w-3.5 h-3.5 text-amber-300" /> Split AI
                   </button>
                   <button
                     onClick={() => {
                       setActiveProject(proj);
                       setActiveTab('notion');
                     }}
-                    className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs py-2 rounded-xl font-bold border border-slate-700 transition flex items-center justify-center gap-1.5 active:scale-95"
+                    className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs py-2 rounded-xl font-bold border border-slate-700 transition flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer"
                   >
-                    <FileText className="w-3.5 h-3.5" /> Notion Studio
+                    <FileText className="w-3.5 h-3.5 text-indigo-400" /> Notion Studio
                   </button>
                 </div>
               </div>
