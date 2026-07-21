@@ -2,6 +2,11 @@ import React, { useState } from 'react';
 import DeepLearningWizard from './components/DeepLearningWizard';
 import AIWorkspace from './components/AIWorkspace';
 
+/**
+ * TRISULAPROMPT - Root Application Shell v2.5
+ * UI Layout dengan Deep Navy (#0B192C) & Gold (#D4AF37) Theme
+ */
+
 export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard'); // 'dashboard' | 'workspace' | 'project-hub' | 'notion-studio'
   const [isWizardOpen, setIsWizardOpen] = useState(false);
