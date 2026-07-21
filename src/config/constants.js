@@ -10,7 +10,7 @@ export const DOC_TREE_LABELS = [
   { id: 'tp', label: '2. Tujuan Pembelajaran (TP)' },
   { id: 'atp', label: '3. Alur TP (ATP)' },
   { id: 'kktp', label: '4. KKTP Rubrik Penilaian' },
-  { id: 'prota', label: '5. Program Tahunan (Prota)' },
+  { id: 'prota', label: '5. Program Tahunan (Prota)' }, 
   { id: 'prosem', label: '6. Program Semester (Prosem)' },
   { id: 'modul', label: '7. Modul Ajar Utuh (3 Pilar)' }
 ];
