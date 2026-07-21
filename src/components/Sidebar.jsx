@@ -9,14 +9,15 @@ import {
 } from 'lucide-react';
 
 /**
- * TRISULAPROMPT - Sidebar Navigation Component
- * Collapsible navigation panel for switching workspace views & triggering export tools.
+ * TRISULAPROMPT - Sidebar Navigation Component v2.5
+ * Author: TRISULACODER v8.7 - Lead Solution Architect
+ * Module: Collapsible Navigation Panel & Quick Action Trigger
  * 
  * @param {Object} props
  * @param {boolean} props.isSidebarOpen - Responsive toggle state for sidebar expansion
- * @param {string} props.activeTab - Currently active tab identifier ('dashboard' | 'projects' | 'workspace' | 'notion')
+ * @param {string} props.activeTab - Currently active view tab ('dashboard' | 'projects' | 'workspace' | 'notion')
  * @param {Function} props.setActiveTab - State setter function for tab switching
- * @param {Function} props.onOpenExport - Callback to trigger Export Center modal
+ * @param {Function} props.onOpenExport - Callback trigger to open Export Center Modal
  */
 export default function Sidebar({
   isSidebarOpen,
@@ -57,7 +58,7 @@ export default function Sidebar({
         isSidebarOpen ? 'w-64' : 'w-16'
       } bg-[#0F172A]/70 border-r border-slate-800 flex flex-col justify-between transition-all duration-300 z-30 shrink-0`}
     >
-      {}
+      {/* Top Navigation Items */}
       <div className="p-3 space-y-1">
         {navItems.map((item) => {
           const Icon = item.icon;
@@ -68,7 +69,7 @@ export default function Sidebar({
               onClick={() => setActiveTab(item.id)}
               className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition ${
                 isActive
-                  ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30'
+                  ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30 shadow-md'
                   : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
               }`}
               title={!isSidebarOpen ? item.label : undefined}
@@ -80,6 +81,7 @@ export default function Sidebar({
         })}
       </div>
 
+      {/* Bottom Status Card & Quick Export Trigger */}
       {}
       {isSidebarOpen && (
         <div className="p-3 m-3 bg-slate-900/80 border border-slate-800 rounded-2xl text-center shadow-lg">
@@ -94,7 +96,7 @@ export default function Sidebar({
             onClick={onOpenExport}
             className="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs py-1.5 rounded-lg border border-slate-700 transition flex items-center justify-center gap-1.5 font-medium active:scale-95"
           >
-            <Download className="w-3.5 h-3.5" /> Export Center
+            <Download className="w-3.5 h-3.5 text-indigo-400" /> Export Center
           </button>
         </div>
       )}
