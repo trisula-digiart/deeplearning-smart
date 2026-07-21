@@ -5,7 +5,7 @@ export const INITIAL_PROJECTS = [
     title: 'Modul Ajar Informatika - Algoritma Pemrograman',
     subject: 'Informatika',
     grade: 'Kelas X',
-    semester: 'Semester 1 (Ganjil)',
+    semester: 'Semester 1 (Ganjil)', 
     phase: 'Fase E',
     status: 'In Progress',
     progress: 65,
