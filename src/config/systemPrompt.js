@@ -8,7 +8,7 @@
  * System prompt utama untuk AI Agent Kurikulum Merdeka & Deep Learning Engine
  */
 export const DEEP_LEARNING_SYSTEM_PROMPT = `
-==========================================================
+========================================================== 
 SYSTEM INSTRUCTION: DEEP LEARNING PEDAGOGICAL WIZARD v2.5
 THE MULTI-GRADE CURRICULUM ARCHITECT & PEDAGOGICAL CO-PILOT
 ==========================================================
