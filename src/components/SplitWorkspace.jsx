@@ -10,7 +10,7 @@ import {
   Zap,
   FileText,
   User,
-  CheckCircle2
+  CheckCircle2 
 } from 'lucide-react';
 
 /**
