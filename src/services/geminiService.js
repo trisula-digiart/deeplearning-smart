@@ -1,94 +1,142 @@
-import { DEEP_LEARNING_SYSTEM_PROMPT } from '../config/systemPrompt';
+import { GoogleGenAI } from '@google/genai';
 
 /**
- * TRISULAPROMPT - Gemini AI Service Engine v2.5
- * Handles integration with Gemini 3 Flash API for Kurikulum Merdeka & Deep Learning synthesis.
- * Built-in support for Mindful, Meaningful, & Joyful pedagogy pillars.
+ * TRISULAPROMPT - Gemini AI Service Integration Layer v2.5
+ * Menghubungkan Engine Deep Learning Kurikulum Merdeka ke Google Gemini AI
  */
 
-// Mengambil API Key dari environment variable (.env / Vercel), dengan fallback string kosong
-const API_KEY = import.meta.env?.VITE_GEMINI_API_KEY || ""; 
-const MODEL_NAME = "gemini-3-flash-preview";
-const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${API_KEY}`;
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
 
-/**
- * Primary API caller for Gemini Engine
- * @param {string} promptText - User query or structured prompt
- * @param {string} [systemInstructionText] - Optional override for system prompt
- * @returns {Promise<string>} Generated markdown/text response
- */
-export async function callGeminiAI(promptText, systemInstructionText = DEEP_LEARNING_SYSTEM_PROMPT) {
+// Inisialisasi Google GenAI SDK jika API Key tersedia
+let ai = null;
+if (API_KEY) {
   try {
-    const payload = {
-      contents: [
-        {
-          parts: [{ text: promptText }]
-        }
-      ],
-      systemInstruction: {
-        parts: [{ text: systemInstructionText }]
-      }
-    };
-
-    const response = await fetch(GEMINI_API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(payload)
-    });
-
-    if (!response.ok) {
-      throw new Error(`Gemini API Error Status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    const generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-
-    if (generatedText) {
-      return generatedText;
-    } else {
-      throw new Error('Empty payload returned from Gemini API.');
-    }
+    ai = new GoogleGenAI({ apiKey: API_KEY });
   } catch (error) {
-    console.warn('[Gemini AI Engine] Falling back to offline synthesis engine:', error.message);
-    return generateOfflineFallback(promptText);
+    console.warn("[TRISULA AI] Inisialisasi Gemini SDK gagal, beralih ke Mock Engine Mode:", error);
   }
 }
 
 /**
- * Fallback generator when offline or API key is not configured
- * @param {string} promptText - Original user prompt
- * @returns {string} Simulated Deep Learning response
+ * System Prompt Utama untuk Kurikulum Merdeka 3 Pilar Deep Learning
  */
-function generateOfflineFallback(promptText) {
-  return `[DEEP LEARNING ENGINE REVISION GENERATED]\n\n` +
-         `Berdasarkan analisis terarah terhadap konteks Anda:\n\n` +
-         `### 1. Mindful Learning Integration\n` +
-         `- Menambahkan sesi hening / pernapasan "STOP" 3 menit sebelum pembelajaran dimulai.\n` +
-         `- Lembar refleksi diri untuk mengukur kesiapan emosional siswa.\n\n` +
-         `### 2. Meaningful Learning Integration\n` +
-         `- Menghubungkan topik secara langsung dengan studi kasus di lingkungan sekitar sekolah.\n` +
-         `- Penugasan berupa mini proyek pemecahan masalah kontekstual.\n\n` +
-         `### 3. Joyful Learning Integration\n` +
-         `- Aktivitas kerja kelompok interaktif dengan strategi gamifikasi.\n` +
-         `- Sesi peer-review yang menyenangkan dan apresiatif.`;
-}
+const SYSTEM_PROMPT_KURIKULUM_MERDEKA = `
+Anda adalah Pakar Kurikulum Merdeka & Senior Educational Designer berpengalaman.
+Tugas Anda adalah membuat dokumen Perangkat Ajar Kurikulum Merdeka secara otomatis, rapi, terstruktur, dan presisi tinggi.
+
+Setiap dokumen yang dibuat WAJIB mengintegrasikan 3 Pilar Deep Learning:
+1. Mindful Learning (Pembelajaran Sadar & Reflektif)
+2. Meaningful Learning (Pembelajaran Bermakna & Kontekstual)
+3. Joyful Learning (Pembelajaran Menyenangkan & Mengembangkan Potensi)
+
+Format output harus berupa JSON yang valid dan bersih agar dapat diproses oleh sistem UI SaaS.
+`;
 
 /**
- * Specialized helper to synthesize initial TP, ATP, KKTP draft from CP and Diagnostic Data
+ * Generasi Perangkat Ajar Utama (Modul Ajar / TP / ATP / KKTP / Prota / Prosem)
+ * @param {Object} params Parameter Kurikulum Merdeka dari Wizard Form
+ * @returns {Promise<Object>} Output dokumen terstruktur
  */
-export async function generateWizardDrafts({ subject, grade, cpText, learningStyle, realIssue }) {
-  const prompt = `
-Buatkan draf TP, ATP, KKTP, Prota, dan Prosem Kurikulum Merdeka berlandaskan Deep Learning (Mindful, Meaningful, Joyful) untuk:
-- Mata Pelajaran: ${subject}
-- Kelas: ${grade}
-- Capaian Pembelajaran (CP): ${cpText}
-- Profil Murid / Gaya Belajar: ${learningStyle}
-- Isu Nyata Lingkungan: ${realIssue}
+export const generatePerangkatAjar = async (params) => {
+  const {
+    mataPelajaran = 'Informatika',
+    fase = 'Fase E (Kelas 10)',
+    topik = 'Algoritma Pemrograman',
+    jenisDokumen = 'Modul Ajar',
+    durasi = '2 JP (2 x 45 Menit)',
+    pilarFocus = ['Mindful', 'Meaningful', 'Joyful']
+  } = params;
 
-Berikan keluaran terstruktur dengan penjelasan ringkas untuk masing-masing poin.
-  `.trim();
+  // Prompt Khusus Per jenisDokumen
+  const userPrompt = `
+  Buatkan dokumen ${jenisDokumen} Kurikulum Merdeka dengan spesifikasi berikut:
+  - Mata Pelajaran: ${mataPelajaran}
+  - Fase/Kelas: ${fase}
+  - Topik/Materi Utama: ${topik}
+  - Alokasi Waktu: ${durasi}
+  - Fokus Pilar Deep Learning: ${pilarFocus.join(', ')}
 
-  return await callGeminiAI(prompt);
-}
+  Sertakan struktur lengkap:
+  1. Identitas Modul
+  2. Capaian Pembelajaran (CP) & Tujuan Pembelajaran (TP)
+  3. Indikator Ketercapaian (KKTP)
+  4. Kegiatan Pembelajaran (Pendahuluan, Inti - 3 Pilar, Penutup)
+  5. Asesmen (Diagnostik, Formatif, Sumatif)
+  6. Lembar Kerja Peserta Didik (LKPD) & Bahan Bacaan
+
+  Kembalikan dalam format JSON dengan struktur:
+  {
+    "title": "Judul Dokumen",
+    "subject": "${mataPelajaran}",
+    "phase": "${fase}",
+    "topic": "${topik}",
+    "summary": "Ringkasan Eksekutif",
+    "components": [
+      { "section": "Nama Bagian", "content": "Detail penjelasan atau markdown list" }
+    ]
+  }
+  `;
+
+  // Path 1: Menggunakan Live Gemini API
+  if (ai) {
+    try {
+      const response = await ai.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: [
+          { role: 'user', parts: [{ text: SYSTEM_PROMPT_KURIKULUM_MERDEKA + '\n\n' + userPrompt }] }
+        ],
+        config: {
+          temperature: 0.7,
+          responseMimeType: 'application/json'
+        }
+      });
+
+      const responseText = response.text();
+      const parsedData = JSON.parse(responseText);
+      return {
+        success: true,
+        source: 'gemini-api',
+        data: parsedData
+      };
+    } catch (err) {
+      console.error("[TRISULA AI] Gemini API Error, fallback ke Smart Mock Engine:", err);
+    }
+  }
+
+  // Path 2: Fallback Smart Mock Engine (Diaktifkan jika API Key Kosong/Limit Error)
+  await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulasi latency jaringan
+
+  return {
+    success: true,
+    source: 'mock-engine',
+    data: {
+      title: `${jenisDokumen} - ${topik}`,
+      subject: mataPelajaran,
+      phase: fase,
+      topic: topik,
+      summary: `Perangkat ajar berbasis 3 Pilar Deep Learning (${pilarFocus.join(', ')}) dirancang khusus untuk meningkatkan pemahaman kontekstual dan keterlibatan aktif siswa.`,
+      components: [
+        {
+          section: "1. Identitas & Informasi Umum",
+          content: `• Mata Pelajaran: ${mataPelajaran}\n• Fase / Kelas: ${fase}\n• Alokasi Waktu: ${durasi}\n• Target Peserta Didik: Reguler / Tipikal\n• Moda Pembelajaran: Tatap Muka (Luring)`
+        },
+        {
+          section: "2. Capaian & Tujuan Pembelajaran (TP)",
+          content: `• Capaian Pembelajaran: Peserta didik mampu menganalisis dan menerapkan konsep dasar ${topik} secara kritis.\n• Tujuan Pembelajaran (TP 1.1): Memahami alur logika dan implementasi ${topik} dalam kehidupan sehari-hari.\n• Indikator (KKTP): Mampu merancang alur penyelesaian masalah dengan akurasi min. 80%.`
+        },
+        {
+          section: "3. Kegiatan Pembelajaran (3 Pilar Deep Learning)",
+          content: `• Mindful Learning (15 Menit): Refleksi awal & orientasi masalah interaktif.\n• Meaningful Learning (50 Menit): Diskusi kelompok memecahkan studi kasus dunia nyata terkait ${topik}.\n• Joyful Learning (25 Menit): Kuis gamifikasi & presentasi kolaboratif antarkelompok.`
+        },
+        {
+          section: "4. Rencana Asesmen",
+          content: `• Asesmen Awal (Diagnostik): Pertanyaan pemantik logika.\n• Asesmen Formatif: Lembar observasi diskusi & unjuk kerja.\n• Asesmen Sumatif: Tes tertulis pilihan ganda beralasan & pembuatan proyek sederhana.`
+        }
+      ]
+    }
+  };
+};
+
+export default {
+  generatePerangkatAjar
+};
