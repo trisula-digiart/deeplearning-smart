@@ -3,7 +3,7 @@ import {
   LayoutDashboard,
   FolderKanban,
   Sparkles,
-  FileText,
+  FileText, 
   Download,
   Zap
 } from 'lucide-react';
