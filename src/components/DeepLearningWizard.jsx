@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { generatePerangkatAjar } from '../services/geminiService';
 
 /**
- * TRISULAPROMPT - Deep Learning Wizard Component v2.5
+ * TRISULAPROMPT - Deep Learning Wizard Component v2.5 (Fully Patched)
  * Modal Multi-Step Form untuk pembuatan Perangkat Ajar Kurikulum Merdeka
  */
 
@@ -89,11 +89,29 @@ export default function DeepLearningWizard({ isOpen, onClose, onSuccess }) {
 
     setIsLoading(true);
     try {
-      const result = await generatePerangkatAjar(formData);
+      const payload = {
+        subject: formData.mataPelajaran,
+        phase: formData.fase,
+        topic: formData.topik,
+        instruction: `Buatkan ${formData.jenisDokumen} dengan durasi ${formData.durasi}. Fokus pilar: ${formData.pilarFocus.join(', ')}.`
+      };
+
+      const result = await generatePerangkatAjar(payload);
+
       if (result.success && onSuccess) {
-        onSuccess(result.data);
+        // Konstruksi Objek Terstruktur agar Sinkron dengan App.jsx & AI Workspace
+        const formattedDocument = {
+          title: `${formData.jenisDokumen} ${formData.mataPelajaran} - ${formData.topik}`,
+          subject: formData.mataPelajaran,
+          phase: formData.fase,
+          topic: formData.topik,
+          summary: `Dokumen ${formData.jenisDokumen} Kurikulum Merdeka terintegrasi 3 Pilar (${formData.pilarFocus.join(', ')}).`,
+          content: typeof result.data === 'string' ? result.data : JSON.stringify(result.data, null, 2)
+        };
+
+        onSuccess(formattedDocument);
         onClose();
-        // Reset State
+        // Reset State ke awal
         setStep(1);
       }
     } catch (err) {
