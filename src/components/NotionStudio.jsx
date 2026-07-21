@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 
 /**
- * TRISULAPROMPT - Notion Studio Component v2.5
- * AI-Powered Markdown & WYSIWYG Editor untuk Penyuntingan Perangkat Ajar
+ * TRISULAPROMPT - Notion Studio Component v2.5 (Fully Patched with Export Center)
+ * Author: TRISULACODER v8.7 - Lead Solution Architect
+ * AI-Powered Markdown & WYSIWYG Editor + Native Document Export Engine
  */
 
 export default function NotionStudio({ activeDoc, onSaveDoc, onBackToDashboard }) {
@@ -39,6 +40,7 @@ export default function NotionStudio({ activeDoc, onSaveDoc, onBackToDashboard }
 
   const [activeViewMode, setActiveViewMode] = useState('split'); // 'editor' | 'preview' | 'split'
   const [isAiProcessing, setIsAiProcessing] = useState(false);
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
 
   const showToast = (msg) => {
@@ -46,12 +48,11 @@ export default function NotionStudio({ activeDoc, onSaveDoc, onBackToDashboard }
     setTimeout(() => setToastMessage(''), 3000);
   };
 
-  // AI Toolbar Quick Helpers (PUEBI Fix, Expand, Simplify)
+  // AI Toolbar Quick Helpers (PUEBI Fix & Content Expansion)
   const handleAiPuebiFix = () => {
     setIsAiProcessing(true);
     showToast('🤖 AI sedang merapikan tata bahasa & PUEBI...');
     setTimeout(() => {
-      // Simulasi Auto-fix PUEBI
       const fixed = content
         .replace(/di /g, 'di-')
         .replace(/di-sekolah/g, 'di sekolah')
@@ -89,6 +90,73 @@ export default function NotionStudio({ activeDoc, onSaveDoc, onBackToDashboard }
     showToast('💾 Dokumen berhasil disimpan ke Project Hub!');
   };
 
+  // ==========================================
+  // REAL EXPORT & DOWNLOAD ENGINE
+  // ==========================================
+
+  const handleDownloadWord = () => {
+    const rawTitle = docTitle || 'Modul_Ajar_Deep_Learning';
+    const htmlContent = `
+      <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+      <head>
+        <meta charset='utf-8'>
+        <title>${rawTitle}</title>
+        <style>
+          body { font-family: 'Calibri', 'Arial', sans-serif; line-height: 1.6; padding: 20px; color: #1e293b; }
+          h1 { color: #0B192C; border-bottom: 2px solid #D4AF37; padding-bottom: 5px; }
+          h2 { color: #1E3A8A; margin-top: 20px; border-bottom: 1px solid #cbd5e1; }
+          h3 { color: #D4AF37; margin-top: 15px; }
+          ul, ol { margin-left: 20px; }
+        </style>
+      </head>
+      <body>
+        <h1>${rawTitle}</h1>
+        <hr/>
+        <div>${content.replace(/\n/g, '<br/>')}</div>
+      </body>
+      </html>
+    `;
+
+    const blob = new Blob(['\ufeff' + htmlContent], { type: 'application/msword' });
+    const url = URL.createObjectURL(blob);
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.href = url;
+    downloadAnchor.download = `${rawTitle.replace(/[^a-zA-Z0-9]/g, '_')}.doc`;
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    document.body.removeChild(downloadAnchor);
+    URL.revokeObjectURL(url);
+
+    setIsExportModalOpen(false);
+    showToast('✅ Berkas Word (.doc) berhasil diunduh!');
+  };
+
+  const handleDownloadTxt = () => {
+    const rawTitle = docTitle || 'Modul_Ajar_Deep_Learning';
+    const rawContent = `${rawTitle}\n\n=========================================\n\n${content}`;
+
+    const blob = new Blob([rawContent], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.href = url;
+    downloadAnchor.download = `${rawTitle.replace(/[^a-zA-Z0-9]/g, '_')}.txt`;
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    document.body.removeChild(downloadAnchor);
+    URL.revokeObjectURL(url);
+
+    setIsExportModalOpen(false);
+    showToast('✅ Berkas Dokumen (.txt) berhasil diunduh!');
+  };
+
+  const handlePrintPDF = () => {
+    setIsExportModalOpen(false);
+    showToast('🖨️ Membuka jendela cetak / simpan PDF...');
+    setTimeout(() => {
+      window.print();
+    }, 500);
+  };
+
   return (
     <div className="h-full flex flex-col bg-[#0F172A]/80 rounded-3xl border border-slate-800 shadow-2xl overflow-hidden relative">
       
@@ -107,7 +175,7 @@ export default function NotionStudio({ activeDoc, onSaveDoc, onBackToDashboard }
           {onBackToDashboard && (
             <button
               onClick={onBackToDashboard}
-              className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold transition-all"
+              className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold transition-all cursor-pointer"
             >
               ← Kembali
             </button>
@@ -128,12 +196,12 @@ export default function NotionStudio({ activeDoc, onSaveDoc, onBackToDashboard }
           </div>
         </div>
 
-        {/* AI Magic Action Buttons */}
+        {/* AI Magic Action Buttons & Export Action */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0">
           <button
             onClick={handleAiPuebiFix}
             disabled={isAiProcessing}
-            className="px-3 py-1.5 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shrink-0"
+            className="px-3 py-1.5 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 cursor-pointer disabled:opacity-50"
           >
             <span>✨ AI Rapikan PUEBI</span>
           </button>
@@ -141,7 +209,7 @@ export default function NotionStudio({ activeDoc, onSaveDoc, onBackToDashboard }
           <button
             onClick={handleAiExpandText}
             disabled={isAiProcessing}
-            className="px-3 py-1.5 bg-amber-500/10 hover:bg-amber-500/20 text-[#D4AF37] border border-amber-500/30 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shrink-0"
+            className="px-3 py-1.5 bg-amber-500/10 hover:bg-amber-500/20 text-[#D4AF37] border border-amber-500/30 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 cursor-pointer disabled:opacity-50"
           >
             <span>⚡ AI Diperdalam</span>
           </button>
@@ -152,7 +220,7 @@ export default function NotionStudio({ activeDoc, onSaveDoc, onBackToDashboard }
               <button
                 key={mode}
                 onClick={() => setActiveViewMode(mode)}
-                className={`px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase transition-all ${
+                className={`px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase transition-all cursor-pointer ${
                   activeViewMode === mode
                     ? 'bg-[#D4AF37] text-black'
                     : 'text-slate-400 hover:text-white'
@@ -164,8 +232,15 @@ export default function NotionStudio({ activeDoc, onSaveDoc, onBackToDashboard }
           </div>
 
           <button
+            onClick={() => setIsExportModalOpen(true)}
+            className="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl shadow-lg transition-all shrink-0 cursor-pointer flex items-center gap-1.5"
+          >
+            <span>📥 Cetak / Export</span>
+          </button>
+
+          <button
             onClick={handleSave}
-            className="px-4 py-1.5 bg-[#D4AF37] hover:bg-amber-500 text-black font-bold text-xs rounded-xl shadow-lg transition-all shrink-0"
+            className="px-4 py-1.5 bg-[#D4AF37] hover:bg-amber-500 text-black font-bold text-xs rounded-xl shadow-lg transition-all shrink-0 cursor-pointer"
           >
             💾 Simpan Dokumen
           </button>
@@ -215,6 +290,89 @@ export default function NotionStudio({ activeDoc, onSaveDoc, onBackToDashboard }
         )}
 
       </div>
+
+      {/* EXPORT CENTER MODAL */}
+      {isExportModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-[#0F172A] border border-slate-800 w-full max-w-md rounded-3xl p-6 space-y-5 shadow-2xl animate-in fade-in zoom-in duration-200">
+            
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div>
+                <h3 className="font-extrabold text-base text-white flex items-center gap-2">
+                  <span>📄</span> Export Center Dokumen
+                </h3>
+                <p className="text-xs text-slate-400 mt-0.5">Pilih format cetak/unduhan untuk perangkat ajar Anda.</p>
+              </div>
+              <button
+                onClick={() => setIsExportModalOpen(false)}
+                className="text-slate-500 hover:text-white text-lg font-bold cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              <button
+                onClick={handleDownloadWord}
+                className="w-full p-3.5 bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-[#D4AF37] rounded-2xl flex items-center justify-between transition-all group cursor-pointer"
+              >
+                <div className="flex items-center gap-3 text-left">
+                  <span className="text-2xl">🟦</span>
+                  <div>
+                    <div className="font-bold text-xs text-slate-100 group-hover:text-[#D4AF37]">
+                      Unduh Berkas Word (.doc)
+                    </div>
+                    <div className="text-[10px] text-slate-400">Siap diedit lanjutan di MS Word / Docs</div>
+                  </div>
+                </div>
+                <span className="text-xs text-[#D4AF37] font-bold">Unduh →</span>
+              </button>
+
+              <button
+                onClick={handleDownloadTxt}
+                className="w-full p-3.5 bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-[#D4AF37] rounded-2xl flex items-center justify-between transition-all group cursor-pointer"
+              >
+                <div className="flex items-center gap-3 text-left">
+                  <span className="text-2xl">📄</span>
+                  <div>
+                    <div className="font-bold text-xs text-slate-100 group-hover:text-[#D4AF37]">
+                      Unduh Teks Polos (.txt)
+                    </div>
+                    <div className="text-[10px] text-slate-400">Format markdown murni bebas karakter aneh</div>
+                  </div>
+                </div>
+                <span className="text-xs text-[#D4AF37] font-bold">Unduh →</span>
+              </button>
+
+              <button
+                onClick={handlePrintPDF}
+                className="w-full p-3.5 bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-[#D4AF37] rounded-2xl flex items-center justify-between transition-all group cursor-pointer"
+              >
+                <div className="flex items-center gap-3 text-left">
+                  <span className="text-2xl">🖨️</span>
+                  <div>
+                    <div className="font-bold text-xs text-slate-100 group-hover:text-[#D4AF37]">
+                      Cetak / Simpan PDF
+                    </div>
+                    <div className="text-[10px] text-slate-400">Gunakan dialog cetak sistem browser</div>
+                  </div>
+                </div>
+                <span className="text-xs text-[#D4AF37] font-bold">Cetak →</span>
+              </button>
+            </div>
+
+            <div className="pt-2 text-center">
+              <button
+                onClick={() => setIsExportModalOpen(false)}
+                className="text-xs text-slate-400 hover:text-slate-200 underline cursor-pointer"
+              >
+                Batal
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
 
     </div>
   );
