@@ -6,7 +6,7 @@ import { GAS_API_URL, API_CONFIG } from '../config/api';
  * Module: Async REST Bridge for Google Apps Script & Google Sheets Database
  */
 
-/**
+/** 
  * Mengambil seluruh daftar proyek perangkat ajar dari Google Sheets via GAS API
  * @returns {Promise<Array>} Array of project objects
  */
