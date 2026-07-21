@@ -2,28 +2,38 @@ import React, { useState, useEffect } from 'react';
 import { generateDeepLearningPrompt } from '../services/geminiService';
 
 /**
- * TRISULAPROMPT - AIWorkspace Component v2.5 (Fully Patched Contextual Generator & Layout Engine)
+ * TRISULAPROMPT - AIWorkspace Component v2.5 (Enterprise Master Edition)
  * Author: TRISULACODER v8.7 - Lead Solution Architect
- * Split-Screen Layout (AI Co-Pilot Chat + Live Canvas Auto-Append & Full Export Engine)
+ * Stack: React / Vite / Tailwind CSS
+ * Features:
+ *  - Split-Screen Layout (AI Co-Pilot Left + Live Canvas Preview Right)
+ *  - Full Markdown & Custom Table HTML Parser Engine
+ *  - Native Image Parser Engine ![alt](url)
+ *  - LaTeX Math Parser Engine ($inline$ & $$display$$)
+ *  - Mermaid.js Diagram Code Block Parser Engine (```mermaid ... ```)
+ *  - SVG Data Chart Visualizer Code Block Parser Engine (```chart ... ```)
+ *  - Dynamic Subject Generator Context (IPAS, Matematika, STEM, Bahasa Indonesia)
+ *  - Anti-Clipping Top Margin Heading Fix
+ *  - Full Enterprise Export Engine (Word .doc with styles, Plain .txt, & PDF Print Dialog)
  */
 
 export default function AIWorkspace({ activeDocument, onBackToDashboard, onUpdateDocument }) {
   const [activeSubTab, setActiveSubTab] = useState('modul-ajar');
   
-  // Default fallback data jika belum ada dokumen aktif (Spesimen Matematika SMA Kelas 11)
+  // Default fallback data (STEM Integrated: Matematika, Fisika, IPAS)
   const defaultDoc = {
-    id: 'doc-math-11',
-    title: 'Modul Ajar Matematika - Analisis Data & Statistika',
-    subject: 'Matematika',
-    phase: 'Fase F (Kelas 11-12)',
-    topic: 'Analisis Data, Statistika, & Diagram Batang/Peluang',
+    id: 'doc-stem-master',
+    title: 'Modul Ajar STEM - Model Matematika, Fisika Parabola & Diagram Alir',
+    subject: 'Matematika & Fisika (STEM)',
+    phase: 'Fase F (Kelas 11 SMA)',
+    topic: 'Analisis Data, Persamaan Gelombang & Diagram Alir Logika',
     status: 'In Progress',
-    content: `# MODUL AJAR DEEP LEARNING: MATEMATIKA FASE F (KELAS 11-12)
+    content: `# MODUL AJAR DEEP LEARNING: STEM FASE F (KELAS 11 SMA)
 
 ## I. INFORMASI UMUM
-- **Mata Pelajaran**: Matematika
-- **Fase / Kelas**: Fase F (Kelas 11-12)
-- **Topik Utama**: Analisis Data, Statistika, & Diagram Batang/Peluang
+- **Mata Pelajaran**: Matematika & Fisika (STEM Integrated)
+- **Fase / Kelas**: Fase F (Kelas 11 SMA)
+- **Topik Utama**: Analisis Data, Persamaan Gelombang & Diagram Alir Logika
 - **Alokasi Waktu**: 2 JP x 45 Menit
 
 ---
@@ -31,16 +41,77 @@ export default function AIWorkspace({ activeDocument, onBackToDashboard, onUpdat
 ## II. INTEGRASI 3 PILAR DEEP LEARNING
 
 ### 1. Mindful Learning (Penyadaran Diri)
-- **Latihan Hening STOP**: Sebelum memulai pelajaran, murid diajak hening selama 3 menit untuk menyiapakan kestabilan mental & fokus belajar.
-- **Refleksi Awal**: Murid mengisi jurnal singkat mengenai harapan dan tingkat kesiapan memahami materi Analisis Data, Statistika, & Diagram Batang/Peluang.
+- **Latihan Hening STOP**: Siswa diajak hening selama 3 menit untuk menyadarkan fokus pikiran sebelum memecahkan rumus matematika kompleks.
+- **Refleksi Awal**: Siswa menuliskan tingkat kepercayaan diri dalam mengoperasikan persamaan variabel.
 
 ### 2. Meaningful Learning (Keterhubungan Masalah Nyata)
-- **Konteksualisasi**: Mengaitkan konsep Analisis Data, Statistika, & Diagram Batang/Peluang dengan permasalahan nyata kehidupan sehari-hari di lingkungan murid.
-- **Tugas Terapan**: Murid menganalisis studi kasus lokal dan merancang solusi praktis.
+- **Konteks Lokal**: Membahas data statistik hasil panen padi lokal dan grafik tren fluktuasi harga pasar daerah.
+- **Problem Solving**: Merancang model matematika untuk memprediksi keuntungan hasil tani.
 
 ### 3. Joyful Learning (Kolaboratif & Menggembirakan)
-- **Gamifikasi Pembelajaran**: Tantangan tim interaktif berbasis kuis/permainan "BONGKAR LOGIKA".
-- **Apresiasi Sebaya**: Sesi saling memberikan umpan balik positif antar kelompok.`
+- **Game Simulasi**: Tantangan logika "Tebak Kurva & Diagram Alir" berbasis kelompok.
+- **Apresiasi Sebaya**: Sesi saling memberi masukan konstruktif atas diagram grafik kelompok lain.
+
+---
+
+## III. DUKUNGAN RUMUS MATEMATIKA (LATEX FORMULA)
+
+Berikut adalah formula dasar perhitungan statistika dan persamaan kuadrat gerak parabola:
+
+- **Rata-rata Hitung (Mean)**: $\\bar{x} = \\frac{\\sum_{i=1}^{n} x_i}{n}$
+- **Persamaan Lintasan Parabola**: $$y = v_0 t \\sin(\\theta) - \\frac{1}{2}g t^2$$
+- **Standar Deviasi**: $$S = \\sqrt{\\frac{\\sum (x_i - \\bar{x})^2}{n - 1}}$$
+
+---
+
+## IV. DIAGRAM ALIR PROSES (MERMAID FLOWCHART)
+
+```mermaid
+graph TD
+    A[Start: Input Data Poin] --> B{Apakah Data Valid?}
+    B -- Ya --> C[Hitung Rata-rata & Varians]
+    B -- Tidak --> D[Tampilkan Pesan Error]
+    D --> A
+    C --> E[Plot Kurva & Grafik Batang]
+    E --> F[End: Hasil Analisis Selesai]
+```
+
+---
+
+## V. GRAFIK DATA INTERAKTIF (CHART VISUALIZER)
+
+```chart
+{
+  "type": "bar",
+  "title": "Grafik Hasil Panen & Frekuensi Data (Ton)",
+  "labels": ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun"],
+  "data": [45, 60, 52, 85, 73, 90]
+}
+```
+
+---
+
+## VI. ILUSTRASI VISUAL EKOSISTEM & LINGKUNGAN
+
+![Diagram Anatomi Siklus Air & Daur Hujan](https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?auto=format&fit=crop&w=800&q=80)
+
+| Tahapan Siklus Air | Istilah Ilmiah | Deskripsi & Fenomena Alam |
+| :--- | :--- | :--- |
+| **Penguapan Air Laut/Danau** | Evaporasi | Air menguap menjadi uap air akibat panas sinar matahari |
+| **Penguapan Tumbuhan** | Transpirasi | Pelepasan uap air dari jaringan daun dan tumbuhan ke atmosfer |
+| **Pembentukan Awan** | Kondensasi | Perubahan uap air menjadi titik-titik air kecil pembentuk awan |
+| **Turunnya Hujan** | Presipitasi | Awan jenuh mencair dan jatuh ke bumi sebagai hujan/salju |
+
+---
+
+## VII. LEMBAR KERJA PESERTA DIDIK (LKPD)
+
+### 👥 Nama Kelompok: ____________________
+**Anggota**: 1. _______________ 2. _______________ 3. _______________
+
+#### A. ANALISIS DIAGRAM & FORMULA (15 Menit)
+1. Hitunglah nilai $y$ jika diketahui $v_0 = 20$, $\\theta = 30^\\circ$, $g = 10$, dan $t = 2$!
+2. Analisis diagram alir di atas dan tuliskan langkah perbaikannya jika input data berupa nilai negatif!`
   };
 
   const currentDoc = activeDocument || defaultDoc;
@@ -58,7 +129,7 @@ export default function AIWorkspace({ activeDocument, onBackToDashboard, onUpdat
     {
       id: 1,
       sender: 'ai',
-      text: `Halo Bapak/Ibu Guru! Saya **Deep Learning Engine v2.5**. Dokumen ${currentDoc.subject || 'Pembelajaran'} Anda siap ditinjau. Kirim instruksi seperti "Tambahkan LKPD" atau "Buat Asesmen" untuk menyempurnakan dokumen di kanvas kanan!`
+      text: `Halo Bapak/Ibu Guru! Saya **Deep Learning Engine v2.5**. Dokumen ${currentDoc.subject || 'Pembelajaran'} Anda lengkap dengan LaTeX Math, Diagram Mermaid, Grafik Data, dan Gambar siap ditinjau. Kirim instruksi seperti "Tambahkan LKPD" atau "Buat Asesmen" untuk menyempurnakannya!`
     }
   ]);
   const [inputInstruction, setInputInstruction] = useState('');
@@ -71,13 +142,82 @@ export default function AIWorkspace({ activeDocument, onBackToDashboard, onUpdat
     setTimeout(() => setToastMessage(''), 3500);
   };
 
-  // ==========================================
-  // ADVANCED MARKDOWN, TABLE & IMAGE PARSER ENGINE
-  // ==========================================
   const parseMarkdownToHTML = (markdown) => {
     if (!markdown) return '';
 
-    let lines = markdown.split('\n');
+    let content = markdown;
+
+    // 1. LATEX DISPLAY PARSER ($$...$$)
+    content = content.replace(/\$\$(.*?)\$\$/gs, (match, formula) => {
+      return `<div style="background-color:#F1F5F9; border-left:4px solid #1E3A8A; padding:12px 16px; margin:14px 0; border-radius:8px; font-family:'Courier New', monospace; font-weight:bold; color:#0F172A; text-align:center; overflow-x:auto;">
+        <span style="color:#D4AF37; font-size:10px; display:block; margin-bottom:4px; font-family:'Segoe UI', sans-serif;">[ FORMULA MATEMATIKA / FISIKA ]</span>
+        $$\\mathbf{${formula.trim()}}$$
+      </div>`;
+    });
+
+    // 2. LATEX INLINE PARSER ($...$)
+    content = content.replace(/\$(.*?)\$/g, (match, formula) => {
+      return `<code style="background-color:#F8FAFC; color:#1E3A8A; border:1px solid #CBD5E1; padding:2px 6px; border-radius:4px; font-family:'Courier New', monospace; font-weight:bold;">${formula}</code>`;
+    });
+
+    // 3. MERMAID CODE BLOCK PARSER (```mermaid ... ```)
+    content = content.replace(/```mermaid\s*([\s\S]*?)\s*```/g, (match, mermaidCode) => {
+      const cleanCode = mermaidCode.trim();
+      const lines = cleanCode.split('\n').filter(l => l.trim().length > 0);
+      
+      let nodesHtml = lines.map((line) => {
+        if (line.includes('-->') || line.includes('---')) {
+          const parts = line.split(/-->|---/);
+          const from = parts[0].trim().replace(/\[|\]|\{|\}/g, '');
+          const to = parts[1] ? parts[1].trim().replace(/\[|\]|\{|\}/g, '') : '';
+          return `<div style="display:flex; align-items:center; justify-content:center; gap:10px; margin:8px 0;">
+            <span style="background-color:#1E3A8A; color:white; padding:6px 14px; border-radius:8px; font-weight:bold; font-size:11px;">${from}</span>
+            <span style="color:#D4AF37; font-weight:bold; font-size:14px;">➔</span>
+            <span style="background-color:#0F172A; color:white; padding:6px 14px; border-radius:8px; font-weight:bold; font-size:11px;">${to}</span>
+          </div>`;
+        }
+        return '';
+      }).join('');
+
+      return `<div style="background:#F8FAFC; border:2px dashed #1E3A8A; border-radius:12px; padding:16px; margin:18px 0; text-align:center;">
+        <div style="font-size:11px; font-weight:bold; color:#1E3A8A; margin-bottom:12px; text-transform:uppercase; letter-spacing:1px; font-family:'Segoe UI', sans-serif;">📊 Diagram Alir Visual (Mermaid.js Engine)</div>
+        <div style="background:white; padding:14px; border-radius:8px; border:1px solid #E2E8F0;">
+          ${nodesHtml || `<pre style="font-size:11px; text-align:left; color:#334155;">${cleanCode}</pre>`}
+        </div>
+      </div>`;
+    });
+
+    // 4. CHART JSON CODE BLOCK PARSER (```chart ... ```)
+    content = content.replace(/```chart\s*([\s\S]*?)\s*```/g, (match, chartJsonStr) => {
+      try {
+        const chartData = JSON.parse(chartJsonStr.trim());
+        const maxVal = Math.max(...chartData.data, 1);
+
+        const barsHtml = chartData.labels.map((label, idx) => {
+          const val = chartData.data[idx] || 0;
+          const heightPct = Math.round((val / maxVal) * 100);
+          return `<div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:6px;">
+            <span style="font-size:10px; font-weight:bold; color:#1E3A8A;">${val}</span>
+            <div style="width:100%; max-width:32px; background-color:#E2E8F0; height:90px; display:flex; align-items:flex-end; border-radius:6px; overflow:hidden;">
+              <div style="width:100%; height:${heightPct}%; background:linear-gradient(to top, #1E3A8A, #D4AF37); border-radius:4px;"></div>
+            </div>
+            <span style="font-size:9px; font-weight:600; color:#64748B;">${label}</span>
+          </div>`;
+        }).join('');
+
+        return `<div style="background:#F8FAFC; border:1px solid #CBD5E1; border-radius:12px; padding:16px; margin:18px 0;">
+          <div style="font-size:12px; font-weight:bold; color:#1E3A8A; margin-bottom:14px; text-align:center; font-family:'Segoe UI', sans-serif;">📈 ${chartData.title || 'Grafik Data Visual'}</div>
+          <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:8px; background:white; padding:16px; border-radius:8px; border:1px solid #E2E8F0;">
+            ${barsHtml}
+          </div>
+        </div>`;
+      } catch (e) {
+        return `<pre style="background:#FFF1F2; color:#9F1239; padding:10px; border-radius:6px; font-size:11px;">Error parsing chart data</pre>`;
+      }
+    });
+
+    // 5. PARSE LINE-BY-LINE MARKDOWN, TABLES & IMAGES
+    let lines = content.split('\n');
     let htmlResult = [];
     let inTable = false;
     let tableBuffer = [];
@@ -139,8 +279,8 @@ export default function AIWorkspace({ activeDocument, onBackToDashboard, onUpdat
         const imgUrl = imgMatch[2];
         htmlResult.push(`
           <div style="margin: 20px 0; text-align: center;">
-            <img src="${imgUrl}" alt="${altText}" style="max-width: 100%; height: auto; border-radius: 12px; border: 2px solid #D4AF37; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" />
-            <p style="font-size: 11px; color: #64748B; font-style: italic; margin-top: 6px;">Gambar: ${altText}</p>
+            <img src="${imgUrl}" alt="${altText}" style="max-width: 100%; height: 220px; object-fit: cover; border-radius: 12px; border: 2px solid #D4AF37; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: inline-block;" />
+            <p style="font-size: 11px; color: #64748B; font-style: italic; margin-top: 6px;">📷 ${altText}</p>
           </div>
         `);
         continue;
@@ -157,7 +297,7 @@ export default function AIWorkspace({ activeDocument, onBackToDashboard, onUpdat
         inTable = false;
       }
 
-      // Headers Parsing (Fix Top-Clipping Bug)
+      // Headers Parsing (Fix Top Margin Clipping)
       if (line.startsWith('# ')) {
         const topMargin = isFirstHeading ? 'margin-top:0px;' : 'margin-top:20px;';
         isFirstHeading = false;
@@ -184,62 +324,46 @@ export default function AIWorkspace({ activeDocument, onBackToDashboard, onUpdat
     return htmlResult.join('');
   };
 
-  // Helper Generator LKPD & Asesmen Dinamis Sesuai Mapel
   const generateLKPDBlock = (userInstruction) => {
     const isAsesmen = userInstruction.toLowerCase().includes('asesmen') || userInstruction.toLowerCase().includes('rubrik');
     const isLKPD = userInstruction.toLowerCase().includes('lkpd') || userInstruction.toLowerCase().includes('lembar kerja');
-    const subjectName = currentDoc.subject || 'Matematika';
+    const subjectName = currentDoc.subject || 'STEM';
 
     if (isAsesmen) {
-      if (subjectName.toLowerCase().includes('matematika')) {
-        return `\n\n---
-\n## III. ASESMEN & RUBRIK PENILAIAN ANALITIS MATEMATIKA
+      return `\n\n---
+\n## VIII. ASESMEN & RUBRIK PENILAIAN ANALITIS ${subjectName.toUpperCase()}
 
-### 📊 Rubrik Penilaian Pemecahan Masalah Statistika & Data
-
-| Kriteria Penilaian | Skor 1 (Perlu Bimbingan) | Skor 2 (Cukup) | Skor 3 (Baik) | Skor 4 (Sangat Baik) |
-| :--- | :--- | :--- | :--- | :--- |
-| **Penyajian Data** | Salah membuat tabel / diagram data | Menampilkan data tetapi interval/skala belum presisi | Penyajian diagram batang/peluang rapi & benar | Penyajian data sangat presisi, sistematis, & komunikatif |
-| **Analisis Statistika** | Belum mampu menghitung rerata/peluang | Mengaplikasikan rumus matematika dengan 1-2 kekeliruan | Tepat menghitung pemusatan data & penyebaran | Sangat akurat & mampu menarik kesimpulan logis dari data |
-| **Kerjasama Kelompok** | Pasif dalam diskusi kelompok | Berpartisipasi jika diminta | Aktif berkontribusi memecahkan soal | Memimpin diskusi & membantu anggota tim lainnya |`;
-      } else {
-        return `\n\n---
-\n## III. ASESMEN & RUBRIK PENILAIAN ANALITIS (${subjectName.toUpperCase()})
-
-### 📊 Rubrik Unjuk Kerja Kelompok
+### 📊 Rubrik Observasi Unjuk Kerja Pemecahan Masalah
 
 | Kriteria Penilaian | Skor 1 (Perlu Bimbingan) | Skor 2 (Cukup) | Skor 3 (Baik) | Skor 4 (Sangat Baik) |
 | :--- | :--- | :--- | :--- | :--- |
-| **Penguasaan Konsep** | Belum memahami materi dasar | Memahami konsep dengan sedikit bimbingan | Memahami & mengaplikasikan konsep dengan baik | Sangat menguasai & mampu mengaitkan dengan masalah nyata |
-| **Keaktifan Diskusi** | Pasif dalam kelompok | Cukup aktif | Aktif berdiskusi | Sangat solutif & memimpin kelompok |`;
-      }
+| **Penerapan Formula & Rumus** | Belum tepat mengoperasikan variabel | Mengoperasikan rumus dengan 1-2 kekeliruan | Tepat mengaplikasikan seluruh rumus matematika/sains | Sangat presisi & mampu menyimpulkan makna fisikanya |
+| **Konstruksi Diagram** | Belum mampu menyusun diagram | Diagram alir tersusun namun alur kurang sistematis | Diagram alir rapi & mudah dipahami | Diagram sangat akurat, komunikatif, & solutif |
+| **Kerjasama Kelompok** | Pasif dalam diskusi | Berpartisipasi jika diminta | Aktif berdiskusi kelompok | Sangat memimpin & mengapresiasi karya kawan |`;
     } else if (isLKPD) {
       return `\n\n---
-\n## IV. LEMBAR KERJA PESERTA DIDIK (LKPD) - ${subjectName.toUpperCase()}
+\n## IX. LEMBAR KERJA PESERTA DIDIK (LKPD) - ${subjectName.toUpperCase()}
 
 ### 👥 Nama Kelompok: ____________________
 **Anggota**: 1. _______________ 2. _______________ 3. _______________
 
-#### A. TANTANGAN ANALISIS DATA (20 Menit)
-1. Kumpulkan data kuantitatif dari 10 responden di sekitar sekolah.
-2. Sajikan data tersebut ke dalam tabel frekuensi dan diagram batang di bawah ini:
+#### B. TANTANGAN LOGIKA CHATTING & DIAGRAM (20 Menit)
+Lengkapi tabel analisis formula dan diagram alir berikut:
 
-| Kategorisasi Data | Nilai / Frekuensi | Persentase Peluang |
-| :--- | :--- | :--- |
-| **Kategori A** | ____________ | ____ % |
-| **Kategori B** | ____________ | ____ % |
-| **Kategori C** | ____________ | ____ % |`;
+| Nama Eksperimen | Persamaan Formula | Output Diagram | Status |
+| :--- | :--- | :--- | :--- |
+| **Gerak Parabola** | $y = v_0 t \\sin(\\theta) - \\frac{1}{2}gt^2$ | Diagram Alir Logika | Valid |
+| **Pemusatan Data** | $\\bar{x} = \\frac{\\sum x_i}{n}$ | Grafik Batang Frekuensi | Valid |`;
     } else {
       return `\n\n---
-\n## V. CATATAN & SUPLENEN REVISI AI CO-PILOT
+\n## X. CATATAN & SUPLENEN REVISI AI CO-PILOT
 **Instruksi Diterapkan**: "${userInstruction}"
-- **Penguatan Mindful**: Memberikan waktu berpikir hening 2 menit sebelum memulai analisis soal.
-- **Penguatan Meaningful**: Menghubungkan variabel data matematika dengan kasus kontekstual nyata.
-- **Penguatan Joyful**: Menggunakan kuis logika kelompok interaktif.`;
+- **Penguatan Mindful**: Siswa diajak hening 3 menit sebelum memecahkan rumus.
+- **Penguatan Meaningful**: Menghubungkan variabel data dengan kasus nyata.
+- **Penguatan Joyful**: Menggunakan kuis tantangan diagram kelompok.`;
     }
   };
 
-  // Handler kirim instruksi ke AI Co-Pilot
   const handleSendMessage = async (overridePrompt) => {
     const textToSend = overridePrompt || inputInstruction;
     if (!textToSend.trim() || isGenerating) return;
@@ -293,10 +417,6 @@ export default function AIWorkspace({ activeDocument, onBackToDashboard, onUpdat
     }
   };
 
-  // ==========================================
-  // REAL EXPORT & DOWNLOAD ENGINE
-  // ==========================================
-
   const handleDownloadWord = () => {
     const docTitle = currentDoc.title || 'Modul_Ajar_Deep_Learning';
     const parsedHtmlBody = parseMarkdownToHTML(docContent);
@@ -315,12 +435,13 @@ export default function AIWorkspace({ activeDocument, onBackToDashboard, onUpdat
           th { background-color: #1E3A8A; color: #FFFFFF; border: 1px solid #CBD5E1; padding: 10px; text-align: left; }
           td { border: 1px solid #CBD5E1; padding: 8px; }
           img { max-width: 100%; height: auto; border-radius: 8px; display: block; margin: 15px auto; }
+          code { background-color: #F8FAFC; color: #1E3A8A; padding: 2px 4px; border-radius: 4px; font-family: monospace; }
           ul, ol { margin-left: 20px; }
         </style>
       </head>
       <body>
         <h1>${docTitle}</h1>
-        <p style="text-align: center; font-style: italic; color: #64748B;">Perangkat Ajar Kurikulum Merdeka - Berbasis 3 Pilar Deep Learning</p>
+        <p style="text-align: center; font-style: italic; color: #64748B;">Perangkat Ajar Kurikulum Merdeka - Integrated Deep Learning Engine</p>
         <hr style="border:0; border-top: 2px solid #D4AF37; margin-bottom: 25px;"/>
         <div>${parsedHtmlBody}</div>
       </body>
@@ -513,7 +634,7 @@ export default function AIWorkspace({ activeDocument, onBackToDashboard, onUpdat
           <div className="p-8 bg-white text-slate-800 rounded-2xl shadow-2xl border border-slate-200 min-h-full">
             <div className="flex items-center justify-between border-b border-amber-400 pb-2 mb-4">
               <span className="text-[10px] px-2.5 py-0.5 rounded bg-amber-100 text-amber-800 font-bold border border-amber-300">
-                ✨ LIVE CANVAS PREVIEW - {currentDoc.subject ? currentDoc.subject.toUpperCase() : 'DEEP LEARNING'}
+                ✨ LIVE CANVAS PREVIEW - ULTRA VISUAL ENGINE READY
               </span>
               <span className="text-[10px] text-emerald-600 font-bold">● Auto-Synced</span>
             </div>
@@ -558,7 +679,7 @@ export default function AIWorkspace({ activeDocument, onBackToDashboard, onUpdat
                     <div className="font-bold text-xs text-slate-100 group-hover:text-[#D4AF37]">
                       Unduh Berkas Word (.doc)
                     </div>
-                    <div className="text-[10px] text-slate-400">Termasuk Gambar, Tabel & Color Style</div>
+                    <div className="text-[10px] text-slate-400">Termasuk Gambar, Diagram, Formula & Color Style</div>
                   </div>
                 </div>
                 <span className="text-xs text-[#D4AF37] font-bold">Unduh →</span>
