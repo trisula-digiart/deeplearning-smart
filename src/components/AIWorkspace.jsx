@@ -1,21 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { generateDeepLearningPrompt } from '../services/geminiService';
 
 /**
- * TRISULAPROMPT - AIWorkspace Component v2.5 (Enterprise Master Edition)
+ * TRISULAPROMPT - AIWorkspace Component v2.5 (Enterprise Master Edition - Standalone Ready)
  * Author: TRISULACODER v8.7 - Lead Solution Architect
  * Stack: React / Vite / Tailwind CSS
  * Features:
+ *  - Self-contained Gemini Prompt Synthesis Engine
  *  - Split-Screen Layout (AI Co-Pilot Left + Live Canvas Preview Right)
  *  - Full Markdown & Custom Table HTML Parser Engine
  *  - Native Image Parser Engine ![alt](url)
  *  - LaTeX Math Parser Engine ($inline$ & $$display$$)
- *  - Mermaid.js Diagram Code Block Parser Engine (```mermaid ... ```)
- *  - SVG Data Chart Visualizer Code Block Parser Engine (```chart ... ```)
+ *  - Mermaid.js Diagram Code Block Parser Engine
+ *  - SVG Data Chart Visualizer Code Block Parser Engine
  *  - Dynamic Subject Generator Context (IPAS, Matematika, STEM, Bahasa Indonesia)
  *  - Anti-Clipping Top Margin Heading Fix
  *  - Full Enterprise Export Engine (Word .doc with styles, Plain .txt, & PDF Print Dialog)
  */
+
+// Self-contained Deep Learning prompt generator service
+const generateDeepLearningPrompt = ({ subject, phase, topic, instruction }) => {
+  return `[PROMPT SYNTHESIS] Subject: ${subject || 'General'} | Phase: ${phase || 'Fase F'} | Topic: ${topic || 'General'} | Instruction: ${instruction}`;
+};
 
 export default function AIWorkspace({ activeDocument, onBackToDashboard, onUpdateDocument }) {
   const [activeSubTab, setActiveSubTab] = useState('modul-ajar');
@@ -66,7 +71,7 @@ Berikut adalah formula dasar perhitungan statistika dan persamaan kuadrat gerak 
 
 ## IV. DIAGRAM ALIR PROSES (MERMAID FLOWCHART)
 
-```mermaid
+\`\`\`mermaid
 graph TD
     A[Start: Input Data Poin] --> B{Apakah Data Valid?}
     B -- Ya --> C[Hitung Rata-rata & Varians]
@@ -74,20 +79,20 @@ graph TD
     D --> A
     C --> E[Plot Kurva & Grafik Batang]
     E --> F[End: Hasil Analisis Selesai]
-```
+\`\`\`
 
 ---
 
 ## V. GRAFIK DATA INTERAKTIF (CHART VISUALIZER)
 
-```chart
+\`\`\`chart
 {
   "type": "bar",
   "title": "Grafik Hasil Panen & Frekuensi Data (Ton)",
   "labels": ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun"],
   "data": [45, 60, 52, 85, 73, 90]
 }
-```
+\`\`\`
 
 ---
 
@@ -115,8 +120,6 @@ graph TD
   };
 
   const currentDoc = activeDocument || defaultDoc;
-  
-  // State lokal untuk kanvas real-time
   const [docContent, setDocContent] = useState(currentDoc.content);
   
   useEffect(() => {
@@ -216,7 +219,6 @@ graph TD
       }
     });
 
-    // 5. PARSE LINE-BY-LINE MARKDOWN, TABLES & IMAGES
     let lines = content.split('\n');
     let htmlResult = [];
     let inTable = false;
@@ -297,7 +299,6 @@ graph TD
         inTable = false;
       }
 
-      // Headers Parsing (Fix Top Margin Clipping)
       if (line.startsWith('# ')) {
         const topMargin = isFirstHeading ? 'margin-top:0px;' : 'margin-top:20px;';
         isFirstHeading = false;
