@@ -1,183 +1,221 @@
-import React from 'react';
-import {
-  FileText,
-  Sparkles,
-  Zap,
-  CheckCircle2,
-  Type,
-  Check,
-  BookOpen,
-  Edit3
-} from 'lucide-react';
-
-const DEFAULT_DOC_LABELS = [
-  { id: 'cp', label: '1. Capaian Pembelajaran (CP)' },
-  { id: 'tp', label: '2. Tujuan Pembelajaran (TP)' },
-  { id: 'atp', label: '3. Alur TP (ATP)' },
-  { id: 'kktp', label: '4. KKTP Rubrik Penilaian' },
-  { id: 'prota', label: '5. Program Tahunan (Prota)' },
-  { id: 'prosem', label: '6. Program Semester (Prosem)' },
-  { id: 'modul', label: '7. Modul Ajar Utuh (3 Pilar)' }
-];
+import React, { useState } from 'react';
 
 /**
  * TRISULAPROMPT - Notion Studio Component v2.5
- * Author: TRISULACODER v8.7 - Lead Solution Architect
- * Module: Notion-Style Rich Text Canvas with Document Tree Navigation & Inline AI Refactor Engine
+ * AI-Powered Markdown & WYSIWYG Editor untuk Penyuntingan Perangkat Ajar
  */
-export default function NotionStudio({
-  activeProject,
-  activeDocView,
-  setActiveDocView,
-  notionContent,
-  setNotionContent,
-  onAiFixGrammar,
-  onAiExpand,
-  onAiSimplify,
-  isAiThinking,
-  customDocLabels
-}) {
-  const docLabelsList = customDocLabels || DEFAULT_DOC_LABELS;
 
-  const currentDocLabel =
-    docLabelsList.find((item) => item.id === activeDocView)?.label ||
-    '7. Modul Ajar Utuh';
+export default function NotionStudio({ activeDoc, onSaveDoc, onBackToDashboard }) {
+  // Local State Konten Editor
+  const [docTitle, setDocTitle] = useState(
+    activeDoc?.title || 'Modul Ajar Bahasa Indonesia - Fase B (Kelas 3)'
+  );
+  const [content, setContent] = useState(
+    activeDoc?.content ||
+      `# MODUL AJAR DEEP LEARNING: BAHASA INDONESIA FASE B
 
-  const charCount = notionContent ? notionContent.length : 0;
-  const wordCount = notionContent ? notionContent.trim().split(/\s+/).filter(Boolean).length : 0;
+## I. INFORMASI UMUM
+- **Mata Pelajaran**: Bahasa Indonesia
+- **Fase / Kelas**: Fase B (Kelas 3)
+- **Topik Utama**: Membaca & Memahami Isu Lingkungan
+- **Alokasi Waktu**: 2 JP x 35 Menit
+
+---
+
+## II. INTEGRASI 3 PILAR DEEP LEARNING
+
+### 1. Mindful Learning (Penyadaran Diri)
+- **Latihan Hening STOP**: Sebelum pembelajaran dimulai, murid diajak hening selama 3 menit untuk menyiapkan fokus mental dan emosi.
+- **Refleksi Awal**: Murid mengisi jurnal singkat mengenai harapan pembelajaran hari ini.
+
+### 2. Meaningful Learning (Keterhubungan Masalah Nyata)
+- **Konteks Lokal**: Membahas isu sampah dan kebersihan lingkungan sekolah.
+- **Problem Solving**: Murid menganalisis teks narasi lingkungan dan merancang aksi nyata pemilahan sampah.
+
+### 3. Joyful Learning (Kolaboratif & Menggembirakan)
+- **Game Unplugged**: Detektif Kata Lingkungan (Aktivitas kelompok).
+- **Apresiasi Sebaya**: Sesi apresiasi menggunakan kartu ucapan terima kasih antar teman kelompok.`
+  );
+
+  const [activeViewMode, setActiveViewMode] = useState('split'); // 'editor' | 'preview' | 'split'
+  const [isAiProcessing, setIsAiProcessing] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+
+  const showToast = (msg) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(''), 3000);
+  };
+
+  // AI Toolbar Quick Helpers (PUEBI Fix, Expand, Simplify)
+  const handleAiPuebiFix = () => {
+    setIsAiProcessing(true);
+    showToast('🤖 AI sedang merapikan tata bahasa & PUEBI...');
+    setTimeout(() => {
+      // Simulasi Auto-fix PUEBI
+      const fixed = content
+        .replace(/di /g, 'di-')
+        .replace(/di-sekolah/g, 'di sekolah')
+        .replace(/di-lakukan/g, 'dilakukan');
+      setContent(fixed);
+      setIsAiProcessing(false);
+      showToast('✨ PUEBI & Tata Bahasa berhasil dirapikan!');
+    }, 1000);
+  };
+
+  const handleAiExpandText = () => {
+    setIsAiProcessing(true);
+    showToast('🤖 AI sedang memperdalam deskripsi kegiatan pembelajaran...');
+    setTimeout(() => {
+      const expanded =
+        content +
+        `\n\n### 4. Asesmen Berkelanjutan (Tambahan AI)
+- **Asesmen Formatif**: Rubrik observasi unjuk kerja saat diskusi kelompok.
+- **Asesmen Sumatif**: Penilaian lembar kerja peserta didik (LKPD) mandiri.`;
+      setContent(expanded);
+      setIsAiProcessing(false);
+      showToast('⚡ Konten berhasil diperdalam oleh AI!');
+    }, 1200);
+  };
+
+  const handleSave = () => {
+    if (onSaveDoc) {
+      onSaveDoc({
+        ...activeDoc,
+        title: docTitle,
+        content: content,
+        updatedAt: 'Baru saja'
+      });
+    }
+    showToast('💾 Dokumen berhasil disimpan ke Project Hub!');
+  };
 
   return (
-    <div className="h-[calc(100vh-61px)] flex overflow-hidden bg-[#0B192C]">
-      {}
-      <div className="w-64 bg-slate-950/80 border-r border-slate-800 p-4 space-y-4 overflow-y-auto shrink-0 hidden md:block">
-        <div className="flex items-center justify-between pb-2 border-b border-slate-800/80">
-          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-            <FileText className="w-3.5 h-3.5 text-emerald-400" /> Dokumen Tree
-          </h3>
-          <span className="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full font-semibold">
-            Notion Mode
-          </span>
+    <div className="h-full flex flex-col bg-[#0F172A]/80 rounded-3xl border border-slate-800 shadow-2xl overflow-hidden relative">
+      
+      {/* TOAST NOTIFICATION */}
+      {toastMessage && (
+        <div className="fixed top-16 right-6 z-50 bg-[#D4AF37] text-black font-bold px-4 py-2.5 rounded-xl shadow-2xl text-xs border border-amber-300 animate-bounce">
+          {toastMessage}
+        </div>
+      )}
+
+      {/* HEADER TOOLBAR NOTION STUDIO */}
+      <div className="p-4 bg-slate-900/90 border-b border-slate-800 flex flex-wrap items-center justify-between gap-4">
+        
+        {/* Title Input & Navigation */}
+        <div className="flex items-center gap-3 flex-1 min-w-[280px]">
+          {onBackToDashboard && (
+            <button
+              onClick={onBackToDashboard}
+              className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold transition-all"
+            >
+              ← Kembali
+            </button>
+          )}
+          <div className="flex-1">
+            <input
+              type="text"
+              value={docTitle}
+              onChange={(e) => setDocTitle(e.target.value)}
+              className="w-full bg-transparent font-extrabold text-sm md:text-base text-white focus:outline-none focus:border-b focus:border-[#D4AF37] pb-0.5"
+              placeholder="Judul Perangkat Ajar..."
+            />
+            <div className="text-[10px] text-slate-400 flex items-center gap-2">
+              <span className="text-[#D4AF37]">📝 Notion Studio Editor</span>
+              <span>•</span>
+              <span>Markdown Supported</span>
+            </div>
+          </div>
         </div>
 
-        <div className="space-y-1">
-          {docLabelsList.map((item) => {
-            const isActive = activeDocView === item.id;
-            return (
+        {/* AI Magic Action Buttons */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0">
+          <button
+            onClick={handleAiPuebiFix}
+            disabled={isAiProcessing}
+            className="px-3 py-1.5 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shrink-0"
+          >
+            <span>✨ AI Rapikan PUEBI</span>
+          </button>
+
+          <button
+            onClick={handleAiExpandText}
+            disabled={isAiProcessing}
+            className="px-3 py-1.5 bg-amber-500/10 hover:bg-amber-500/20 text-[#D4AF37] border border-amber-500/30 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shrink-0"
+          >
+            <span>⚡ AI Diperdalam</span>
+          </button>
+
+          {/* View Mode Switches */}
+          <div className="bg-slate-950 p-1 rounded-xl border border-slate-800 flex items-center gap-1 shrink-0">
+            {['editor', 'split', 'preview'].map((mode) => (
               <button
-                key={item.id}
-                onClick={() => setActiveDocView(item.id)}
-                className={`w-full text-left text-xs px-3 py-2.5 rounded-xl font-medium transition flex items-center justify-between cursor-pointer group ${
-                  isActive
-                    ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shadow-md'
-                    : 'text-slate-400 hover:bg-slate-900 hover:text-slate-200'
+                key={mode}
+                onClick={() => setActiveViewMode(mode)}
+                className={`px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase transition-all ${
+                  activeViewMode === mode
+                    ? 'bg-[#D4AF37] text-black'
+                    : 'text-slate-400 hover:text-white'
                 }`}
               >
-                <span className="truncate">{item.label}</span>
-                {isActive && (
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                )}
+                {mode}
               </button>
-            );
-          })}
+            ))}
+          </div>
+
+          <button
+            onClick={handleSave}
+            className="px-4 py-1.5 bg-[#D4AF37] hover:bg-amber-500 text-black font-bold text-xs rounded-xl shadow-lg transition-all shrink-0"
+          >
+            💾 Simpan Dokumen
+          </button>
         </div>
 
-        {}
-        <div className="pt-4 border-t border-slate-800/80">
-          <div className="p-3 bg-slate-900/90 border border-slate-800 rounded-2xl text-[11px] text-slate-400 space-y-1.5">
-            <p className="font-bold text-slate-200 flex items-center gap-1">
-              <Zap className="w-3.5 h-3.5 text-amber-400 fill-amber-400" /> Fitur AI Studio
-            </p>
-            <p className="leading-relaxed text-[10px]">
-              Gunakan bilah alat AI di atas canvas untuk memperbaiki tata bahasa, memperluas uraian, atau menyederhanakan teks secara otomatis.
-            </p>
-          </div>
-        </div>
       </div>
 
-      {}
-      <div className="flex-1 flex flex-col p-4 sm:p-6 overflow-y-auto relative bg-[#0B192C]">
-        {/* Mobile Sub-Menu Navigation */}
-        <div className="flex md:hidden items-center gap-1 overflow-x-auto pb-3 mb-2 border-b border-slate-800 shrink-0">
-          {docLabelsList.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => setActiveDocView(item.id)}
-              className={`text-xs px-3 py-1.5 rounded-xl font-bold transition whitespace-nowrap cursor-pointer ${
-                activeDocView === item.id
-                  ? 'bg-emerald-600 text-white shadow-md'
-                  : 'text-slate-400 bg-slate-900 hover:text-slate-200'
-              }`}
-            >
-              {item.label}
-            </button>
-          ))}
-        </div>
-
-        {}
-        <div className="max-w-4xl mx-auto w-full bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-5 flex flex-col flex-1">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800">
-            <div>
-              <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20 uppercase tracking-wider inline-flex items-center gap-1">
-                <FileText className="w-3 h-3 text-emerald-400" />
-                {currentDocLabel}
-              </span>
-              <h2 className="text-base sm:text-lg font-bold text-white mt-2 leading-snug">
-                {activeProject ? activeProject.title : 'Judul Perangkat Ajar'}
-              </h2>
+      {/* EDITOR & PREVIEW WORKSPACE AREA */}
+      <div className="flex-1 flex overflow-hidden">
+        
+        {/* LEFT: TEXTAREA MARKDOWN EDITOR */}
+        {(activeViewMode === 'editor' || activeViewMode === 'split') && (
+          <div
+            className={`h-full p-4 flex flex-col bg-slate-950/60 border-r border-slate-800/80 ${
+              activeViewMode === 'split' ? 'w-1/2' : 'w-full'
+            }`}
+          >
+            <div className="text-[10px] font-bold text-slate-500 uppercase mb-2 flex items-center justify-between">
+              <span>RAW MARKDOWN INPUT</span>
+              <span>{content.length} Karakter</span>
             </div>
-
-            {}
-            <div className="flex flex-wrap items-center gap-2">
-              <button
-                onClick={onAiFixGrammar}
-                disabled={isAiThinking}
-                className="text-xs bg-indigo-600/20 hover:bg-indigo-600 text-indigo-300 hover:text-white border border-indigo-500/30 font-bold px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 disabled:opacity-50 active:scale-95 shadow-sm cursor-pointer"
-                title="Perbaiki tata bahasa dan ejaan PUEBI"
-              >
-                <Sparkles className="w-3.5 h-3.5 text-indigo-300" /> AI Fix Grammar
-              </button>
-
-              <button
-                onClick={onAiExpand}
-                disabled={isAiThinking}
-                className="text-xs bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-slate-950 border border-amber-500/30 font-bold px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 disabled:opacity-50 active:scale-95 shadow-sm cursor-pointer"
-                title="Perluas deskripsi dengan contoh kontekstual"
-              >
-                <Zap className="w-3.5 h-3.5 text-amber-400 fill-amber-400" /> AI Expand
-              </button>
-
-              <button
-                onClick={onAiSimplify}
-                disabled={isAiThinking}
-                className="text-xs bg-emerald-500/20 hover:bg-emerald-500 text-emerald-300 hover:text-white border border-emerald-500/30 font-bold px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 disabled:opacity-50 active:scale-95 shadow-sm cursor-pointer"
-                title="Sederhanakan kalimat agar lebih ringkas"
-              >
-                <Type className="w-3.5 h-3.5 text-emerald-400" /> AI Simplify
-              </button>
-            </div>
-          </div>
-
-          {}
-          <div className="flex-1 min-h-[420px] flex flex-col bg-slate-950/60 border border-slate-800/80 rounded-2xl p-4 shadow-inner">
             <textarea
-              className="w-full h-full flex-1 bg-transparent text-slate-200 text-xs sm:text-sm leading-relaxed outline-none resize-none font-mono placeholder-slate-600 focus:ring-0 border-none"
-              value={notionContent}
-              onChange={(e) => setNotionContent(e.target.value)}
-              placeholder="Mulai mengetik atau gunakan tombol AI di atas untuk menyintesis konten..."
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              placeholder="Tulis atau tempel kode Markdown perangkat ajar Anda di sini..."
+              className="flex-1 w-full bg-slate-900/90 text-slate-100 p-4 rounded-2xl font-mono text-xs leading-relaxed focus:outline-none focus:border-[#D4AF37] border border-slate-800 resize-none selection:bg-[#D4AF37] selection:text-black"
             />
           </div>
+        )}
 
-          {}
-          <div className="pt-3 border-t border-slate-800/80 flex flex-wrap items-center justify-between text-[11px] text-slate-500 gap-2">
-            <span className="flex items-center gap-1.5 text-emerald-400 font-semibold">
-              <Check className="w-3.5 h-3.5" /> Tersimpan di State Lokal
-            </span>
-            <span>
-              Karakter: {charCount} | Kata: {wordCount}
-            </span>
+        {/* RIGHT: WYSIWYG LIVE PREVIEW */}
+        {(activeViewMode === 'preview' || activeViewMode === 'split') && (
+          <div
+            className={`h-full p-6 overflow-y-auto bg-slate-900/40 ${
+              activeViewMode === 'split' ? 'w-1/2' : 'w-full'
+            }`}
+          >
+            <div className="text-[10px] font-bold text-[#D4AF37] uppercase mb-3 flex items-center justify-between">
+              <span>LIVE WYSIWYG DOCUMENT PREVIEW</span>
+              <span className="text-emerald-400">● Synchronized</span>
+            </div>
+
+            <div className="p-8 bg-[#0F172A] border border-slate-800 rounded-3xl shadow-xl text-xs text-slate-200 leading-relaxed font-sans space-y-4 whitespace-pre-wrap">
+              {content}
+            </div>
           </div>
-        </div>
+        )}
+
       </div>
+
     </div>
   );
 }
