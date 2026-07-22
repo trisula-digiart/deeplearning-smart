@@ -1158,7 +1158,6 @@ Berikut adalah formula dasar perhitungan laju pertumbuhan populasi dan rata-rata
     }
   }, [activeDocument]);
 
-  // Check if user has active export privileges (Premium OR remaining credits > 0)
   const canExport = Boolean(currentUser?.is_premium || (currentUser?.kredit_tersisa && currentUser.kredit_tersisa > 0));
 
   const handleSendMessage = (customPrompt) => {
@@ -1558,6 +1557,37 @@ function CleanEditorView({ activeDocument, onSaveDocument }) {
     setContent(prev => prev + tableTemplate);
   };
 
+  // Proteksi Anti-Copy & Anti-Cut Khusus Editor Teks Rapih
+  const handlePreventCopyCut = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.clipboardData) {
+      e.clipboardData.setData('text/plain', '');
+    }
+    showToast('⚠️ Menyalin atau memotong teks dilarang!');
+  };
+
+  const handleKeyDownProtection = (e) => {
+    const isCtrlOrCmd = e.ctrlKey || e.metaKey;
+    const isCopyKey = e.key === 'c' || e.key === 'C' || e.code === 'KeyC';
+    const isCutKey = e.key === 'x' || e.key === 'X' || e.code === 'KeyX';
+
+    if (isCtrlOrCmd && (isCopyKey || isCutKey)) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (e.clipboardData) {
+        e.clipboardData.setData('text/plain', '');
+      }
+      showToast('⚠️ Kombinasi tombol Salin/Potong (Ctrl+C / Ctrl+X) dilarang!');
+    }
+  };
+
+  const handleContextMenuProtection = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    showToast('⚠️ Klik kanan dinonaktifkan!');
+  };
+
   return (
     <div className="h-full flex flex-col p-4 md:p-6 space-y-4 font-sans max-w-7xl mx-auto">
       {toast && (
@@ -1589,13 +1619,14 @@ function CleanEditorView({ activeDocument, onSaveDocument }) {
 
       <div className="flex items-center gap-2 bg-slate-900 border border-slate-800 p-2 rounded-xl overflow-x-auto text-xs">
         <button onClick={() => handleInsertHeader(1)} className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded font-bold">H1</button>
-        <button onClick={() => handleInsertHeader(2)} className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded font-bold">H2</button>
+        <button onClick={() => handleInsertHeader(2)} className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded font-bold">H3</button>
         <button onClick={() => handleInsertHeader(3)} className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded font-bold">H3</button>
         <span className="text-slate-700">|</span>
         <button onClick={handleInsertTable} className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded">📊 + Tabel</button>
       </div>
 
       <div className="flex-1 grid md:grid-cols-2 gap-4 min-h-[500px]">
+        {/* LEFT: TEXTAREA MARKDOWN EDITOR DENGAN PROTEKSI MULTI-LAYER */}
         <div className="flex flex-col bg-[#0D1C2E] border border-slate-800 rounded-2xl overflow-hidden">
           <div className="p-3 bg-slate-900 border-b border-slate-800 text-xs font-bold text-slate-400">
             📝 EDITOR MARKDOWN MURNI
@@ -1603,17 +1634,27 @@ function CleanEditorView({ activeDocument, onSaveDocument }) {
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            className="flex-1 w-full bg-slate-950 p-4 text-xs font-mono text-slate-200 focus:outline-none resize-none leading-relaxed"
+            onCopy={handlePreventCopyCut}
+            onCut={handlePreventCopyCut}
+            onKeyDown={handleKeyDownProtection}
+            onContextMenu={handleContextMenuProtection}
+            className="flex-1 w-full bg-slate-950 p-4 text-xs font-mono text-slate-200 focus:outline-none resize-none leading-relaxed selection:bg-[#D4AF37] selection:text-slate-950"
           />
         </div>
 
+        {/* RIGHT: PRATINJAU KANVAS HASIL (LIVE PREVIEW) DENGAN KUNCIAN SELEKSI TEKS */}
         <div className="flex flex-col bg-[#0D1C2E] border border-slate-800 rounded-2xl overflow-hidden">
           <div className="p-3 bg-slate-900 border-b border-slate-800 text-xs font-bold text-[#D4AF37]">
             👁️ PRATINJAU KANVAS HASIL (LIVE PREVIEW)
           </div>
-          <div className="flex-1 bg-white p-6 overflow-y-auto text-slate-900">
+          <div 
+            className="flex-1 bg-white p-6 overflow-y-auto text-slate-900 select-none"
+            style={{ userSelect: 'none', WebkitUserSelect: 'none' }}
+            onCopy={handlePreventCopyCut}
+            onContextMenu={handleContextMenuProtection}
+          >
             <div
-              className="prose prose-slate max-w-none text-xs leading-relaxed"
+              className="prose prose-slate max-w-none text-xs leading-relaxed select-none"
               dangerouslySetInnerHTML={{ __html: parseMarkdownToHTML(content) }}
             />
           </div>
