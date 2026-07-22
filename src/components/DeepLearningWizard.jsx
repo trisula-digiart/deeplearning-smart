@@ -1,20 +1,18 @@
 import React, { useState } from 'react';
-import { generatePerangkatAjar } from '../services/geminiService';
 
 /**
  * TRISULA SMART LEARNING ENGINE - Deep Learning Wizard Component v3.0
- * Multi-Step & Single-View Form Modal for Kurikulum Merdeka + 3 Pillars
+ * Form Modal Komprehensif dengan Pilihan Komponen Perangkat & 3 Pilar Deep Learning
  */
 
 const PRESET_TOPICS = [
-  { subject: 'Informatika', phase: 'Fase E (Kelas 10 SMA)', topic: 'Algoritma Pemrograman & Flowchart' },
   { subject: 'IPA & Biologi', phase: 'Fase E (Kelas 10 SMA)', topic: 'Ekosistem & Keanekaragaman Hayati' },
+  { subject: 'Informatika', phase: 'Fase E (Kelas 10 SMA)', topic: 'Algoritma Pemrograman & Flowchart' },
   { subject: 'Matematika', phase: 'Fase F (Kelas 11 SMA)', topic: 'Analisis Data, Statistika & Peluang' },
   { subject: 'IPAS', phase: 'Fase C (Kelas 5 SD)', topic: 'Ekosistem dan Keseimbangan Alam' }
 ];
 
 export default function DeepLearningWizard({ isOpen, onClose, onSuccess, onCreateDocument }) {
-  const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
@@ -78,12 +76,10 @@ export default function DeepLearningWizard({ isOpen, onClose, onSuccess, onCreat
     }));
   };
 
-  const validateStep = (currentStep) => {
+  const validateForm = () => {
     const newErrors = {};
-    if (currentStep === 1) {
-      if (!formData.mataPelajaran.trim()) newErrors.mataPelajaran = 'Mata pelajaran wajib diisi.';
-      if (!formData.topik.trim()) newErrors.topik = 'Topik utama wajib diisi.';
-    }
+    if (!formData.mataPelajaran.trim()) newErrors.mataPelajaran = 'Mata pelajaran wajib diisi.';
+    if (!formData.topik.trim()) newErrors.topik = 'Topik utama wajib diisi.';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -131,7 +127,7 @@ export default function DeepLearningWizard({ isOpen, onClose, onSuccess, onCreat
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateStep(1)) return;
+    if (!validateForm()) return;
 
     setIsLoading(true);
     try {
@@ -172,30 +168,30 @@ export default function DeepLearningWizard({ isOpen, onClose, onSuccess, onCreat
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-      <div className="w-full max-w-xl bg-[#0F172A] border border-[#D4AF37]/50 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md">
+      <div className="w-full max-w-xl bg-[#0F172A] border border-[#D4AF37]/50 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
         
         {/* Header Modal */}
-        <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-[#0B192C]">
+        <div className="px-5 sm:px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-[#0B192C]">
           <div>
-            <h2 className="text-base font-bold text-[#D4AF37] flex items-center gap-2">
+            <h2 className="text-sm sm:text-base font-bold text-[#D4AF37] flex items-center gap-2">
               <span>✨</span> Wizard Generator Perangkat Ajar
             </h2>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-[10px] sm:text-xs text-slate-400 mt-0.5">
               Rancang Perangkat Ajar Terintegrasi 3 Pilar Deep Learning
             </p>
           </div>
           <button
             onClick={onClose}
             disabled={isLoading}
-            className="text-slate-400 hover:text-white font-bold p-1 rounded-lg transition-colors cursor-pointer"
+            className="text-slate-400 hover:text-white font-bold p-1 rounded-lg transition-colors cursor-pointer text-sm"
           >
             ✕
           </button>
         </div>
 
         {/* Modal Form Body */}
-        <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-4 flex-1 text-slate-100">
+        <form onSubmit={handleSubmit} className="p-5 sm:p-6 overflow-y-auto space-y-4 flex-1 text-slate-100">
           {errors.global && (
             <div className="p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-xs text-rose-400">
               {errors.global}
@@ -219,7 +215,7 @@ export default function DeepLearningWizard({ isOpen, onClose, onSuccess, onCreat
             </div>
           </div>
 
-          {/* Form Inputs */}
+          {/* Form Inputs Utama */}
           <div>
             <label className="block text-xs font-semibold text-slate-300 mb-1">Mata Pelajaran *</label>
             <input
@@ -281,7 +277,7 @@ export default function DeepLearningWizard({ isOpen, onClose, onSuccess, onCreat
             <label className="block text-xs font-bold text-[#D4AF37] mb-2">
               Pilihan Komponen Perangkat Ajar Wajib:
             </label>
-            <div className="grid grid-cols-2 gap-2 text-xs text-slate-300 bg-slate-950/80 p-3.5 rounded-2xl border border-slate-800">
+            <div className="grid grid-cols-2 sm:grid-cols-2 gap-2 text-xs text-slate-300 bg-slate-950/80 p-3.5 rounded-2xl border border-slate-800">
               {[
                 { key: 'modulAjar', label: '📘 Modul Ajar' },
                 { key: 'cp', label: '📘 CP (Capaian)' },
@@ -309,7 +305,7 @@ export default function DeepLearningWizard({ isOpen, onClose, onSuccess, onCreat
             <label className="block text-xs font-bold text-slate-300 mb-2">
               Integrasi 3 Pilar Deep Learning:
             </label>
-            <div className="flex gap-4 text-xs text-slate-300 bg-slate-950/80 p-3 rounded-2xl border border-slate-800">
+            <div className="flex flex-wrap sm:flex-nowrap gap-3 sm:gap-4 text-xs text-slate-300 bg-slate-950/80 p-3 rounded-2xl border border-slate-800">
               {[
                 { key: 'mindful', label: '🧠 Mindful' },
                 { key: 'meaningful', label: '🎯 Meaningful' },
