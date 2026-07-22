@@ -1,6 +1,22 @@
 import React, { useState } from 'react';
 
-// Custom SVG Icons for Zero-Crash Reliability and Styling Consistency
+// Google Sheets Webhook Sync Helper
+const GOOGLE_SHEETS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyJJp3CVGiAEkCQ-6zDTgS1Rz2Fz2vQYCvpn_hB-JkN13q9aWQOAFfAtpWH3cHnby6LEg/exec";
+
+const syncUserToGoogleSheets = async (userData, action = 'SYNC_USER') => {
+  if (!GOOGLE_SHEETS_WEBHOOK_URL) return;
+  try {
+    await fetch(GOOGLE_SHEETS_WEBHOOK_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action, user: userData })
+    });
+  } catch (err) {
+    console.error('Failed to sync with Google Sheets:', err);
+  }
+};
+
 const Icons = {
   Cpu: ({ className = "w-6 h-6 text-[#D4AF37]" }) => (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -38,16 +54,6 @@ const Icons = {
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
     </svg>
   ),
-  Shield: ({ className = "w-4 h-4 text-[#D4AF37]" }) => (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-    </svg>
-  ),
-  Sparkles: ({ className = "w-4 h-4 text-amber-300" }) => (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-    </svg>
-  ),
   ArrowRight: ({ className = "w-4 h-4" }) => (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
@@ -63,6 +69,7 @@ const Icons = {
 export default function LoginPage({ onLoginSuccess }) {
   const [authMode, setAuthMode] = useState('login'); // 'login' | 'register' | 'forgot'
   const [selectedRole, setSelectedRole] = useState('guru'); // 'guru' | 'siswa' | 'admin'
+  const [selectedPackage, setSelectedPackage] = useState('free'); // 'free' | 'single' | 'monthly'
 
   // Form Fields
   const [email, setEmail] = useState('');
@@ -77,7 +84,6 @@ export default function LoginPage({ onLoginSuccess }) {
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
-  // Handler Login Submisi
   const handleAuthSubmit = (e) => {
     e.preventDefault();
     setErrorMessage('');
@@ -95,30 +101,50 @@ export default function LoginPage({ onLoginSuccess }) {
 
     setIsLoading(true);
 
-    // Simulasi Authentication Latency
     setTimeout(() => {
       setIsLoading(false);
+
+      let initialCredits = 1;
+      let isPrem = false;
+
+      if (authMode === 'register') {
+        if (selectedPackage === 'monthly' || email.includes('admin') || email.includes('premium')) {
+          isPrem = true;
+          initialCredits = 250;
+        } else if (selectedPackage === 'single') {
+          isPrem = false;
+          initialCredits = 5;
+        } else {
+          isPrem = false;
+          initialCredits = 1;
+        }
+      } else {
+        isPrem = selectedRole === 'admin' || email.includes('admin') || email.includes('premium');
+        initialCredits = isPrem ? 250 : 5;
+      }
 
       const userPayload = {
         id: `usr_${Math.floor(1000 + Math.random() * 9000)}`,
         name: fullName || (email.includes('admin') ? 'Administrator Trisula' : email.split('@')[0]),
         email: email,
         role: selectedRole,
-        is_premium: selectedRole === 'admin' || email.includes('premium') || email.includes('guru'),
-        kredit_tersisa: email.includes('premium') ? 100 : 1,
+        is_premium: isPrem,
+        kredit_tersisa: initialCredits,
         doc_generated_count: 0,
         school: schoolName || 'SMA Negeri 1 Jakarta'
       };
+
+      // Sync to Google Sheets Webhook
+      syncUserToGoogleSheets(userPayload, authMode === 'register' ? 'REGISTER' : 'LOGIN');
 
       if (onLoginSuccess) {
         onLoginSuccess(userPayload);
       } else {
         setSuccessMessage('Login berhasil! Mengalihkan ke Dashboard...');
       }
-    }, 1200);
+    }, 1000);
   };
 
-  // Quick Demo Auto-Fill Handler
   const handleDemoLogin = (type) => {
     setErrorMessage('');
     setSuccessMessage('');
@@ -140,18 +166,18 @@ export default function LoginPage({ onLoginSuccess }) {
       setEmail('budi.santoso@guru.sma.sch.id');
       setPassword('demo1234');
       setSelectedRole('guru');
-    } else if (type === 'guru_free') {
+    } else if (type === 'eike2000' || type === 'guru_free') {
       demoUser = {
-        id: 'usr_free_01',
-        name: 'Siti Rahmawati, S.Pd.',
-        email: 'siti.rahma@sd.kemdikbud.go.id',
+        id: 'usr_eike2000',
+        name: 'Eike2000, S.Pd.',
+        email: 'eike2000@sekolah.sch.id',
         role: 'guru',
         is_premium: false,
-        kredit_tersisa: 1,
-        doc_generated_count: 1,
-        school: 'SD Negeri 05 Kebayoran'
+        kredit_tersisa: 5,
+        doc_generated_count: 0,
+        school: 'SMA Negeri 1 Jakarta'
       };
-      setEmail('siti.rahma@sd.kemdikbud.go.id');
+      setEmail('eike2000@sekolah.sch.id');
       setPassword('demo1234');
       setSelectedRole('guru');
     } else if (type === 'admin') {
@@ -172,30 +198,31 @@ export default function LoginPage({ onLoginSuccess }) {
 
     setTimeout(() => {
       setIsLoading(false);
+      syncUserToGoogleSheets(demoUser, 'LOGIN');
       if (onLoginSuccess) {
         onLoginSuccess(demoUser);
       }
-    }, 800);
+    }, 600);
   };
 
   return (
-    <div className="min-h-screen bg-[#0B192C] text-slate-100 font-sans flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen w-full bg-[#0B192C] text-slate-100 font-sans flex items-center justify-center p-3 sm:p-6 relative overflow-x-hidden overflow-y-auto">
       {/* Background Glow Decorations */}
-      <div className="absolute top-1/4 left-10 w-96 h-96 bg-[#D4AF37]/10 rounded-full blur-3xl pointer-events-none"></div>
-      <div className="absolute bottom-10 right-10 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="absolute top-1/4 left-10 w-72 h-72 sm:w-96 sm:h-96 bg-[#D4AF37]/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="absolute bottom-10 right-10 w-72 h-72 sm:w-96 sm:h-96 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none"></div>
 
-      <div className="w-full max-w-md bg-[#132338]/90 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl backdrop-blur-xl relative z-10 space-y-6">
+      <div className="w-full max-w-lg bg-[#132338]/95 border border-slate-800 rounded-3xl p-5 sm:p-8 shadow-2xl backdrop-blur-xl relative z-10 space-y-5 my-auto">
         
         {/* Brand Header */}
         <div className="text-center space-y-2">
-          <div className="inline-flex items-center justify-center p-3 bg-gradient-to-br from-[#D4AF37] to-amber-600 rounded-2xl shadow-lg shadow-amber-500/20 mb-2">
-            <Icons.Cpu className="w-8 h-8 text-slate-950" />
+          <div className="inline-flex items-center justify-center p-3 bg-gradient-to-br from-[#D4AF37] to-amber-600 rounded-2xl shadow-lg shadow-amber-500/20 mb-1">
+            <Icons.Cpu className="w-7 h-7 text-slate-950" />
           </div>
-          <h1 className="text-2xl font-extrabold text-white tracking-tight flex items-center justify-center gap-2">
-            TRISULA AI PORTAL
+          <h1 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight flex items-center justify-center gap-2">
+            TRISULA SMART LEARNING ENGINE
           </h1>
-          <p className="text-xs text-slate-400">
-            Engine Evaluasi Penilaian Otomatis, Modul Ajar, & Portal B2B Sekolah
+          <p className="text-xs text-slate-400 leading-relaxed px-2">
+            Engine evaluasi penilaian otomatis, Modul ajar, CP, TP, ATP, KKTP, Prota, Prosem & Portal B2B Sekolah
           </p>
         </div>
 
@@ -210,7 +237,7 @@ export default function LoginPage({ onLoginSuccess }) {
               key={r.id}
               type="button"
               onClick={() => setSelectedRole(r.id)}
-              className={`flex-1 py-2 text-center rounded-xl transition-all ${
+              className={`flex-1 py-2 text-center rounded-xl transition-all cursor-pointer ${
                 selectedRole === r.id
                   ? 'bg-gradient-to-r from-[#D4AF37] to-amber-500 text-slate-950 font-bold shadow-md'
                   : 'text-slate-400 hover:text-slate-200'
@@ -233,9 +260,7 @@ export default function LoginPage({ onLoginSuccess }) {
           </div>
         )}
 
-        {/* Form Container */}
-        <form onSubmit={handleAuthSubmit} className="space-y-4">
-          
+        <form onSubmit={handleAuthSubmit} className="space-y-3.5">
           {authMode === 'register' && (
             <>
               <div>
@@ -267,6 +292,34 @@ export default function LoginPage({ onLoginSuccess }) {
                     placeholder="Contoh: SMA Negeri 1 Jakarta"
                     className="w-full pl-9 pr-4 py-2.5 bg-slate-900 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-[#D4AF37]"
                   />
+                </div>
+              </div>
+
+              {/* PAKET PEMILIHAN SAAT PENDAFTARAN */}
+              <div>
+                <label className="block text-xs font-medium text-[#D4AF37] mb-1.5 font-bold">
+                  Pilih Paket Awal Pendaftaran:
+                </label>
+                <div className="grid grid-cols-3 gap-2 text-xs">
+                  {[
+                    { id: 'free', title: 'Gratis', desc: '1 Token Uji Coba' },
+                    { id: 'single', title: '1 Modul', desc: '5 Token (Rp10rb)' },
+                    { id: 'monthly', title: 'Bulanan', desc: 'Unlimited (Rp29rb)' }
+                  ].map(pkg => (
+                    <button
+                      key={pkg.id}
+                      type="button"
+                      onClick={() => setSelectedPackage(pkg.id)}
+                      className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                        selectedPackage === pkg.id 
+                          ? 'bg-[#D4AF37]/10 border-[#D4AF37] text-white shadow-md' 
+                          : 'bg-slate-900 border-slate-800 text-slate-400 hover:border-slate-700'
+                      }`}
+                    >
+                      <span className="font-bold text-xs text-amber-300">{pkg.title}</span>
+                      <span className="text-[10px] text-slate-300 mt-1 leading-tight">{pkg.desc}</span>
+                    </button>
+                  ))}
                 </div>
               </div>
             </>
@@ -304,7 +357,7 @@ export default function LoginPage({ onLoginSuccess }) {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
               >
                 {showPassword ? <Icons.EyeOff /> : <Icons.Eye />}
               </button>
@@ -318,14 +371,14 @@ export default function LoginPage({ onLoginSuccess }) {
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="rounded border-slate-700 bg-slate-900 text-[#D4AF37] focus:ring-0"
+                  className="rounded border-slate-700 bg-slate-900 text-[#D4AF37] focus:ring-0 cursor-pointer"
                 />
                 Ingat Saya
               </label>
               <button
                 type="button"
                 onClick={() => setAuthMode('forgot')}
-                className="hover:text-[#D4AF37] transition-colors"
+                className="hover:text-[#D4AF37] transition-colors cursor-pointer"
               >
                 Lupa Sandi?
               </button>
@@ -335,23 +388,22 @@ export default function LoginPage({ onLoginSuccess }) {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3 rounded-xl bg-gradient-to-r from-[#D4AF37] to-amber-500 text-slate-950 font-bold text-xs hover:brightness-110 shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2 transition-all cursor-pointer"
+            className="w-full py-3 rounded-xl bg-gradient-to-r from-[#D4AF37] to-amber-500 text-slate-950 font-bold text-xs hover:brightness-110 shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2 transition-all cursor-pointer mt-2"
           >
             {isLoading ? (
               <div className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin"></div>
             ) : (
               <>
-                {authMode === 'login' ? 'Masuk Sekarang' : authMode === 'register' ? 'Buat Akun Baru' : 'Kirim Instruksi Reset'}
+                {authMode === 'login' ? 'Masuk Sekarang' : 'Daftar & Aktifkan Paket'}
                 <Icons.ArrowRight />
               </>
             )}
           </button>
         </form>
 
-        {/* Quick Demo Access Launcher */}
         <div className="pt-2 border-t border-slate-800 space-y-2">
           <div className="text-[10px] text-center uppercase tracking-wider text-slate-400 font-semibold">
-            ⚡ Pengujian Cepat / Akun Demo
+            ⚡ Pengujian Cepat Akun Demo
           </div>
           <div className="grid grid-cols-3 gap-2">
             <button
@@ -363,10 +415,10 @@ export default function LoginPage({ onLoginSuccess }) {
             </button>
             <button
               type="button"
-              onClick={() => handleDemoLogin('guru_free')}
-              className="p-2 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-[10px] text-slate-300 font-semibold transition-all text-center cursor-pointer"
+              onClick={() => handleDemoLogin('eike2000')}
+              className="p-2 bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-[#D4AF37] rounded-xl text-[10px] text-slate-200 font-semibold transition-all text-center cursor-pointer"
             >
-              User Gratis
+              eike2000 (5 Token)
             </button>
             <button
               type="button"
@@ -378,7 +430,6 @@ export default function LoginPage({ onLoginSuccess }) {
           </div>
         </div>
 
-        {/* Auth Mode Toggle Footer */}
         <div className="text-center text-xs text-slate-400">
           {authMode === 'login' ? (
             <>
@@ -386,7 +437,7 @@ export default function LoginPage({ onLoginSuccess }) {
               <button
                 type="button"
                 onClick={() => setAuthMode('register')}
-                className="text-[#D4AF37] font-bold hover:underline"
+                className="text-[#D4AF37] font-bold hover:underline cursor-pointer"
               >
                 Daftar Sekarang
               </button>
@@ -397,7 +448,7 @@ export default function LoginPage({ onLoginSuccess }) {
               <button
                 type="button"
                 onClick={() => setAuthMode('login')}
-                className="text-[#D4AF37] font-bold hover:underline"
+                className="text-[#D4AF37] font-bold hover:underline cursor-pointer"
               >
                 Masuk Kembali
               </button>
