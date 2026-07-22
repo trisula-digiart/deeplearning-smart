@@ -6,7 +6,7 @@ FileDown,
 Printer,
 Share2,
 Check,
-FileText,
+FileText, 
 Sparkles,
 Layers,
 Coins
