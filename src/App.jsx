@@ -3,6 +3,13 @@ import React, { useState, useEffect, useMemo } from 'react';
 // Google Apps Script Webhook URL for Google Sheets syncing
 const GOOGLE_SHEETS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyJJp3CVGiAEkCQ-6zDTgS1Rz2Fz2vQYCvpn_hB-JkN13q9aWQOAFfAtpWH3cHnby6LEg/exec";
 
+// Contact and Payment Configuration
+const ADMIN_WA_NUMBER = "6281298406844";
+const BANK_BCA_REK = "5765323549";
+const BANK_BCA_NAME = "iis istianawahid";
+const DANA_NUMBER = "081519234087";
+const DANA_NAME = "iis istianawahid";
+
 // Helper function to sync user status changes to Google Sheets
 const syncUserToGoogleSheets = async (userData, action = 'SYNC_USER') => {
   if (!GOOGLE_SHEETS_WEBHOOK_URL) return;
@@ -58,11 +65,6 @@ const Icons = {
   Shield: ({ className = "w-4 h-4 text-[#D4AF37]" }) => (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-    </svg>
-  ),
-  Sparkles: ({ className = "w-4 h-4 text-amber-300" }) => (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
     </svg>
   ),
   ArrowRight: ({ className = "w-4 h-4" }) => (
@@ -316,7 +318,7 @@ function LoginPage({ onLoginSuccess }) {
         email: email,
         role: selectedRole,
         is_premium: selectedRole === 'admin' || email.includes('premium'),
-        kredit_tersisa: email.includes('premium') ? 250 : 0, // Free users start with 0 credits (1 free trial draft)
+        kredit_tersisa: email.includes('premium') ? 250 : 0, // Free users start with 0 credits
         doc_generated_count: 0,
         school: schoolName || 'SMA Negeri 1 Jakarta'
       };
@@ -369,7 +371,6 @@ function LoginPage({ onLoginSuccess }) {
           <div className="inline-flex items-center justify-center p-3 bg-gradient-to-br from-[#D4AF37] to-amber-600 rounded-2xl shadow-lg shadow-amber-500/20 mb-2">
             <Icons.Cpu className="w-8 h-8 text-slate-950" />
           </div>
-          {/* UPDATED TITLE & SUBTITLE */}
           <h1 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight flex items-center justify-center gap-2">
             TRISULA SMART LEARNING ENGINE
           </h1>
@@ -569,7 +570,7 @@ function LoginPage({ onLoginSuccess }) {
   );
 }
 
-function AdminDashboard({ usersData, onUpdateUserStatus, onAddCredits, onAddUser }) {
+function AdminDashboard({ usersData, onUpdateUserStatus, onAddCredits, onAddUser, transactionsHistory }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [selectedUserForCredits, setSelectedUserForCredits] = useState(null);
@@ -638,6 +639,7 @@ function AdminDashboard({ usersData, onUpdateUserStatus, onAddCredits, onAddUser
     syncUserToGoogleSheets(updatedUser, 'ADD_CREDITS');
     showToast(`Berhasil +${added} kuota modul untuk ${selectedUserForCredits.name} & tersimpan ke Google Sheets.`);
     setSelectedUserForCredits(null);
+    setCreditAmount(1);
   };
 
   const handleCreateUserSubmit = (e) => {
@@ -692,7 +694,9 @@ function AdminDashboard({ usersData, onUpdateUserStatus, onAddCredits, onAddUser
           <h1 className="text-2xl md:text-3xl font-extrabold text-white mt-2">
             Dashboard Aktivasi User & Lisensi
           </h1>
-          <p className="text-xs text-slate-400 mt-1">Data pengguna otomatis tersinkronisasi dengan Google Sheets</p>
+          <p className="text-xs text-slate-400 mt-1">
+            TRISULA SMART LEARNING ENGINE • Data pengguna otomatis tersinkronisasi dengan Google Sheets
+          </p>
         </div>
 
         <button
@@ -907,6 +911,138 @@ function AdminDashboard({ usersData, onUpdateUserStatus, onAddCredits, onAddUser
   );
 }
 
+function PaywallModal({ isOpen, onClose, userContext = {}, paywallReason = '' }) {
+  if (!isOpen) return null;
+
+  const userEmail = userContext.email || 'email@sekolah.sch.id';
+
+  const waMonthlyText = encodeURIComponent(
+    `Halo Admin TRISULA SMART LEARNING ENGINE,\n\nSaya telah melakukan pembayaran untuk Paket Bulanan Rp29.000.\n\n📌 Email Terdaftar: ${userEmail}\n📌 Bukti Transfer: (Terlampir)\n\nMohon bantuannya untuk mengaktifkan akses akun saya. Terima kasih!`
+  );
+
+  const waSingleText = encodeURIComponent(
+    `Halo Admin TRISULA SMART LEARNING ENGINE,\n\nSaya telah melakukan pembayaran untuk Paket 1 Modul Ajar Rp10.000.\n\n📌 Email Terdaftar: ${userEmail}\n📌 Bukti Transfer: (Terlampir)\n\nMohon bantuannya untuk menambahkan 1 kuota modul saya. Terima kasih!`
+  );
+
+  const waB2BText = encodeURIComponent(
+    `Halo Admin TRISULA SMART LEARNING ENGINE,\n\nSaya tertarik mengajukan *Lisensi Sekolah / B2B* untuk instansi kami.\n\n📌 Email Terdaftar: ${userEmail}\n\nMohon info proposal dan kemitraan resmi. Terima kasih!`
+  );
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+      <div className="bg-[#0B192C] border border-[#D4AF37] rounded-3xl max-w-xl w-full p-6 space-y-4 text-white shadow-2xl relative my-6">
+        <div className="flex justify-between items-center border-b border-slate-800 pb-3">
+          <h3 className="font-bold text-base text-[#D4AF37] flex items-center gap-2">
+            <span>🔒</span> Buka Akses Feature / Top Up Modul
+          </h3>
+          <button onClick={onClose} className="text-slate-400 hover:text-white cursor-pointer font-bold text-sm">✕</button>
+        </div>
+        
+        {paywallReason && (
+          <p className="text-xs text-amber-200/90 bg-amber-500/10 border border-amber-500/20 p-2.5 rounded-xl leading-relaxed">
+            ⚠️ {paywallReason}
+          </p>
+        )}
+
+        {/* Bank & DANA Account Info */}
+        <div className="bg-slate-900/90 p-3.5 border border-slate-800 rounded-2xl text-xs space-y-2">
+          <div className="font-bold text-[#D4AF37] flex items-center gap-1.5">
+            💳 Rekening Transfer & E-Wallet Resmi:
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] text-slate-300">
+            <div className="p-2.5 bg-slate-950 rounded-xl border border-slate-800 space-y-0.5">
+              <span className="font-bold text-white block">🏦 Bank BCA</span>
+              <span className="font-mono text-amber-300 text-xs font-bold block select-all">{BANK_BCA_REK}</span>
+              <span className="block text-[10px] text-slate-400">a.n. {BANK_BCA_NAME}</span>
+            </div>
+            <div className="p-2.5 bg-slate-950 rounded-xl border border-slate-800 space-y-0.5">
+              <span className="font-bold text-white block">💙 DANA</span>
+              <span className="font-mono text-amber-300 text-xs font-bold block select-all">{DANA_NUMBER}</span>
+              <span className="block text-[10px] text-slate-400">a.n. {DANA_NAME}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* 3 PACKAGE TIERS */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+          {/* Paket 1: Bulanan */}
+          <div className="bg-slate-900 p-3.5 border border-amber-500/50 rounded-2xl space-y-2 flex flex-col justify-between hover:border-[#D4AF37] transition-all">
+            <div className="space-y-1">
+              <span className="px-2 py-0.5 bg-amber-500/20 text-amber-300 text-[9px] font-bold rounded-full uppercase">Paling Laris</span>
+              <div className="font-bold text-xs text-amber-300 uppercase">Paket Bulanan</div>
+              <div className="text-base font-black text-[#D4AF37]">Rp29.000 <span className="text-[9px] text-slate-400 font-normal">/ bln</span></div>
+              <ul className="text-[10px] text-slate-300 space-y-1 pt-1 border-t border-slate-800/80">
+                <li className="flex items-center gap-1"><span className="text-emerald-400">✓</span> Unlimited 30 Hari</li>
+                <li className="flex items-center gap-1"><span className="text-emerald-400">✓</span> Bebas Generate</li>
+                <li className="flex items-center gap-1"><span className="text-emerald-400">✓</span> Bebas Cetak Word/PDF</li>
+              </ul>
+            </div>
+            <a
+              href={`https://wa.me/${ADMIN_WA_NUMBER}?text=${waMonthlyText}`}
+              target="_blank"
+              rel="noreferrer"
+              className="block text-center py-2 bg-[#D4AF37] hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-xs transition-colors shadow-lg cursor-pointer mt-2"
+            >
+              🟢 Beli via WA
+            </a>
+          </div>
+
+          {/* Paket 2: 1 Modul Ajar */}
+          <div className="bg-slate-900 p-3.5 border border-indigo-500/40 rounded-2xl space-y-2 flex flex-col justify-between hover:border-indigo-400 transition-all">
+            <div className="space-y-1">
+              <span className="px-2 py-0.5 bg-indigo-500/20 text-indigo-300 text-[9px] font-bold rounded-full uppercase">Eceran</span>
+              <div className="font-bold text-xs text-indigo-300 uppercase">1 Modul Ajar</div>
+              <div className="text-base font-black text-indigo-400">Rp10.000 <span className="text-[9px] text-slate-400 font-normal">/ modul</span></div>
+              <ul className="text-[10px] text-slate-300 space-y-1 pt-1 border-t border-slate-800/80">
+                <li className="flex items-center gap-1"><span className="text-emerald-400">✓</span> Hak Akses 1 Modul</li>
+                <li className="flex items-center gap-1"><span className="text-emerald-400">✓</span> Bebas Generate & Edit</li>
+                <li className="flex items-center gap-1"><span className="text-emerald-400">✓</span> Bebas Cetak Word/PDF</li>
+                <li className="flex items-center gap-1"><span className="text-emerald-400">✓</span> Tanpa Hangus</li>
+              </ul>
+            </div>
+            <a
+              href={`https://wa.me/${ADMIN_WA_NUMBER}?text=${waSingleText}`}
+              target="_blank"
+              rel="noreferrer"
+              className="block text-center py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition-colors shadow-lg cursor-pointer mt-2"
+            >
+              🟢 Beli via WA
+            </a>
+          </div>
+
+          {/* Paket 3: Lisensi Sekolah B2B */}
+          <div className="bg-slate-900 p-3.5 border border-cyan-500/40 rounded-2xl space-y-2 flex flex-col justify-between hover:border-cyan-400 transition-all">
+            <div className="space-y-1">
+              <span className="px-2 py-0.5 bg-cyan-500/20 text-cyan-300 text-[9px] font-bold rounded-full uppercase">Instansi</span>
+              <div className="font-bold text-xs text-cyan-300 uppercase">Lisensi Sekolah</div>
+              <div className="text-base font-black text-cyan-400">B2B <span className="text-[9px] text-slate-400 font-normal">/ thn</span></div>
+              <ul className="text-[10px] text-slate-300 space-y-1 pt-1 border-t border-slate-800/80">
+                <li className="flex items-center gap-1"><span className="text-emerald-400">✓</span> Akses Seluruh Guru</li>
+                <li className="flex items-center gap-1"><span className="text-emerald-400">✓</span> Faktur & Kwitansi</li>
+                <li className="flex items-center gap-1"><span className="text-emerald-400">✓</span> Portal Sekolah B2B</li>
+              </ul>
+            </div>
+            <a
+              href={`https://wa.me/${ADMIN_WA_NUMBER}?text=${waB2BText}`}
+              target="_blank"
+              rel="noreferrer"
+              className="block text-center py-2 bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/40 font-bold rounded-xl text-xs transition-colors shadow-lg cursor-pointer mt-2"
+            >
+              💬 Tanya Admin
+            </a>
+          </div>
+        </div>
+
+        <div className="text-center pt-1">
+          <span className="text-[10px] text-slate-400">
+            Email Anda (<strong className="text-slate-200">{userEmail}</strong>) akan otomatis dilampirkan saat pesan WhatsApp terbuka.
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function AIWorkspace({ activeDocument, onBackToDashboard, currentUser, onUpdateCurrentUser }) {
   const [activeSubTab, setActiveSubTab] = useState('modul-ajar');
   const [isPaywallOpen, setIsPaywallOpen] = useState(false);
@@ -1022,7 +1158,6 @@ Berikut adalah formula dasar perhitungan laju pertumbuhan populasi dan rata-rata
     }
   }, [activeDocument]);
 
-  // STRICT CHECK: Check if user has active quota or premium
   const hasActiveAccess = currentUser?.is_premium || (currentUser?.kredit_tersisa && currentUser.kredit_tersisa > 0) || (currentUser?.doc_generated_count === 0);
 
   const handleSendMessage = (customPrompt) => {
@@ -1044,7 +1179,6 @@ Berikut adalah formula dasar perhitungan laju pertumbuhan populasi dan rata-rata
       
       setDocContent(prev => prev + generatedMarkdownBlock);
 
-      // Deduct credit if non-premium
       if (!currentUser.is_premium && currentUser.kredit_tersisa > 0) {
         const updatedUser = {
           ...currentUser,
@@ -1147,17 +1281,6 @@ Berikut adalah formula dasar perhitungan laju pertumbuhan populasi dan rata-rata
   };
 
   const activeTabContent = filterContentByTab(docContent, activeSubTab);
-
-  // Dynamic WhatsApp Message text containing logged-in user email
-  const userEmail = currentUser?.email || 'email@sekolah.sch.id';
-  
-  const waMonthlyText = encodeURIComponent(
-    `Halo Admin TRISULA SMART LEARNING ENGINE,\n\nSaya telah melakukan pembayaran untuk Paket Bulanan Rp29.000.\n\n📌 Email Terdaftar: ${userEmail}\n📌 Bukti Transfer: (Terlampir)\n\nMohon bantuannya untuk mengaktifkan akses akun saya. Terima kasih!`
-  );
-
-  const waSingleText = encodeURIComponent(
-    `Halo Admin TRISULA SMART LEARNING ENGINE,\n\nSaya telah melakukan pembayaran untuk Paket 1 Modul Ajar Rp10.000.\n\n📌 Email Terdaftar: ${userEmail}\n📌 Bukti Transfer: (Terlampir)\n\nMohon bantuannya untuk menambahkan 1 kuota modul saya. Terima kasih!`
-  );
 
   return (
     <div className="h-full flex flex-col md:flex-row gap-4 font-sans">
@@ -1307,90 +1430,13 @@ Berikut adalah formula dasar perhitungan laju pertumbuhan populasi dan rata-rata
         </div>
       )}
 
-      {/* UPDATED PAYWALL LOCK MODAL WITH CLEAR PACKAGE DESCRIPTIONS & AUTO-EMAIL WA LINK */}
-      {isPaywallOpen && (
-        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-[#0B192C] border border-[#D4AF37] rounded-3xl max-w-lg w-full p-6 space-y-4 text-white shadow-2xl relative">
-            <div className="flex justify-between items-center border-b border-slate-800 pb-2">
-              <h3 className="font-bold text-base text-[#D4AF37] flex items-center gap-2">
-                <span>🔒</span> Akses Fitur / Modul Terkunci
-              </h3>
-              <button onClick={() => setIsPaywallOpen(false)} className="text-slate-400 hover:text-white cursor-pointer font-bold">✕</button>
-            </div>
-            
-            <p className="text-xs text-slate-300 leading-relaxed">{paywallReason}</p>
-
-            {/* Rekening & DANA Information */}
-            <div className="bg-slate-900/90 p-3.5 border border-slate-800 rounded-xl text-xs space-y-2">
-              <div className="font-bold text-[#D4AF37] flex items-center gap-1.5">
-                💳 Metode Pembayaran Transfer / E-Wallet:
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] text-slate-300">
-                <div className="p-2.5 bg-slate-950 rounded-lg border border-slate-800 space-y-0.5">
-                  <span className="font-bold text-white block">🏦 Bank BCA</span>
-                  <span className="font-mono text-amber-300 text-xs font-bold block select-all">5765323549</span>
-                  <span className="block text-[10px] text-slate-400">a.n. iis istianawahid</span>
-                </div>
-                <div className="p-2.5 bg-slate-950 rounded-lg border border-slate-800 space-y-0.5">
-                  <span className="font-bold text-white block">💙 DANA</span>
-                  <span className="font-mono text-amber-300 text-xs font-bold block select-all">081519234087</span>
-                  <span className="block text-[10px] text-slate-400">a.n. iis istianawahid</span>
-                </div>
-              </div>
-            </div>
-
-            {/* PACKAGE CARDS WITH EXPLICIT HAK AKSES */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-              <div className="bg-slate-900 p-4 border border-amber-500/50 rounded-2xl space-y-2 flex flex-col justify-between hover:border-[#D4AF37] transition-all">
-                <div className="space-y-1.5">
-                  <div className="font-bold text-xs text-amber-300 uppercase tracking-wider">Paket Bulanan</div>
-                  <div className="text-xl font-black text-[#D4AF37]">Rp29.000 <span className="text-[10px] text-slate-400 font-normal">/ bln</span></div>
-                  <ul className="text-[11px] text-slate-300 space-y-1 pt-1 border-t border-slate-800/80">
-                    <li className="flex items-center gap-1.5"><span className="text-emerald-400">✓</span> Unlimited Akses 30 Hari</li>
-                    <li className="flex items-center gap-1.5"><span className="text-emerald-400">✓</span> Bebas Generate Sepuasnya</li>
-                    <li className="flex items-center gap-1.5"><span className="text-emerald-400">✓</span> Bebas Cetak (Word, PDF)</li>
-                  </ul>
-                </div>
-                <a
-                  href={`https://wa.me/6281298406844?text=${waMonthlyText}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="block text-center py-2.5 bg-[#D4AF37] hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-xs transition-colors shadow-lg cursor-pointer mt-3"
-                >
-                  🟢 Beli via WA
-                </a>
-              </div>
-
-              <div className="bg-slate-900 p-4 border border-indigo-500/40 rounded-2xl space-y-2 flex flex-col justify-between hover:border-indigo-400 transition-all">
-                <div className="space-y-1.5">
-                  <div className="font-bold text-xs text-indigo-300 uppercase tracking-wider">Paket 1 Modul Ajar</div>
-                  <div className="text-xl font-black text-indigo-400">Rp10.000 <span className="text-[10px] text-slate-400 font-normal">/ modul</span></div>
-                  <ul className="text-[11px] text-slate-300 space-y-1 pt-1 border-t border-slate-800/80">
-                    <li className="flex items-center gap-1.5"><span className="text-emerald-400">✓</span> Hak Akses 1 Modul Utuh</li>
-                    <li className="flex items-center gap-1.5"><span className="text-emerald-400">✓</span> Bebas Generate & Edit</li>
-                    <li className="flex items-center gap-1.5"><span className="text-emerald-400">✓</span> Bebas Cetak (Word, PDF)</li>
-                    <li className="flex items-center gap-1.5"><span className="text-emerald-400">✓</span> Kuota Tanpa Hangus</li>
-                  </ul>
-                </div>
-                <a
-                  href={`https://wa.me/6281298406844?text=${waSingleText}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="block text-center py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition-colors shadow-lg cursor-pointer mt-3"
-                >
-                  🟢 Beli via WA
-                </a>
-              </div>
-            </div>
-
-            <div className="text-center pt-2">
-              <span className="text-[10px] text-slate-400">
-                Email Terdaftar Anda (<strong className="text-slate-200">{currentUser?.email || 'Guest'}</strong>) akan otomatis dilampirkan saat pesan WhatsApp terbuka.
-              </span>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* PAYWALL MODAL */}
+      <PaywallModal
+        isOpen={isPaywallOpen}
+        onClose={() => setIsPaywallOpen(false)}
+        userContext={currentUser}
+        paywallReason={paywallReason}
+      />
     </div>
   );
 }
@@ -1930,12 +1976,11 @@ Peserta didik mampu menganalisis interaksi antar komponen ekosistem, memahami pe
     setAllUsers(prev => [newUserPayload, ...prev]);
   };
 
-  // Check quota access before creating a new document
   const handleOpenWizard = () => {
     const hasQuota = currentUser.is_premium || (currentUser.kredit_tersisa && currentUser.kredit_tersisa > 0) || (currentUser.doc_generated_count === 0);
     if (!hasQuota) {
       showToast('⚠️ Kuota modul Anda telah habis. Silakan top up Paket 1 Modul Ajar (Rp10.000) atau Paket Bulanan!');
-      setCurrentView('workspace'); // Opens workspace which displays Paywall Modal
+      setCurrentView('workspace');
       return;
     }
     setIsWizardOpen(true);
@@ -1992,7 +2037,6 @@ Peserta didik mampu menganalisis interaksi antar komponen ekosistem, memahami pe
               <Icons.Cpu className="w-5 h-5 text-slate-950" />
             </div>
             <div>
-              {/* UPDATED APP TITLE */}
               <span className="font-extrabold text-xs sm:text-sm text-white tracking-wider block">
                 TRISULA SMART LEARNING ENGINE
               </span>
