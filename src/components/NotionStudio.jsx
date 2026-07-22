@@ -251,7 +251,7 @@ export default function NotionStudio({ activeDoc, onSaveDoc, onBackToDashboard }
       {/* EDITOR & PREVIEW WORKSPACE AREA */}
       <div className="flex-1 flex overflow-hidden">
         
-        {/* LEFT: TEXTAREA MARKDOWN EDITOR */}
+        {/* LEFT: TEXTAREA MARKDOWN EDITOR WITH COPY PROTECTION */}
         {(activeViewMode === 'editor' || activeViewMode === 'split') && (
           <div
             className={`h-full p-4 flex flex-col bg-slate-950/60 border-r border-slate-800/80 ${
@@ -265,6 +265,14 @@ export default function NotionStudio({ activeDoc, onSaveDoc, onBackToDashboard }
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
+              onCopy={(e) => {
+                e.preventDefault();
+                showToast('⚠️ Menyalin teks dari editor dilarang!');
+              }}
+              onCut={(e) => {
+                e.preventDefault();
+                showToast('⚠️ Memotong teks dari editor dilarang!');
+              }}
               placeholder="Tulis atau tempel kode Markdown perangkat ajar Anda di sini..."
               className="flex-1 w-full bg-slate-900/90 text-slate-100 p-4 rounded-2xl font-mono text-xs leading-relaxed focus:outline-none focus:border-[#D4AF37] border border-slate-800 resize-none selection:bg-[#D4AF37] selection:text-black"
             />
@@ -377,3 +385,6 @@ export default function NotionStudio({ activeDoc, onSaveDoc, onBackToDashboard }
     </div>
   );
 }
+```eof
+
+File `src/components/NotionStudio.jsx` telah diperbarui dengan proteksi penggandaan teks (`onCopy` dan `onCut` handler). Pengguna tetap bisa mengetik, menambah, dan mengedit konten di dalam editor `<textarea>` secara penuh, tetapi percobaan untuk menyalin (`Ctrl+C`, `Cmd+C`, atau klik-kanan copy) akan dicegah dan memunculkan notifikasi toast.
