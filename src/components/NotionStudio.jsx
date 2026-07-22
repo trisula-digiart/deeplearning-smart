@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 
 /**
- * TRISULAPROMPT - Notion Studio Component v2.5 (Fully Patched with Export Center)
- * Author: TRISULACODER v8.7 - Lead Solution Architect
+ * TRISULAPROMPT - Notion Studio Component v2.6 (Multi-Layer Copy Protection)
+ * Author: TRISULACODER v9.6 - Lead Solution Architect
  * AI-Powered Markdown & WYSIWYG Editor + Native Document Export Engine
  */
 
@@ -157,6 +157,28 @@ export default function NotionStudio({ activeDoc, onSaveDoc, onBackToDashboard }
     }, 500);
   };
 
+  // Anti-Copy & Cut Event Handler
+  const handlePreventCopyCut = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    showToast('⚠️ Menyalin / memotong teks dari editor dilarang!');
+  };
+
+  // Keyboard Shortcut Interceptor (Ctrl+C, Cmd+C, Ctrl+X, Cmd+X)
+  const handleKeyDownProtection = (e) => {
+    if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'C' || e.key === 'x' || e.key === 'X')) {
+      e.preventDefault();
+      e.stopPropagation();
+      showToast('⚠️ Kombinasi tombol Salin/Potong (Ctrl+C / Ctrl+X) dilarang!');
+    }
+  };
+
+  // Context Menu Disabler for Editor and Preview
+  const handleContextMenuProtection = (e) => {
+    e.preventDefault();
+    showToast('⚠️ Menu klik kanan dinonaktifkan di area ini!');
+  };
+
   return (
     <div className="h-full flex flex-col bg-[#0F172A]/80 rounded-3xl border border-slate-800 shadow-2xl overflow-hidden relative">
       
@@ -251,7 +273,7 @@ export default function NotionStudio({ activeDoc, onSaveDoc, onBackToDashboard }
       {/* EDITOR & PREVIEW WORKSPACE AREA */}
       <div className="flex-1 flex overflow-hidden">
         
-        {/* LEFT: TEXTAREA MARKDOWN EDITOR WITH COPY PROTECTION */}
+        {/* LEFT: TEXTAREA MARKDOWN EDITOR WITH TRIPLE-LAYER COPY PROTECTION */}
         {(activeViewMode === 'editor' || activeViewMode === 'split') && (
           <div
             className={`h-full p-4 flex flex-col bg-slate-950/60 border-r border-slate-800/80 ${
@@ -265,33 +287,32 @@ export default function NotionStudio({ activeDoc, onSaveDoc, onBackToDashboard }
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              onCopy={(e) => {
-                e.preventDefault();
-                showToast('⚠️ Menyalin teks dari editor dilarang!');
-              }}
-              onCut={(e) => {
-                e.preventDefault();
-                showToast('⚠️ Memotong teks dari editor dilarang!');
-              }}
+              onCopy={handlePreventCopyCut}
+              onCut={handlePreventCopyCut}
+              onKeyDown={handleKeyDownProtection}
+              onContextMenu={handleContextMenuProtection}
               placeholder="Tulis atau tempel kode Markdown perangkat ajar Anda di sini..."
               className="flex-1 w-full bg-slate-900/90 text-slate-100 p-4 rounded-2xl font-mono text-xs leading-relaxed focus:outline-none focus:border-[#D4AF37] border border-slate-800 resize-none selection:bg-[#D4AF37] selection:text-black"
             />
           </div>
         )}
 
-        {/* RIGHT: WYSIWYG LIVE PREVIEW */}
+        {/* RIGHT: WYSIWYG LIVE PREVIEW WITH TEXT SELECTION & COPY DISABLED */}
         {(activeViewMode === 'preview' || activeViewMode === 'split') && (
           <div
-            className={`h-full p-6 overflow-y-auto bg-slate-900/40 ${
+            className={`h-full p-6 overflow-y-auto bg-slate-900/40 select-none ${
               activeViewMode === 'split' ? 'w-1/2' : 'w-full'
             }`}
+            style={{ userSelect: 'none', WebkitUserSelect: 'none' }}
+            onCopy={handlePreventCopyCut}
+            onContextMenu={handleContextMenuProtection}
           >
             <div className="text-[10px] font-bold text-[#D4AF37] uppercase mb-3 flex items-center justify-between">
               <span>LIVE WYSIWYG DOCUMENT PREVIEW</span>
               <span className="text-emerald-400">● Synchronized</span>
             </div>
 
-            <div className="p-8 bg-[#0F172A] border border-slate-800 rounded-3xl shadow-xl text-xs text-slate-200 leading-relaxed font-sans space-y-4 whitespace-pre-wrap">
+            <div className="p-8 bg-[#0F172A] border border-slate-800 rounded-3xl shadow-xl text-xs text-slate-200 leading-relaxed font-sans space-y-4 whitespace-pre-wrap select-none">
               {content}
             </div>
           </div>
@@ -385,6 +406,3 @@ export default function NotionStudio({ activeDoc, onSaveDoc, onBackToDashboard }
     </div>
   );
 }
-```eof
-
-File `src/components/NotionStudio.jsx` telah diperbarui dengan proteksi penggandaan teks (`onCopy` dan `onCut` handler). Pengguna tetap bisa mengetik, menambah, dan mengedit konten di dalam editor `<textarea>` secara penuh, tetapi percobaan untuk menyalin (`Ctrl+C`, `Cmd+C`, atau klik-kanan copy) akan dicegah dan memunculkan notifikasi toast.
