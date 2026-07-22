@@ -11,7 +11,7 @@ import AIWorkspace from './components/AIWorkspace';
 
 export const GOOGLE_SHEETS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyJJp3CVGiAEkCQ-6zDTgS1Rz2Fz2vQYCvpn_hB-JkN13q9aWQOAFfAtpWH3cHnby6LEg/exec";
 
-// Master Initial Documents (Clean Array Join Formatting - 100% Safe from Unterminated Literal Errors)
+// Master Initial Documents (Clean Array Join Formatting - 100% Safe from Unterminated Literal Errors) 
 const INITIAL_DOCUMENTS = [
 {
 id: "doc_01",
