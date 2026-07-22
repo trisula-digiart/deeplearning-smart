@@ -11,7 +11,7 @@ import AIWorkspace from './components/AIWorkspace';
 
 export const GOOGLE_SHEETS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyJJp3CVGiAEkCQ-6zDTgS1Rz2Fz2vQYCvpn_hB-JkN13q9aWQOAFfAtpWH3cHnby6LEg/exec";
 
-// Default Master Initial Documents
+// Master Initial Documents (Clean ES String Formatting - Zero Unterminated Literal Error)
 const INITIAL_DOCUMENTS = [
 {
 id: "doc_01",
@@ -22,201 +22,54 @@ topic: "Ekosistem, Keanekaragaman Hayati & Perubahan Lingkungan",
 fase_pembelajaran: "Modul Ajar",
 lastModified: "2026-07-22 14:30",
 status: "In Progress",
-content: `# MODUL AJAR DEEP LEARNING: IPA & BIOLOGI FASE E (KELAS 10 SMA)
-
-I. INFORMASI UMUM
-
-Mata Pelajaran: IPA & Biologi
-
-Fase / Kelas: Fase E (Kelas 10 SMA)
-
-Topik Utama: Ekosistem, Keanekaragaman Hayati & Perubahan Lingkungan
-
-Alokasi Waktu: 2 JP x 45 Menit
-
-II. CAPAIAN PEMBELAJARAN (CP)
-
-📘 Analisis Capaian Pembelajaran Elemen (IPA & BIOLOGI)
-
-Peserta didik mampu menganalisis interaksi antar komponen ekosistem, memahami pentingnya keanekaragaman hayati lokal, serta merancang solusi kreatif atas perubahan lingkungan secara kritis dan kolaboratif.
-
-III. TUJUAN PEMBELAJARAN (TP)
-
-🎯 Poin Tujuan Pembelajaran ABCD (IPA & BIOLOGI)
-
-TP1: Menganalisis struktur rantai makanan dan piramida energi ekosistem menggunakan formula matematis $P(t) = P_0 e^{rt}$.
-
-TP2: Menyusun grafik fluktuasi populasi spesies lokal berdasarkan data sampel di lapangan.
-
-TP3: Mempresentasikan hasil analisis proyek pelestarian lingkungan secara kolaboratif.
+content: "# MODUL AJAR DEEP LEARNING: IPA & BIOLOGI FASE E (KELAS 10 SMA)\n\n" +
+"## I. INFORMASI UMUM\n" +
+"- Mata Pelajaran: IPA & Biologi\n" +
+"- Fase / Kelas: Fase E (Kelas 10 SMA)\n" +
+"- Topik Utama: Ekosistem, Keanekaragaman Hayati & Perubahan Lingkungan\n" +
+"- Alokasi Waktu: 2 JP x 45 Menit\n\n" +
+"---\n\n" +
+"## II. CAPAIAN PEMBELAJARAN (CP)\n" +
+"### 📘 Analisis Capaian Pembelajaran Elemen (IPA & BIOLOGI)\n" +
+"Peserta didik mampu menganalisis interaksi antar komponen ekosistem, memahami pentingnya keanekaragaman hayati lokal, serta merancang solusi kreatif atas perubahan lingkungan secara kritis dan kolaboratif.\n\n" +
+"---\n\n" +
+"## III. TUJUAN PEMBELAJARAN (TP)\n" +
+"### 🎯 Poin Tujuan Pembelajaran ABCD (IPA & BIOLOGI)\n" +
+"- TP1: Menganalisis struktur rantai makanan dan piramida energi ekosistem menggunakan formula matematis $P(t) = P_0 e^{rt}$.\n" +
+"- TP2: Menyusun grafik fluktuasi populasi spesies lokal berdasarkan data sampel di lapangan.\n" +
+"- TP3: Mempresentasikan hasil analisis proyek pelestarian lingkungan secara kolaboratif.\n\n" +
+"
 
 $$E = m \cdot c^2 \quad \text{(Simulasi Energi Biomasa Ekosistem)}$$
 
-IV. ALUR TUJUAN PEMBELAJARAN (ATP)
-
-🗺️ Pemetaan Runtutan ATP (IPA & BIOLOGI)
-
-Kode ATP
-
-Alokasi Waktu
-
-Indikator Ketercapaian
-
-Rencana Asesmen
-
-ATP.10.1
-
-2 JP
-
-Mampu menganalisis interaksi trophic level
-
-Formatif Latihan Soal
-
-ATP.10.2
-
-2 JP
-
-Mampu menyusun laporan proyek pelestarian
-
-Unjuk Kerja Kelompok
-
-V. KRITERIA KETERCAPAIAN TUJUAN PEMBELAJARAN (KKTP)
-
-📊 Rubrik Observasi Unjuk Kerja Pemecahan Masalah (IPA & BIOLOGI)
-
-Kriteria Penilaian
-
-Belum Memenuhi (1)
-
-Memenuhi (2-3)
-
-Sangat Baik (4)
-
-Penerapan Konsep
-
-Salah mengidentifikasi rantai makanan
-
-Tepat mengidentifikasi 80% komponen
-
-Tepat 100% & menganalisis dampak
-
-VI. PROGRAM TAHUNAN (PROTA)
-
-No
-
-Bab / Elemen Materi Utama
-
-Alokasi Waktu (JP)
-
-Keterangan Semester
-
-1
-
-Keanekaragaman Hayati & Ekosistem
-
-18 JP
-
-Semester 1
-
-2
-
-Perubahan Lingkungan & Pemanasan Global
-
-18 JP
-
-Semester 2
-
-VII. PROGRAM SEMESTER (PROSEM)
-
-No
-
-Materi / Tujuan Pembelajaran
-
-JP
-
-Juli
-
-Ags
-
-Sep
-
-Okt
-
-Nov
-
-Des
-
-1
-
-Analisis Interaksi Ekosistem
-
-6 JP
-
-x
-
-x
-
-
-
-
-
-
-
-
-
-2
-
-Pemetaan Keanekaragaman Hayati
-
-6 JP
-
-
-
-
-
-x
-
-x
-
-
-
-
-
+\n\n" +
+"---\n\n" +
+"## IV. ALUR TUJUAN PEMBELAJARAN (ATP)\n" +
+"### 🗺️ Pemetaan Runtutan ATP (IPA & BIOLOGI)\n" +
+"| Kode ATP | Alokasi Waktu | Indikator Ketercapaian | Rencana Asesmen |\n" +
+"| :--- | :--- | :--- | :--- |\n" +
+"| ATP.10.1 | 2 JP | Mampu menganalisis interaksi trophic level | Formatif Latihan Soal |\n" +
+"| ATP.10.2 | 2 JP | Mampu menyusun laporan proyek pelestarian | Unjuk Kerja Kelompok |\n\n" +
+"---\n\n" +
+"## V. KRITERIA KETERCAPAIAN TUJUAN PEMBELAJARAN (KKTP)\n" +
+"### 📊 Rubrik Observasi Unjuk Kerja Pemecahan Masalah (IPA & BIOLOGI)\n" +
+"| Kriteria Penilaian | Belum Memenuhi (1) | Memenuhi (2-3) | Sangat Baik (4) |\n" +
+"| :--- | :--- | :--- | :--- |\n" +
+"| Penerapan Konsep | Salah mengidentifikasi rantai makanan | Tepat mengidentifikasi 80% komponen | Tepat 100% & menganalisis dampak |\n\n" +
+"---\n\n" +
+"## VI. PROGRAM TAHUNAN (PROTA)\n" +
+"| No | Bab / Elemen Materi Utama | Alokasi Waktu (JP) | Keterangan Semester |\n" +
+"| :--- | :--- | :--- | :--- |\n" +
+"| 1 | Keanekaragaman Hayati & Ekosistem | 18 JP | Semester 1 |\n" +
+"| 2 | Perubahan Lingkungan & Pemanasan Global | 18 JP | Semester 2 |\n\n" +
+"---\n\n" +
+"## VII. PROGRAM SEMESTER (PROSEM)\n" +
+"| No | Materi / Tujuan Pembelajaran | JP | Juli | Ags | Sep | Okt | Nov | Des |\n" +
+"| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |\n" +
+"| 1 | Analisis Interaksi Ekosistem | 6 JP | x | x | | | | |\n" +
+"| 2 | Pemetaan Keanekaragaman Hayati | 6 JP | | | x | x | | |"
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ];
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // Background Webhook Sync to Google Sheets
 export const syncUserToGoogleSheets = async (userData, actionType = 'SYNC_USER') => {
@@ -241,6 +94,164 @@ console.warn("Google Sheet Webhook Sync Warning:", err);
 }
 };
 
+// ============================================================================
+// COMPONENT: WIZARD MODAL (BUAT PERANGKAT AJAR DEEP LEARNING BARU)
+// ============================================================================
+function NewDocWizardModal({ isOpen, onClose, onCreateDocument }) {
+const [subject, setSubject] = useState('IPA & Biologi');
+const [phase, setPhase] = useState('Fase E (Kelas 10 SMA)');
+const [topic, setTopic] = useState('Ekosistem, Keanekaragaman Hayati & Perubahan Lingkungan');
+const [hours, setHours] = useState('2 JP x 45 Menit');
+
+if (!isOpen) return null;
+
+const handleSubmit = (e) => {
+e.preventDefault();
+const upperSub = subject.toUpperCase();
+
+const generatedContent = "# MODUL AJAR DEEP LEARNING: " + upperSub + " (" + phase + ")\n\n" +
+  "## I. INFORMASI UMUM\n" +
+  "- **Mata Pelajaran**: " + subject + "\n" +
+  "- **Fase / Kelas**: " + phase + "\n" +
+  "- **Topik Utama**: " + topic + "\n" +
+  "- **Alokasi Waktu**: " + hours + "\n\n" +
+  "---\n\n" +
+  "## II. CAPAIAN PEMBELAJARAN (CP)\n" +
+  "### 📘 Analisis Capaian Pembelajaran Elemen (" + upperSub + ")\n" +
+  "Peserta didik mampu memahami konsep utama " + topic + ", mengaitkannya dengan fenomena nyata, serta merancang solusi kreatif melalui pendekatan analisis kritis.\n\n" +
+  "---\n\n" +
+  "## III. TUJUAN PEMBELAJARAN (TP)\n" +
+  "### 🎯 Poin Tujuan Pembelajaran ABCD (" + upperSub + ")\n" +
+  "- **TP1**: Menganalisis struktur dan dinamika " + topic + ".\n" +
+  "- **TP2**: Menyusun model matematika/logika sederhana terkait " + topic + ".\n" +
+  "- **TP3**: Mempresentasikan hasil analisis proyek kelompok secara kolaboratif.\n\n" +
+  "---\n\n" +
+  "## IV. ALUR TUJUAN PEMBELAJARAN (ATP)\n" +
+  "| Kode ATP | Alokasi Waktu | Indikator Ketercapaian | Rencana Asesmen |\n" +
+  "| :--- | :--- | :--- | :--- |\n" +
+  "| **ATP.01** | 2 JP | Mampu menganalisis efisiensi model | Formatif Latihan Soal |\n" +
+  "| **ATP.02** | 2 JP | Mampu membuat diagram alir terstruktur | Unjuk Kerja Kelompok |\n\n" +
+  "---\n\n" +
+  "## V. KRITERIA KETERCAPAIAN TUJUAN PEMBELAJARAN (KKTP)\n" +
+  "| Kriteria Penilaian | Belum Memenuhi (1) | Memenuhi (2-3) | Sangat Baik (4) |\n" +
+  "| :--- | :--- | :--- | :--- |\n" +
+  "| **Penerapan Konsep** | Salah mengidentifikasi | Tepat 80% komponen | Tepat 100% & Solutif |\n\n" +
+  "---\n\n" +
+  "## VI. PROGRAM TAHUNAN (PROTA)\n" +
+  "| No | Bab / Elemen Materi Utama | Alokasi Waktu (JP) | Keterangan Semester |\n" +
+  "| :--- | :--- | :--- | :--- |\n" +
+  "| **1** | " + topic + " | 18 JP | Semester 1 |\n\n" +
+  "---\n\n" +
+  "## VII. PROGRAM SEMESTER (PROSEM)\n" +
+  "| No | Materi / Tujuan Pembelajaran | JP | Juli | Ags | Sep | Okt | Nov | Des |\n" +
+  "| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |\n" +
+  "| **1** | " + topic + " | 6 JP | x | x | | | | |";
+
+const newDoc = {
+  id: "doc_" + Date.now(),
+  title: "Modul Ajar " + subject + " - " + topic,
+  subject: subject,
+  phase: phase,
+  topic: topic,
+  fase_pembelajaran: "Modul Ajar",
+  lastModified: new Date().toISOString().split('T')[0] + " 10:00",
+  status: "In Progress",
+  content: generatedContent
+};
+
+onCreateDocument(newDoc);
+onClose();
+
+
+};
+
+return (
+
+
+
+
+✨ Wizard Generator Perangkat Ajar Baru
+
+✕
+
+
+    <form onSubmit={handleSubmit} className="space-y-3 text-xs">
+      <div>
+        <label className="block font-semibold text-amber-300/90 mb-1">Mata Pelajaran</label>
+        <input
+          type="text"
+          required
+          value={subject}
+          onChange={(e) => setSubject(e.target.value)}
+          placeholder="Contoh: IPA & Biologi / Informatika"
+          className="w-full bg-slate-950 border border-amber-500/20 rounded-xl px-3 py-2 text-xs text-amber-100 focus:outline-none focus:border-amber-400"
+        />
+      </div>
+
+      <div>
+        <label className="block font-semibold text-amber-300/90 mb-1">Fase / Kelas Target</label>
+        <select
+          value={phase}
+          onChange={(e) => setPhase(e.target.value)}
+          className="w-full bg-slate-950 border border-amber-500/20 rounded-xl px-3 py-2 text-xs text-amber-100 focus:outline-none focus:border-amber-400"
+        >
+          <option value="Fase A (Kelas 1-2 SD)">Fase A (Kelas 1-2 SD)</option>
+          <option value="Fase B (Kelas 3-4 SD)">Fase B (Kelas 3-4 SD)</option>
+          <option value="Fase C (Kelas 5-6 SD)">Fase C (Kelas 5-6 SD)</option>
+          <option value="Fase D (Kelas 7-9 SMP)">Fase D (Kelas 7-9 SMP)</option>
+          <option value="Fase E (Kelas 10 SMA)">Fase E (Kelas 10 SMA)</option>
+          <option value="Fase F (Kelas 11-12 SMA)">Fase F (Kelas 11-12 SMA)</option>
+        </select>
+      </div>
+
+      <div>
+        <label className="block font-semibold text-amber-300/90 mb-1">Topik Utama Pembelajaran</label>
+        <input
+          type="text"
+          required
+          value={topic}
+          onChange={(e) => setTopic(e.target.value)}
+          placeholder="Contoh: Ekosistem & Pemanasan Global"
+          className="w-full bg-slate-950 border border-amber-500/20 rounded-xl px-3 py-2 text-xs text-amber-100 focus:outline-none focus:border-amber-400"
+        />
+      </div>
+
+      <div>
+        <label className="block font-semibold text-amber-300/90 mb-1">Alokasi Waktu JP</label>
+        <input
+          type="text"
+          value={hours}
+          onChange={(e) => setHours(e.target.value)}
+          className="w-full bg-slate-950 border border-amber-500/20 rounded-xl px-3 py-2 text-xs text-amber-100 focus:outline-none focus:border-amber-400"
+        />
+      </div>
+
+      <div className="flex justify-end space-x-2 pt-3 border-t border-slate-800">
+        <button
+          type="button"
+          onClick={onClose}
+          className="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl font-bold cursor-pointer hover:bg-slate-700"
+        >
+          Batal
+        </button>
+        <button
+          type="submit"
+          className="px-5 py-2 bg-gradient-to-r from-amber-500 to-yellow-500 text-[#0B192C] font-black rounded-xl cursor-pointer shadow-lg shadow-amber-500/20 hover:from-amber-400 hover:to-yellow-400"
+        >
+          ✨ Buat Dokumen Sekarang
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+);
+}
+
+// ============================================================================
+// MAIN APP COMPONENT
+// ============================================================================
 export default function App() {
 // --- LIFTED STATE MANAGEMENT (SINGLE SOURCE OF TRUTH) ---
 const [currentUser, setCurrentUser] = useState(() => {
@@ -354,9 +365,19 @@ showToast('Berkas dihapus.');
 }
 }, [activeDocument, documents]);
 
+const handleCreateDocument = useCallback((newDoc) => {
+setDocuments(prev => [newDoc, ...prev]);
+setActiveDocument(newDoc);
+setCurrentView('workspace');
+showToast('Perangkat Ajar Baru Berhasil Dibuat!');
+deductQuotaOnAction('CREATE_DOC');
+}, [deductQuotaOnAction]);
+
 // Auth Gate
 if (!currentUser) {
-return ;
+return (
+
+);
 }
 
 return (
@@ -521,6 +542,13 @@ return (
       </div>
     )}
   </main>
+
+  {/* NEW DOCUMENT WIZARD MODAL */}
+  <NewDocWizardModal
+    isOpen={isWizardOpen}
+    onClose={() => setIsWizardOpen(false)}
+    onCreateDocument={handleCreateDocument}
+  />
 
   {/* GLOBAL PAYWALL MODAL */}
   {isPaywallOpen && (
