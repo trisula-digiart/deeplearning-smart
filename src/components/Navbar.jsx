@@ -1,360 +1,178 @@
-import React, { useState } from 'react';
-import { generatePerangkatAjar } from '../services/geminiService';
+import React from 'react';
 
-/**
- * TRISULA SMART LEARNING ENGINE - Deep Learning Wizard Component v3.0
- * Multi-Step & Single-View Form Modal for Kurikulum Merdeka + 3 Pillars
- */
+// Native Inline SVG Icons (100% Standalone - Zero External Dependencies)
+const Icons = {
+  Menu: ({ className = "w-5 h-5" }) => (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+  ),
+  Search: ({ className = "w-4 h-4" }) => (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+    </svg>
+  ),
+  Plus: ({ className = "w-4 h-4" }) => (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+    </svg>
+  ),
+  Cpu: ({ className = "w-5 h-5 text-[#D4AF37]" }) => (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M3 9h2m-2 6h2m14-6h2m-2 6h2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+    </svg>
+  ),
+  Coins: ({ className = "w-4 h-4 text-[#D4AF37]" }) => (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+  ),
+  LogOut: ({ className = "w-4 h-4" }) => (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+    </svg>
+  )
+};
 
-const PRESET_TOPICS = [
-  { subject: 'Informatika', phase: 'Fase E (Kelas 10 SMA)', topic: 'Algoritma Pemrograman & Flowchart' },
-  { subject: 'IPA & Biologi', phase: 'Fase E (Kelas 10 SMA)', topic: 'Ekosistem & Keanekaragaman Hayati' },
-  { subject: 'Matematika', phase: 'Fase F (Kelas 11 SMA)', topic: 'Analisis Data, Statistika & Peluang' },
-  { subject: 'IPAS', phase: 'Fase C (Kelas 5 SD)', topic: 'Ekosistem dan Keseimbangan Alam' }
-];
+export default function Navbar({
+  isSidebarOpen = true,
+  setIsSidebarOpen,
+  toggleSidebar,
+  searchQuery = '',
+  setSearchQuery,
+  onOpenWizard,
+  handleOpenWizard,
+  currentUser,
+  onLogout,
+  handleLogout,
+  onRequestPaywall
+}) {
+  // Safe Fallback & Normalization for User State
+  const isPremium = Boolean(currentUser?.is_premium);
+  const creditCount = currentUser?.kredit_tersisa ?? 0;
 
-export default function DeepLearningWizard({ isOpen, onClose, onSuccess, onCreateDocument }) {
-  const [step, setStep] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState({});
+  // Resilient Handlers
+  const triggerWizard = onOpenWizard || handleOpenWizard || (() => {});
+  
+  const triggerToggleSidebar = () => {
+    if (setIsSidebarOpen) {
+      setIsSidebarOpen(!isSidebarOpen);
+    } else if (toggleSidebar) {
+      toggleSidebar();
+    }
+  };
 
-  const [formData, setFormData] = useState({
-    mataPelajaran: 'IPA & Biologi',
-    fase: 'Fase E (Kelas 10 SMA)',
-    topik: 'Ekosistem & Keanekaragaman Hayati',
-    durasi: '2 JP x 45 Menit',
-    components: {
-      modulAjar: true,
-      cp: true,
-      tp: true,
-      atp: true,
-      kktp: true,
-      prota: true,
-      prosem: true
-    },
-    pilarFocus: {
-      mindful: true,
-      meaningful: true,
-      joyful: true
+  const triggerLogout = onLogout || handleLogout || (() => {
+    try {
+      localStorage.removeItem('trisula_user_session');
+      window.location.reload();
+    } catch (e) {
+      console.error('Logout failed:', e);
     }
   });
 
-  if (!isOpen) return null;
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: null }));
-    }
-  };
-
-  const handleComponentToggle = (key) => {
-    setFormData((prev) => ({
-      ...prev,
-      components: {
-        ...prev.components,
-        [key]: !prev.components[key]
-      }
-    }));
-  };
-
-  const handlePilarToggle = (key) => {
-    setFormData((prev) => ({
-      ...prev,
-      pilarFocus: {
-        ...prev.pilarFocus,
-        [key]: !prev.pilarFocus[key]
-      }
-    }));
-  };
-
-  const handleApplyPreset = (preset) => {
-    setFormData((prev) => ({
-      ...prev,
-      mataPelajaran: preset.subject,
-      fase: preset.phase,
-      topik: preset.topic
-    }));
-  };
-
-  const validateStep = (currentStep) => {
-    const newErrors = {};
-    if (currentStep === 1) {
-      if (!formData.mataPelajaran.trim()) newErrors.mataPelajaran = 'Mata pelajaran wajib diisi.';
-      if (!formData.topik.trim()) newErrors.topik = 'Topik utama wajib diisi.';
-    }
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const generateMarkdownStructure = () => {
-    const upperSub = formData.mataPelajaran.toUpperCase();
-    const upperPhase = formData.fase.toUpperCase();
-
-    let content = `# MODUL AJAR DEEP LEARNING: ${upperSub} ${upperPhase}
-
-## I. INFORMASI UMUM
-- **Mata Pelajaran**: ${formData.mataPelajaran}
-- **Fase / Kelas**: ${formData.fase}
-- **Topik Utama**: ${formData.topik}
-- **Alokasi Waktu**: ${formData.durasi}`;
-
-    if (formData.components.cp) {
-      content += `\n\n---\n## II. CAPAIAN PEMBELAJARAN (CP)\n### 📘 Analisis Capaian Pembelajaran Elemen (${upperSub})\nPeserta didik mampu menganalisis interaksi komponen ${formData.topik}, memahami keterhubungan fenomena nyata, serta merancang solusi solutif secara kritis dan kolaboratif.`;
-    }
-
-    if (formData.components.tp) {
-      content += `\n\n---\n## III. TUJUAN PEMBELAJARAN (TP)\n### 🎯 Poin Tujuan Pembelajaran ABCD (${upperSub})\n- **TP1**: Menganalisis konsep dan fungsi dasar dari ${formData.topik}.\n- **TP2**: Menyusun model analisis terstruktur dan grafik pemrosesan data.\n- **TP3**: Mempresentasikan hasil analisis proyek kelompok secara kolaboratif.`;
-    }
-
-    if (formData.components.atp) {
-      content += `\n\n---\n## IV. ALUR TUJUAN PEMBELAJARAN (ATP)\n### 🗺️ Pemetaan Runtutan ATP (${upperSub})\n| Kode ATP | Alokasi Waktu | Indikator Ketercapaian | Rencana Asesmen |\n| :--- | :--- | :--- | :--- |\n| **ATP.01** | 2 JP | Mampu menganalisis konsep dasar ${formData.topik} | Formatif Latihan Soal |\n| **ATP.02** | 2 JP | Mampu menyusun laporan proyek pelestarian | Unjuk Kerja Kelompok |`;
-    }
-
-    if (formData.components.kktp) {
-      content += `\n\n---\n## V. KRITERIA KETERCAPAIAN TUJUAN PEMBELAJARAN (KKTP)\n### 📊 Rubrik Observasi Unjuk Kerja Pemecahan Masalah (${upperSub})\n| Kriteria Penilaian | Belum Memenuhi (1) | Memenuhi (2-3) | Sangat Baik (4) |\n| :--- | :--- | :--- | :--- |\n| **Penerapan Konsep** | Belum menguasai alur dasar | Tepat mengidentifikasi 80% komponen | Tepat 100% & solutif |`;
-    }
-
-    if (formData.components.prota) {
-      content += `\n\n---\n## VI. PROGRAM TAHUNAN (PROTA)\n### 🗓️ Alokasi Efektif Jam Pelajaran Tahunan (${upperSub})\n| No | Bab / Elemen Materi Utama | Alokasi Waktu (JP) | Keterangan Semester |\n| :--- | :--- | :--- | :--- |\n| **1** | ${formData.topik} | 18 JP | Semester 1 |`;
-    }
-
-    if (formData.components.prosem) {
-      content += `\n\n---\n## VII. PROGRAM SEMESTER (PROSEM)\n### 📅 Alokasi Pemetaan Jam Pelajaran Semester 1 & 2 (${upperSub})\n| No | Materi / Tujuan Pembelajaran | JP | Juli | Ags | Sep | Okt | Nov | Des |\n| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |\n| **1** | ${formData.topik} | 6 JP | x | x | | | | |`;
-    }
-
-    content += `\n\n---\n## VIII. INTEGRASI 3 PILAR DEEP LEARNING\n${formData.pilarFocus.mindful ? '- **Mindful Learning**: Siswa diajak melakukan sesi hening STOP 3 menit untuk membangun kesadaran belajar.\n' : ''}${formData.pilarFocus.meaningful ? '- **Meaningful Learning**: Menganalisis isu lingkungan/kasus nyata di sekitar lingkungan sekolah.\n' : ''}${formData.pilarFocus.joyful ? '- **Joyful Learning**: Kuis interaktif berbasis kelompok dan presentasi solutif.' : ''}`;
-
-    return content;
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!validateStep(1)) return;
-
-    setIsLoading(true);
-    try {
-      const activePilars = Object.keys(formData.pilarFocus)
-        .filter((k) => formData.pilarFocus[k])
-        .map((k) => k.toUpperCase());
-
-      const activeComps = Object.keys(formData.components)
-        .filter((k) => formData.components[k])
-        .map((k) => k.toUpperCase());
-
-      const generatedContent = generateMarkdownStructure();
-
-      const newDocument = {
-        id: `doc_${Date.now()}`,
-        title: `Modul Ajar ${formData.mataPelajaran} - ${formData.topik}`,
-        subject: formData.mataPelajaran,
-        phase: formData.fase,
-        topic: formData.topik,
-        status: 'In Progress',
-        content: generatedContent,
-        summary: `Komponen: [${activeComps.join(', ')}] | Pilar: [${activePilars.join(', ')}]`
-      };
-
-      if (onCreateDocument) {
-        onCreateDocument(newDocument);
-      } else if (onSuccess) {
-        onSuccess(newDocument);
-      }
-
-      onClose();
-    } catch (err) {
-      console.error("[WIZARD ERROR]", err);
-      setErrors({ global: 'Gagal merancang dokumen. Silakan coba lagi.' });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-      <div className="w-full max-w-xl bg-[#0F172A] border border-[#D4AF37]/50 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-        
-        {/* Header Modal */}
-        <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-[#0B192C]">
-          <div>
-            <h2 className="text-base font-bold text-[#D4AF37] flex items-center gap-2">
-              <span>✨</span> Wizard Generator Perangkat Ajar
-            </h2>
-            <p className="text-xs text-slate-400 mt-0.5">
-              Rancang Perangkat Ajar Terintegrasi 3 Pilar Deep Learning
-            </p>
+    <header className="bg-[#0B1728]/95 border-b border-slate-800 px-3 sm:px-6 py-3 sticky top-0 z-40 backdrop-blur-md flex items-center justify-between shadow-xl w-full">
+      
+      {/* LEFT SECTION: Sidebar Toggle + Brand Identity */}
+      <div className="flex items-center gap-3">
+        <button
+          onClick={triggerToggleSidebar}
+          className="p-2 text-slate-400 hover:text-white hover:bg-slate-800/80 rounded-xl transition cursor-pointer border border-transparent hover:border-slate-700 active:scale-95"
+          aria-label="Toggle Menu Sidebar"
+          title="Buka / Tutup Navigasi"
+        >
+          <Icons.Menu className="w-5 h-5 text-slate-300" />
+        </button>
+
+        {/* Brand Logo and Title */}
+        <div className="flex items-center gap-2.5">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#D4AF37] to-amber-600 p-[1px] shadow-lg shadow-amber-500/10 flex items-center justify-center shrink-0">
+            <div className="w-full h-full bg-[#0B1728] rounded-[11px] flex items-center justify-center">
+              <Icons.Cpu className="w-5 h-5 text-[#D4AF37]" />
+            </div>
           </div>
+
+          <div className="flex flex-col justify-center">
+            <h1 className="font-extrabold text-xs sm:text-sm tracking-wide text-white leading-none">
+              TRISULA SMART LEARNING ENGINE
+            </h1>
+            <span className="text-[10px] text-[#D4AF37] font-bold tracking-wider mt-1 uppercase">
+              DEEP LEARNING ENGINE V3.0
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {}
+      {/* RIGHT SECTION: Search + Token Badge + CTA + User Profile + Logout */}
+      <div className="flex items-center gap-2 sm:gap-3">
+        
+        {/* Global Search Bar (Hidden on Mobile) */}
+        <div className="hidden lg:flex items-center bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 w-48 xl:w-64 text-xs focus-within:border-[#D4AF37] transition-all">
+          <Icons.Search className="w-4 h-4 text-slate-500 mr-2 shrink-0" />
+          <input
+            type="text"
+            placeholder="Cari modul / topik..."
+            className="bg-transparent border-none outline-none text-slate-200 text-xs w-full placeholder-slate-500"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery && setSearchQuery(e.target.value)}
+          />
+        </div>
+
+        {/* Real-time Token / Kuota Badge */}
+        <button
+          type="button"
+          onClick={() => onRequestPaywall && onRequestPaywall('Silakan lakukan top up token atau tingkatkan paket lisensi Anda!')}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-sm cursor-pointer ${
+            isPremium
+              ? 'bg-amber-500/10 border-[#D4AF37]/50 text-amber-300 hover:bg-amber-500/20'
+              : creditCount > 0
+              ? 'bg-slate-900 border-slate-700 text-amber-300 hover:border-[#D4AF37]'
+              : 'bg-rose-950/50 border-rose-500/50 text-rose-300 hover:bg-rose-900/60 animate-pulse'
+          }`}
+          title="Klik untuk Top Up Kuota / Buka Akses"
+        >
+          <Icons.Coins className="w-4 h-4 text-[#D4AF37] shrink-0" />
+          <span className="font-mono text-xs">
+            {isPremium ? 'Unlimited Pro' : `${creditCount} Token`}
+          </span>
+        </button>
+
+        {/* Primary Action Button: Wizard */}
+        <button
+          onClick={triggerWizard}
+          className="flex items-center gap-1.5 bg-gradient-to-r from-[#D4AF37] to-amber-500 hover:brightness-110 text-slate-950 text-xs px-3.5 py-1.5 rounded-xl font-bold shadow-lg shadow-amber-500/15 transition-all active:scale-95 cursor-pointer shrink-0"
+          title="Buat Perangkat Ajar Baru"
+        >
+          <Icons.Plus className="w-4 h-4 text-slate-950" />
+          <span className="hidden sm:inline">+ Buat Perangkat</span>
+        </button>
+
+        {/* User Profile Badge & Logout Button */}
+        <div className="flex items-center gap-2 pl-2 sm:pl-3 border-l border-slate-800">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-500 to-[#D4AF37] text-slate-950 font-extrabold flex items-center justify-center text-xs shadow-md uppercase shrink-0">
+            {currentUser?.name ? currentUser.name.substring(0, 2) : 'GH'}
+          </div>
+
+          <div className="hidden md:block text-left text-xs leading-tight max-w-[120px] truncate">
+            <span className="font-bold text-white block truncate">{currentUser?.name || 'Guru Hebat'}</span>
+            <span className="text-[10px] text-slate-400 block truncate">{currentUser?.school || 'Sekolah'}</span>
+          </div>
+
+          {/* Guaranteed Visible Logout Button */}
           <button
-            onClick={onClose}
-            disabled={isLoading}
-            className="text-slate-400 hover:text-white font-bold p-1 rounded-lg transition-colors cursor-pointer"
+            onClick={triggerLogout}
+            className="flex items-center gap-1.5 p-2 bg-slate-900 hover:bg-rose-950/80 border border-slate-800 hover:border-rose-500/50 text-rose-400 rounded-xl transition-all cursor-pointer shrink-0 ml-1 shadow-sm"
+            title="Keluar / Logout dari Akun"
+            aria-label="Logout"
           >
-            ✕
+            <Icons.LogOut className="w-4 h-4 text-rose-400" />
+            <span className="hidden xl:inline text-xs font-bold text-rose-300">Keluar</span>
           </button>
         </div>
 
-        {/* Modal Form Body */}
-        <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-4 flex-1 text-slate-100">
-          {errors.global && (
-            <div className="p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-xs text-rose-400">
-              {errors.global}
-            </div>
-          )}
-
-          {/* Preset Quick Buttons */}
-          <div>
-            <span className="text-[11px] font-semibold text-slate-400 block mb-1.5">⚡ Preset Cepat:</span>
-            <div className="flex flex-wrap gap-1.5">
-              {PRESET_TOPICS.map((preset) => (
-                <button
-                  key={preset.topic}
-                  type="button"
-                  onClick={() => handleApplyPreset(preset)}
-                  className="px-2.5 py-1 bg-slate-900 hover:bg-slate-800 border border-slate-700/80 rounded-lg text-[11px] text-slate-300 transition-colors cursor-pointer"
-                >
-                  {preset.subject}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Form Inputs */}
-          <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Mata Pelajaran *</label>
-            <input
-              type="text"
-              name="mataPelajaran"
-              required
-              value={formData.mataPelajaran}
-              onChange={handleChange}
-              placeholder="Contoh: IPA & Biologi / Matematika"
-              className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-[#D4AF37]"
-            />
-            {errors.mataPelajaran && <p className="text-xs text-rose-400 mt-1">{errors.mataPelajaran}</p>}
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Fase / Kelas *</label>
-            <select
-              name="fase"
-              value={formData.fase}
-              onChange={handleChange}
-              className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-[#D4AF37]"
-            >
-              <option value="Fase A (Kelas 1-2 SD)">Fase A (Kelas 1-2 SD)</option>
-              <option value="Fase B (Kelas 3-4 SD)">Fase B (Kelas 3-4 SD)</option>
-              <option value="Fase C (Kelas 5-6 SD)">Fase C (Kelas 5-6 SD)</option>
-              <option value="Fase D (Kelas 7-9 SMP)">Fase D (Kelas 7-9 SMP)</option>
-              <option value="Fase E (Kelas 10 SMA)">Fase E (Kelas 10 SMA)</option>
-              <option value="Fase F (Kelas 11-12 SMA)">Fase F (Kelas 11-12 SMA)</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Topik Utama / Materi Pokok *</label>
-            <input
-              type="text"
-              name="topik"
-              required
-              value={formData.topik}
-              onChange={handleChange}
-              placeholder="Contoh: Ekosistem & Keanekaragaman Hayati"
-              className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-[#D4AF37]"
-            />
-            {errors.topik && <p className="text-xs text-rose-400 mt-1">{errors.topik}</p>}
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Alokasi Waktu</label>
-            <input
-              type="text"
-              name="durasi"
-              value={formData.durasi}
-              onChange={handleChange}
-              className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-[#D4AF37]"
-            />
-          </div>
-
-          {/* PILIHAN KOMPONEN DOKUMEN WAJIB */}
-          <div className="pt-1">
-            <label className="block text-xs font-bold text-[#D4AF37] mb-2">
-              Pilihan Komponen Perangkat Ajar Wajib:
-            </label>
-            <div className="grid grid-cols-2 gap-2 text-xs text-slate-300 bg-slate-950/80 p-3.5 rounded-2xl border border-slate-800">
-              {[
-                { key: 'modulAjar', label: '📘 Modul Ajar' },
-                { key: 'cp', label: '📘 CP (Capaian)' },
-                { key: 'tp', label: '🎯 TP (Tujuan)' },
-                { key: 'atp', label: '🗺️ ATP (Alur)' },
-                { key: 'kktp', label: '📊 KKTP & Rubrik' },
-                { key: 'prota', label: '🗓️ Prota' },
-                { key: 'prosem', label: '📅 Prosem' }
-              ].map((item) => (
-                <label key={item.key} className="flex items-center gap-2 cursor-pointer select-none hover:text-white">
-                  <input
-                    type="checkbox"
-                    checked={formData.components[item.key]}
-                    onChange={() => handleComponentToggle(item.key)}
-                    className="accent-[#D4AF37] rounded w-4 h-4 cursor-pointer"
-                  />
-                  <span>{item.label}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          {/* INTEGRASI 3 PILAR DEEP LEARNING */}
-          <div className="pt-1">
-            <label className="block text-xs font-bold text-slate-300 mb-2">
-              Integrasi 3 Pilar Deep Learning:
-            </label>
-            <div className="flex gap-4 text-xs text-slate-300 bg-slate-950/80 p-3 rounded-2xl border border-slate-800">
-              {[
-                { key: 'mindful', label: '🧠 Mindful' },
-                { key: 'meaningful', label: '🎯 Meaningful' },
-                { key: 'joyful', label: '🚀 Joyful' }
-              ].map((pilar) => (
-                <label key={pilar.key} className="flex items-center gap-1.5 cursor-pointer select-none hover:text-white">
-                  <input
-                    type="checkbox"
-                    checked={formData.pilarFocus[pilar.key]}
-                    onChange={() => handlePilarToggle(pilar.key)}
-                    className="accent-[#D4AF37] rounded w-4 h-4 cursor-pointer"
-                  />
-                  <span>{pilar.label}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          {/* Modal Actions */}
-          <div className="flex justify-end gap-2 pt-4 border-t border-slate-800">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 bg-slate-800 text-slate-300 hover:text-white rounded-xl text-xs font-semibold cursor-pointer"
-            >
-              Batal
-            </button>
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="px-5 py-2.5 bg-gradient-to-r from-[#D4AF37] to-amber-500 hover:brightness-110 text-slate-950 font-bold text-xs rounded-xl shadow-lg shadow-amber-500/20 cursor-pointer flex items-center gap-2"
-            >
-              {isLoading ? (
-                <>
-                  <div className="w-3.5 h-3.5 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
-                  <span>Merancang Dokumen...</span>
-                </>
-              ) : (
-                <span>✨ Buat Dokumen</span>
-              )}
-            </button>
-          </div>
-        </form>
-
       </div>
-    </div>
+    </header>
   );
 }
