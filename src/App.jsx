@@ -220,7 +220,7 @@ x
 
 // Background Webhook Sync to Google Sheets
 export const syncUserToGoogleSheets = async (userData, actionType = 'SYNC_USER') => {
-console.log([TRISULA SHEET WEBHOOK] Sync Payload (${actionType}):, userData);
+console.log('[TRISULA SHEET WEBHOOK] Sync Payload (' + actionType + '):', userData);
 if (!GOOGLE_SHEETS_WEBHOOK_URL) return;
 try {
 const payload = {
@@ -290,7 +290,7 @@ setTimeout(() => setToastMessage(null), 3200);
 const handleLoginSuccess = useCallback((userPayload) => {
 setCurrentUser(userPayload);
 setCurrentView(userPayload.role === 'admin' ? 'admin' : 'dashboard');
-showToast(Selamat datang kembali, ${userPayload.nama || userPayload.name}!);
+showToast('Selamat datang kembali, ' + (userPayload.nama || userPayload.name || 'Pengajar') + '!');
 }, []);
 
 const handleLogout = useCallback(() => {
@@ -306,7 +306,7 @@ setIsPaywallOpen(true);
 }, []);
 
 const handleOpenWizard = useCallback(() => {
-if (!currentUser?.is_premium && currentUser?.kredit_tersisa <= 0) {
+if (!currentUser?.is_premium && (currentUser?.kredit_tersisa || 0) <= 0) {
 handleTriggerPaywall('Pembuatan perangkat ajar memerlukan kuota token aktif atau akun PRO.');
 return;
 }
@@ -317,23 +317,23 @@ setIsWizardOpen(true);
 const deductQuotaOnAction = useCallback((actionName) => {
 if (!currentUser) return;
 if (currentUser.is_premium) {
-console.log([TRISULA TOKEN] Action ${actionName} bypassed for PRO Member.);
+console.log('[TRISULA TOKEN] Action ' + actionName + ' bypassed for PRO Member.');
 return;
 }
 
-if (currentUser.kredit_tersisa <= 0) {
-  handleTriggerPaywall(`Aksi ${actionName} memerlukan kuota token.`);
+if ((currentUser.kredit_tersisa || 0) <= 0) {
+  handleTriggerPaywall('Aksi ' + actionName + ' memerlukan kuota token.');
   return;
 }
 
 const updatedUser = {
   ...currentUser,
-  kredit_tersisa: Math.max(0, currentUser.kredit_tersisa - 1)
+  kredit_tersisa: Math.max(0, (currentUser.kredit_tersisa || 0) - 1)
 };
 
 setCurrentUser(updatedUser);
-syncUserToGoogleSheets(updatedUser, `DEDUCT_TOKEN_${actionName}`);
-showToast(`-1 Token Kuota digunakan untuk ${actionName}`);
+syncUserToGoogleSheets(updatedUser, 'DEDUCT_TOKEN_' + actionName);
+showToast('-1 Token Kuota digunakan untuk ' + actionName);
 
 
 }, [currentUser, handleTriggerPaywall]);
@@ -342,13 +342,6 @@ const handleSaveDocument = useCallback((updatedDoc) => {
 setDocuments(prev => prev.map(d => d.id === updatedDoc.id ? updatedDoc : d));
 setActiveDocument(updatedDoc);
 showToast('Perubahan berkas disimpan!');
-}, []);
-
-const handleCreateDocument = useCallback((newDoc) => {
-setDocuments(prev => [newDoc, ...prev]);
-setActiveDocument(newDoc);
-setCurrentView('workspace');
-showToast(Dokumen "${newDoc.title}" berhasil dibuat!);
 }, []);
 
 const handleDeleteDocument = useCallback((docId) => {
@@ -406,13 +399,13 @@ return (
             <div className="pt-2 flex items-center space-x-3">
               <button
                 onClick={handleOpenWizard}
-                className="bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-[#0B192C] font-black px-5 py-2.5 rounded-xl text-xs shadow-lg shadow-amber-500/20 transition-all"
+                className="bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-[#0B192C] font-black px-5 py-2.5 rounded-xl text-xs shadow-lg shadow-amber-500/20 transition-all cursor-pointer"
               >
                 + Buat Perangkat Ajar
               </button>
               <button
                 onClick={() => setCurrentView('workspace')}
-                className="bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold px-5 py-2.5 rounded-xl text-xs border border-amber-500/30"
+                className="bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold px-5 py-2.5 rounded-xl text-xs border border-amber-500/30 cursor-pointer"
               >
                 Buka AI Workspace
               </button>
@@ -435,7 +428,7 @@ return (
                     setActiveDocument(doc);
                     setCurrentView('workspace');
                   }}
-                  className="text-xs font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1"
+                  className="text-xs font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1 cursor-pointer"
                 >
                   <span>Buka Editor</span>
                   <span>→</span>
@@ -454,13 +447,13 @@ return (
             <div className="p-3 bg-slate-950 rounded-xl border border-amber-500/10">
               <div className="text-[10px] text-slate-400">Sisa Kuota Token:</div>
               <div className="text-xl font-mono font-bold text-amber-300 mt-1">
-                {currentUser.is_premium ? "PRO / Unlimited" : `${currentUser.kredit_tersisa || 0} Token`}
+                {currentUser.is_premium ? "PRO / Unlimited" : (currentUser.kredit_tersisa || 0) + " Token"}
               </div>
             </div>
             {!currentUser.is_premium && (
               <button
                 onClick={() => handleTriggerPaywall("MANUAL")}
-                className="w-full bg-gradient-to-r from-amber-500 to-yellow-500 text-[#0B192C] font-black py-2.5 rounded-xl text-xs uppercase shadow-lg shadow-amber-500/20"
+                className="w-full bg-gradient-to-r from-amber-500 to-yellow-500 text-[#0B192C] font-black py-2.5 rounded-xl text-xs uppercase shadow-lg shadow-amber-500/20 cursor-pointer"
               >
                 Upgrade Ke PRO VIP
               </button>
@@ -490,7 +483,7 @@ return (
           </div>
           <button
             onClick={handleOpenWizard}
-            className="bg-amber-500 hover:bg-amber-400 text-[#0B192C] font-bold px-4 py-2 rounded-xl text-xs shadow-lg"
+            className="bg-amber-500 hover:bg-amber-400 text-[#0B192C] font-bold px-4 py-2 rounded-xl text-xs shadow-lg cursor-pointer"
           >
             + Buat Baru
           </button>
@@ -511,13 +504,13 @@ return (
                     setActiveDocument(doc);
                     setCurrentView('workspace');
                   }}
-                  className="font-bold text-amber-400 hover:text-amber-300"
+                  className="font-bold text-amber-400 hover:text-amber-300 cursor-pointer"
                 >
                   Buka Workspace →
                 </button>
                 <button
                   onClick={() => handleDeleteDocument(doc.id)}
-                  className="text-rose-400/80 hover:text-rose-400"
+                  className="text-rose-400/80 hover:text-rose-400 cursor-pointer"
                 >
                   Hapus
                 </button>
@@ -535,7 +528,7 @@ return (
       <div className="bg-slate-900 border border-amber-500/40 rounded-3xl max-w-lg w-full p-6 space-y-6 shadow-2xl relative text-slate-100">
         <button
           onClick={() => setIsPaywallOpen(false)}
-          className="absolute top-4 right-4 text-slate-400 hover:text-amber-300 p-2"
+          className="absolute top-4 right-4 text-slate-400 hover:text-amber-300 p-2 cursor-pointer"
         >
           ✕
         </button>
@@ -558,7 +551,7 @@ return (
                 setIsPaywallOpen(false);
                 showToast('Sukses +10 Token ditambahkan!');
               }}
-              className="w-full bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold py-2 rounded-xl text-xs border border-amber-500/30 mt-2"
+              className="w-full bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold py-2 rounded-xl text-xs border border-amber-500/30 mt-2 cursor-pointer"
             >
               Beli 10 Token (+10)
             </button>
@@ -574,7 +567,7 @@ return (
                 setIsPaywallOpen(false);
                 showToast('Sukses! Akun PRO Unlimited Aktif!');
               }}
-              className="w-full bg-gradient-to-r from-amber-500 to-yellow-500 text-[#0B192C] font-black py-2 rounded-xl text-xs uppercase shadow-lg shadow-amber-500/20 mt-2"
+              className="w-full bg-gradient-to-r from-amber-500 to-yellow-500 text-[#0B192C] font-black py-2 rounded-xl text-xs uppercase shadow-lg shadow-amber-500/20 mt-2 cursor-pointer"
             >
               Aktifkan PRO Unlimited
             </button>
