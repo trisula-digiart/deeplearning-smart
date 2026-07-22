@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
 
-// Google Apps Script Webhook URL
+// Google Apps Script Webhook URL for Google Sheets syncing
 const GOOGLE_SHEETS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyJJp3CVGiAEkCQ-6zDTgS1Rz2Fz2vQYCvpn_hB-JkN13q9aWQOAFfAtpWH3cHnby6LEg/exec";
 
+// Helper function to sync user status changes to Google Sheets
 const syncUserToGoogleSheets = async (userData, action = 'SYNC_USER') => {
   if (!GOOGLE_SHEETS_WEBHOOK_URL) return;
   try {
@@ -216,7 +217,6 @@ const parseMarkdownToHTML = (markdown) => {
       inTable = false;
     }
 
-    // STRICT HEADING ORDER (#### before ### before ## before #)
     if (line.startsWith('#### ')) {
       htmlResult.push(`<h4 style="color:#D4AF37; font-size:13px; font-weight:bold; margin-top:14px; margin-bottom:6px;">${parseInlineMarkdown(line.replace('#### ', ''))}</h4>`);
     } else if (line.startsWith('### ')) {
@@ -315,8 +315,8 @@ function LoginPage({ onLoginSuccess }) {
         name: fullName || (email.includes('admin') ? 'Root Admin Trisula' : email.split('@')[0]),
         email: email,
         role: selectedRole,
-        is_premium: selectedRole === 'admin' || email.includes('premium') || email.includes('budi'),
-        kredit_tersisa: email.includes('premium') || email.includes('budi') ? 250 : 1,
+        is_premium: selectedRole === 'admin' || email.includes('premium'),
+        kredit_tersisa: email.includes('premium') ? 250 : 0, // Free users start with 0 credits (1 free trial draft)
         doc_generated_count: 0,
         school: schoolName || 'SMA Negeri 1 Jakarta'
       };
@@ -336,51 +336,19 @@ function LoginPage({ onLoginSuccess }) {
     setSuccessMessage('');
     setIsLoading(true);
 
-    let demoUser = {};
-
-    if (type === 'guru_premium') {
-      demoUser = {
-        id: 'usr_premium_01',
-        name: 'Budi Santoso, M.Pd.',
-        email: 'budi.santoso@guru.sma.sch.id',
-        role: 'guru',
-        is_premium: true,
-        kredit_tersisa: 250,
-        doc_generated_count: 14,
-        school: 'SMA Negeri 1 Jakarta'
-      };
-      setEmail('budi.santoso@guru.sma.sch.id');
-      setPassword('demo1234');
-      setSelectedRole('guru');
-    } else if (type === 'guru_free') {
-      demoUser = {
-        id: 'usr_free_01',
-        name: 'Siti Rahmawati, S.Pd.',
-        email: 'siti.rahma@sd.kemdikbud.go.id',
-        role: 'guru',
-        is_premium: false,
-        kredit_tersisa: 1,
-        doc_generated_count: 1,
-        school: 'SD Negeri 05 Kebayoran'
-      };
-      setEmail('siti.rahma@sd.kemdikbud.go.id');
-      setPassword('demo1234');
-      setSelectedRole('guru');
-    } else if (type === 'admin') {
-      demoUser = {
-        id: 'usr_admin_master',
-        name: 'Root Admin Trisula',
-        email: 'admin@trisula.ai',
-        role: 'admin',
-        is_premium: true,
-        kredit_tersisa: 999999,
-        doc_generated_count: 0,
-        school: 'HQ Trisula Engine'
-      };
-      setEmail('admin@trisula.ai');
-      setPassword('admin1234');
-      setSelectedRole('admin');
-    }
+    const demoUser = {
+      id: 'usr_free_01',
+      name: 'Siti Rahmawati, S.Pd.',
+      email: 'siti.rahma@sd.kemdikbud.go.id',
+      role: 'guru',
+      is_premium: false,
+      kredit_tersisa: 0,
+      doc_generated_count: 0,
+      school: 'SD Negeri 05 Kebayoran'
+    };
+    setEmail('siti.rahma@sd.kemdikbud.go.id');
+    setPassword('demo1234');
+    setSelectedRole('guru');
 
     setTimeout(() => {
       setIsLoading(false);
@@ -401,11 +369,12 @@ function LoginPage({ onLoginSuccess }) {
           <div className="inline-flex items-center justify-center p-3 bg-gradient-to-br from-[#D4AF37] to-amber-600 rounded-2xl shadow-lg shadow-amber-500/20 mb-2">
             <Icons.Cpu className="w-8 h-8 text-slate-950" />
           </div>
-          <h1 className="text-2xl font-extrabold text-white tracking-tight flex items-center justify-center gap-2">
-            TRISULA AI PORTAL
+          {/* UPDATED TITLE & SUBTITLE */}
+          <h1 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight flex items-center justify-center gap-2">
+            TRISULA SMART LEARNING ENGINE
           </h1>
-          <p className="text-xs text-slate-400">
-            Engine Evaluasi Penilaian Otomatis, Modul Ajar, & Portal B2B Sekolah
+          <p className="text-xs text-slate-400 leading-relaxed px-2">
+            Engine evaluasi penilaian otomatis, Modul ajar, CP, TP, ATP, KKTP, Prota, Prosem & Portal B2B Sekolah
           </p>
         </div>
 
@@ -554,31 +523,18 @@ function LoginPage({ onLoginSuccess }) {
           </button>
         </form>
 
+        {/* SINGLE DEMO BUTTON: USER GRATIS ONLY */}
         <div className="pt-2 border-t border-slate-800 space-y-2">
           <div className="text-[10px] text-center uppercase tracking-wider text-slate-400 font-semibold">
             ⚡ PENGUJIAN CEPAT / AKUN DEMO
           </div>
-          <div className="grid grid-cols-3 gap-2">
-            <button
-              type="button"
-              onClick={() => handleDemoLogin('guru_premium')}
-              className="p-2 bg-slate-900 hover:bg-slate-800 border border-[#D4AF37]/30 hover:border-[#D4AF37] rounded-xl text-[10px] text-amber-300 font-semibold transition-all text-center cursor-pointer"
-            >
-              Guru Premium
-            </button>
+          <div className="flex justify-center">
             <button
               type="button"
               onClick={() => handleDemoLogin('guru_free')}
-              className="p-2 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-[10px] text-slate-300 font-semibold transition-all text-center cursor-pointer"
+              className="w-full py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-[#D4AF37] rounded-xl text-xs text-slate-200 font-semibold transition-all text-center cursor-pointer"
             >
               User Gratis
-            </button>
-            <button
-              type="button"
-              onClick={() => handleDemoLogin('admin')}
-              className="p-2 bg-slate-900 hover:bg-slate-800 border border-cyan-500/30 hover:border-cyan-400 rounded-xl text-[10px] text-cyan-300 font-semibold transition-all text-center cursor-pointer"
-            >
-              Root Admin
             </button>
           </div>
         </div>
@@ -617,7 +573,7 @@ function AdminDashboard({ usersData, onUpdateUserStatus, onAddCredits, onAddUser
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [selectedUserForCredits, setSelectedUserForCredits] = useState(null);
-  const [creditAmount, setCreditAmount] = useState(10);
+  const [creditAmount, setCreditAmount] = useState(1);
   const [notification, setNotification] = useState(null);
 
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
@@ -626,7 +582,7 @@ function AdminDashboard({ usersData, onUpdateUserStatus, onAddCredits, onAddUser
     email: '',
     role: 'guru',
     is_premium: false,
-    kredit_tersisa: 10,
+    kredit_tersisa: 1,
     school: ''
   });
 
@@ -637,7 +593,7 @@ function AdminDashboard({ usersData, onUpdateUserStatus, onAddCredits, onAddUser
 
   const defaultUsers = [
     { id: 'usr_001', name: 'Budi Santoso, M.Pd.', email: 'budi.santoso@guru.sma.sch.id', role: 'guru', is_premium: true, kredit_tersisa: 250, doc_generated_count: 14, school: 'SMA Negeri 1 Jakarta' },
-    { id: 'usr_002', name: 'Siti Rahmawati, S.Pd.', email: 'siti.rahma@sd.kemdikbud.go.id', role: 'guru', is_premium: false, kredit_tersisa: 1, doc_generated_count: 1, school: 'SD Negeri 05 Kebayoran' },
+    { id: 'usr_002', name: 'Siti Rahmawati, S.Pd.', email: 'siti.rahma@sd.kemdikbud.go.id', role: 'guru', is_premium: false, kredit_tersisa: 0, doc_generated_count: 1, school: 'SD Negeri 05 Kebayoran' },
     { id: 'usr_003', name: 'Ahmad Dahlan, M.T.', email: 'ahmad.dahlan@yayasan.ac.id', role: 'guru', is_premium: false, kredit_tersisa: 0, doc_generated_count: 3, school: 'Yayasan Islam Pusat' },
   ];
 
@@ -680,7 +636,7 @@ function AdminDashboard({ usersData, onUpdateUserStatus, onAddCredits, onAddUser
     }
 
     syncUserToGoogleSheets(updatedUser, 'ADD_CREDITS');
-    showToast(`Berhasil +${added} kredit untuk ${selectedUserForCredits.name} & tersimpan ke Google Sheets.`);
+    showToast(`Berhasil +${added} kuota modul untuk ${selectedUserForCredits.name} & tersimpan ke Google Sheets.`);
     setSelectedUserForCredits(null);
   };
 
@@ -697,7 +653,7 @@ function AdminDashboard({ usersData, onUpdateUserStatus, onAddCredits, onAddUser
       email: newUserForm.email,
       role: newUserForm.role,
       is_premium: newUserForm.is_premium,
-      kredit_tersisa: parseInt(newUserForm.kredit_tersisa, 10) || 10,
+      kredit_tersisa: parseInt(newUserForm.kredit_tersisa, 10) || 0,
       doc_generated_count: 0,
       school: newUserForm.school || 'Instansi Pendidikan'
     };
@@ -715,7 +671,7 @@ function AdminDashboard({ usersData, onUpdateUserStatus, onAddCredits, onAddUser
       email: '',
       role: 'guru',
       is_premium: false,
-      kredit_tersisa: 10,
+      kredit_tersisa: 1,
       school: ''
     });
   };
@@ -771,7 +727,7 @@ function AdminDashboard({ usersData, onUpdateUserStatus, onAddCredits, onAddUser
                 <th className="p-4">Pengguna</th>
                 <th className="p-4">Role</th>
                 <th className="p-4">Status Lisensi</th>
-                <th className="p-4">Sisa Kredit</th>
+                <th className="p-4">Sisa Kuota Modul</th>
                 <th className="p-4 text-center">Aksi</th>
               </tr>
             </thead>
@@ -792,19 +748,21 @@ function AdminDashboard({ usersData, onUpdateUserStatus, onAddCredits, onAddUser
                       {user.is_premium ? 'PREMIUM' : 'GRATIS'}
                     </span>
                   </td>
-                  <td className="p-4 font-mono font-bold text-white">{user.kredit_tersisa} doc</td>
+                  <td className="p-4 font-mono font-bold text-white">
+                    {user.is_premium ? 'Unlimited' : `${user.kredit_tersisa || 0} modul`}
+                  </td>
                   <td className="p-4 text-center space-x-2">
                     <button
                       onClick={() => handleTogglePremium(user)}
                       className={`px-3 py-1 rounded-lg text-[11px] font-semibold cursor-pointer ${user.is_premium ? 'bg-rose-950 text-rose-300' : 'bg-emerald-950 text-emerald-300'}`}
                     >
-                      {user.is_premium ? 'Nonaktifkan' : 'Aktifkan Premium'}
+                      {user.is_premium ? 'Nonaktifkan Premium' : 'Aktifkan Premium (Bulanan)'}
                     </button>
                     <button
                       onClick={() => setSelectedUserForCredits(user)}
                       className="px-3 py-1 bg-slate-800 hover:bg-[#D4AF37] hover:text-slate-950 text-white rounded-lg text-[11px] font-semibold transition-all cursor-pointer"
                     >
-                      + Kredit
+                      + 1 Kuota Modul
                     </button>
                   </td>
                 </tr>
@@ -881,7 +839,7 @@ function AdminDashboard({ usersData, onUpdateUserStatus, onAddCredits, onAddUser
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1">Sisa Kredit Awal</label>
+                  <label className="block text-xs font-medium text-slate-300 mb-1">Sisa Kuota Modul</label>
                   <input
                     type="number"
                     min="0"
@@ -901,7 +859,7 @@ function AdminDashboard({ usersData, onUpdateUserStatus, onAddCredits, onAddUser
                   className="rounded border-slate-800 bg-slate-950 text-[#D4AF37] focus:ring-0 cursor-pointer"
                 />
                 <label htmlFor="isPremiumCheck" className="text-xs text-slate-300 font-semibold cursor-pointer">
-                  Aktifkan Lisensi PREMIUM Langsung
+                  Aktifkan Paket Bulanan PREMIUM Langsung
                 </label>
               </div>
 
@@ -928,7 +886,7 @@ function AdminDashboard({ usersData, onUpdateUserStatus, onAddCredits, onAddUser
       {selectedUserForCredits && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80">
           <div className="bg-[#0B192C] border border-[#D4AF37]/40 rounded-2xl max-w-sm w-full p-6 space-y-4">
-            <h3 className="text-sm font-bold text-white">Tambah Kredit untuk {selectedUserForCredits.name}</h3>
+            <h3 className="text-sm font-bold text-white">Tambah Kuota Modul untuk {selectedUserForCredits.name}</h3>
             <form onSubmit={handleCreditSubmit} className="space-y-3">
               <input
                 type="number"
@@ -949,14 +907,8 @@ function AdminDashboard({ usersData, onUpdateUserStatus, onAddCredits, onAddUser
   );
 }
 
-function AIWorkspace({ activeDocument, onBackToDashboard, externalUserStatus }) {
+function AIWorkspace({ activeDocument, onBackToDashboard, currentUser, onUpdateCurrentUser }) {
   const [activeSubTab, setActiveSubTab] = useState('modul-ajar');
-  const [userStatus, setUserStatus] = useState(externalUserStatus || {
-    is_premium: false,
-    kredit_tersisa: 1,
-    doc_generated_count: 1
-  });
-
   const [isPaywallOpen, setIsPaywallOpen] = useState(false);
   const [paywallReason, setPaywallReason] = useState('');
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
@@ -1070,12 +1022,15 @@ Berikut adalah formula dasar perhitungan laju pertumbuhan populasi dan rata-rata
     }
   }, [activeDocument]);
 
+  // STRICT CHECK: Check if user has active quota or premium
+  const hasActiveAccess = currentUser?.is_premium || (currentUser?.kredit_tersisa && currentUser.kredit_tersisa > 0) || (currentUser?.doc_generated_count === 0);
+
   const handleSendMessage = (customPrompt) => {
     const textToSend = customPrompt || inputInstruction;
     if (!textToSend.trim()) return;
 
-    if (!userStatus.is_premium && userStatus.doc_generated_count >= 1) {
-      setPaywallReason('Batas 1x Generate Dokumen Gratis telah dicapai. Upgrade ke Premium untuk Generate tanpa batas!');
+    if (!hasActiveAccess) {
+      setPaywallReason('Kuota 1 Modul Gratis Anda telah digunakan. Silakan top up Paket 1 Modul Ajar (Rp10.000) atau Paket Bulanan (Rp29.000) untuk melanjutkan!');
       setIsPaywallOpen(true);
       return;
     }
@@ -1088,11 +1043,24 @@ Berikut adalah formula dasar perhitungan laju pertumbuhan populasi dan rata-rata
       const generatedMarkdownBlock = generateRichAIContent(textToSend, currentDocument.subject);
       
       setDocContent(prev => prev + generatedMarkdownBlock);
-      setUserStatus(prev => ({
-        ...prev,
-        doc_generated_count: prev.doc_generated_count + 1,
-        kredit_tersisa: Math.max(0, prev.kredit_tersisa - 1)
-      }));
+
+      // Deduct credit if non-premium
+      if (!currentUser.is_premium && currentUser.kredit_tersisa > 0) {
+        const updatedUser = {
+          ...currentUser,
+          doc_generated_count: (currentUser.doc_generated_count || 0) + 1,
+          kredit_tersisa: Math.max(0, currentUser.kredit_tersisa - 1)
+        };
+        if (onUpdateCurrentUser) onUpdateCurrentUser(updatedUser);
+        syncUserToGoogleSheets(updatedUser, 'DEDUCT_CREDIT');
+      } else if (!currentUser.is_premium) {
+        const updatedUser = {
+          ...currentUser,
+          doc_generated_count: (currentUser.doc_generated_count || 0) + 1
+        };
+        if (onUpdateCurrentUser) onUpdateCurrentUser(updatedUser);
+      }
+
       setMessages(prev => [...prev, { 
         id: Date.now() + 1, 
         sender: 'ai', 
@@ -1103,8 +1071,8 @@ Berikut adalah formula dasar perhitungan laju pertumbuhan populasi dan rata-rata
   };
 
   const handleOpenExportModal = () => {
-    if (!userStatus.is_premium) {
-      setPaywallReason('Cetak dan Export Dokumen (Word, PDF, TXT) adalah fitur eksklusif akun Premium.');
+    if (!hasActiveAccess) {
+      setPaywallReason('Cetak dan Export Dokumen (Word, PDF, TXT) membutuhkan kuota aktif atau Paket Bulanan.');
       setIsPaywallOpen(true);
       return;
     }
@@ -1179,6 +1147,17 @@ Berikut adalah formula dasar perhitungan laju pertumbuhan populasi dan rata-rata
   };
 
   const activeTabContent = filterContentByTab(docContent, activeSubTab);
+
+  // Dynamic WhatsApp Message text containing logged-in user email
+  const userEmail = currentUser?.email || 'email@sekolah.sch.id';
+  
+  const waMonthlyText = encodeURIComponent(
+    `Halo Admin TRISULA SMART LEARNING ENGINE,\n\nSaya telah melakukan pembayaran untuk Paket Bulanan Rp29.000.\n\n📌 Email Terdaftar: ${userEmail}\n📌 Bukti Transfer: (Terlampir)\n\nMohon bantuannya untuk mengaktifkan akses akun saya. Terima kasih!`
+  );
+
+  const waSingleText = encodeURIComponent(
+    `Halo Admin TRISULA SMART LEARNING ENGINE,\n\nSaya telah melakukan pembayaran untuk Paket 1 Modul Ajar Rp10.000.\n\n📌 Email Terdaftar: ${userEmail}\n📌 Bukti Transfer: (Terlampir)\n\nMohon bantuannya untuk menambahkan 1 kuota modul saya. Terima kasih!`
+  );
 
   return (
     <div className="h-full flex flex-col md:flex-row gap-4 font-sans">
@@ -1328,26 +1307,86 @@ Berikut adalah formula dasar perhitungan laju pertumbuhan populasi dan rata-rata
         </div>
       )}
 
-      {/* PAYWALL LOCK MODAL */}
+      {/* UPDATED PAYWALL LOCK MODAL WITH CLEAR PACKAGE DESCRIPTIONS & AUTO-EMAIL WA LINK */}
       {isPaywallOpen && (
-        <div className="fixed inset-0 z-50 bg-black/85 flex items-center justify-center p-4">
-          <div className="bg-[#0B192C] border border-[#D4AF37] rounded-3xl max-w-lg w-full p-6 space-y-4 text-white">
+        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-[#0B192C] border border-[#D4AF37] rounded-3xl max-w-lg w-full p-6 space-y-4 text-white shadow-2xl relative">
             <div className="flex justify-between items-center border-b border-slate-800 pb-2">
-              <h3 className="font-bold text-base text-[#D4AF37]">🔒 Fitur Premium Terkunci</h3>
-              <button onClick={() => setIsPaywallOpen(false)} className="text-slate-400 cursor-pointer">✕</button>
+              <h3 className="font-bold text-base text-[#D4AF37] flex items-center gap-2">
+                <span>🔒</span> Akses Fitur / Modul Terkunci
+              </h3>
+              <button onClick={() => setIsPaywallOpen(false)} className="text-slate-400 hover:text-white cursor-pointer font-bold">✕</button>
             </div>
-            <p className="text-xs text-slate-300">{paywallReason}</p>
-            <div className="grid grid-cols-2 gap-3 pt-2">
-              <div className="bg-slate-900 p-4 border border-amber-500/40 rounded-xl space-y-2">
-                <div className="font-bold text-xs">Paket Bulanan</div>
-                <div className="text-lg font-black text-[#D4AF37]">Rp29.000</div>
-                <a href="https://wa.me/6281234567890?text=Halo%20Admin,%20saya%20mau%20beli%20Paket%20Bulanan" target="_blank" rel="noreferrer" className="block text-center py-1.5 bg-[#D4AF37] text-slate-950 font-bold rounded-lg text-xs">Beli via WA</a>
+            
+            <p className="text-xs text-slate-300 leading-relaxed">{paywallReason}</p>
+
+            {/* Rekening & DANA Information */}
+            <div className="bg-slate-900/90 p-3.5 border border-slate-800 rounded-xl text-xs space-y-2">
+              <div className="font-bold text-[#D4AF37] flex items-center gap-1.5">
+                💳 Metode Pembayaran Transfer / E-Wallet:
               </div>
-              <div className="bg-slate-900 p-4 border border-slate-800 rounded-xl space-y-2">
-                <div className="font-bold text-xs">Paket Kuota</div>
-                <div className="text-lg font-black text-indigo-400">Rp10.000</div>
-                <a href="https://wa.me/6281234567890?text=Halo%20Admin,%20saya%20mau%20beli%20Paket%20Kuota" target="_blank" rel="noreferrer" className="block text-center py-1.5 bg-indigo-600 text-white font-bold rounded-lg text-xs">Beli via WA</a>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] text-slate-300">
+                <div className="p-2.5 bg-slate-950 rounded-lg border border-slate-800 space-y-0.5">
+                  <span className="font-bold text-white block">🏦 Bank BCA</span>
+                  <span className="font-mono text-amber-300 text-xs font-bold block select-all">5765323549</span>
+                  <span className="block text-[10px] text-slate-400">a.n. iis istianawahid</span>
+                </div>
+                <div className="p-2.5 bg-slate-950 rounded-lg border border-slate-800 space-y-0.5">
+                  <span className="font-bold text-white block">💙 DANA</span>
+                  <span className="font-mono text-amber-300 text-xs font-bold block select-all">081519234087</span>
+                  <span className="block text-[10px] text-slate-400">a.n. iis istianawahid</span>
+                </div>
               </div>
+            </div>
+
+            {/* PACKAGE CARDS WITH EXPLICIT HAK AKSES */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+              <div className="bg-slate-900 p-4 border border-amber-500/50 rounded-2xl space-y-2 flex flex-col justify-between hover:border-[#D4AF37] transition-all">
+                <div className="space-y-1.5">
+                  <div className="font-bold text-xs text-amber-300 uppercase tracking-wider">Paket Bulanan</div>
+                  <div className="text-xl font-black text-[#D4AF37]">Rp29.000 <span className="text-[10px] text-slate-400 font-normal">/ bln</span></div>
+                  <ul className="text-[11px] text-slate-300 space-y-1 pt-1 border-t border-slate-800/80">
+                    <li className="flex items-center gap-1.5"><span className="text-emerald-400">✓</span> Unlimited Akses 30 Hari</li>
+                    <li className="flex items-center gap-1.5"><span className="text-emerald-400">✓</span> Bebas Generate Sepuasnya</li>
+                    <li className="flex items-center gap-1.5"><span className="text-emerald-400">✓</span> Bebas Cetak (Word, PDF)</li>
+                  </ul>
+                </div>
+                <a
+                  href={`https://wa.me/6281298406844?text=${waMonthlyText}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="block text-center py-2.5 bg-[#D4AF37] hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-xs transition-colors shadow-lg cursor-pointer mt-3"
+                >
+                  🟢 Beli via WA
+                </a>
+              </div>
+
+              <div className="bg-slate-900 p-4 border border-indigo-500/40 rounded-2xl space-y-2 flex flex-col justify-between hover:border-indigo-400 transition-all">
+                <div className="space-y-1.5">
+                  <div className="font-bold text-xs text-indigo-300 uppercase tracking-wider">Paket 1 Modul Ajar</div>
+                  <div className="text-xl font-black text-indigo-400">Rp10.000 <span className="text-[10px] text-slate-400 font-normal">/ modul</span></div>
+                  <ul className="text-[11px] text-slate-300 space-y-1 pt-1 border-t border-slate-800/80">
+                    <li className="flex items-center gap-1.5"><span className="text-emerald-400">✓</span> Hak Akses 1 Modul Utuh</li>
+                    <li className="flex items-center gap-1.5"><span className="text-emerald-400">✓</span> Bebas Generate & Edit</li>
+                    <li className="flex items-center gap-1.5"><span className="text-emerald-400">✓</span> Bebas Cetak (Word, PDF)</li>
+                    <li className="flex items-center gap-1.5"><span className="text-emerald-400">✓</span> Kuota Tanpa Hangus</li>
+                  </ul>
+                </div>
+                <a
+                  href={`https://wa.me/6281298406844?text=${waSingleText}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="block text-center py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition-colors shadow-lg cursor-pointer mt-3"
+                >
+                  🟢 Beli via WA
+                </a>
+              </div>
+            </div>
+
+            <div className="text-center pt-2">
+              <span className="text-[10px] text-slate-400">
+                Email Terdaftar Anda (<strong className="text-slate-200">{currentUser?.email || 'Guest'}</strong>) akan otomatis dilampirkan saat pesan WhatsApp terbuka.
+              </span>
             </div>
           </div>
         </div>
@@ -1365,7 +1404,7 @@ function MyFilesView({ documents, onOpenDocument, onOpenInEditor, onDeleteDocume
   );
 
   return (
-    <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
+    <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6 font-sans">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800 pb-6">
         <div>
           <span className="px-3 py-1 bg-indigo-500/10 text-indigo-300 border border-indigo-500/30 text-xs font-bold rounded-full uppercase tracking-wider">
@@ -1558,7 +1597,6 @@ function WizardModal({ isOpen, onClose, onCreateDocument }) {
   const [topic, setTopic] = useState('Ekosistem, Keanekaragaman Hayati & Perubahan Lingkungan');
   const [hours, setHours] = useState('2 JP x 45 Menit');
   
-  // Selection options for curriculum components
   const [selectedComponents, setSelectedComponents] = useState({
     modulAjar: true,
     cp: true,
@@ -1686,7 +1724,6 @@ function WizardModal({ isOpen, onClose, onCreateDocument }) {
             />
           </div>
 
-          {/* CURRICULUM SECTIONS SELECTION */}
           <div>
             <label className="block text-xs font-semibold text-[#D4AF37] mb-1.5">
               Pilihan Komponen Perangkat Ajar Wajib
@@ -1753,20 +1790,20 @@ function WizardModal({ isOpen, onClose, onCreateDocument }) {
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState({
-    id: 'usr_premium_01',
-    name: 'Budi Santoso, M.Pd.',
-    email: 'budi.santoso@guru.sma.sch.id',
+    id: 'usr_free_01',
+    name: 'Siti Rahmawati, S.Pd.',
+    email: 'siti.rahma@sd.kemdikbud.go.id',
     role: 'guru',
-    is_premium: true,
-    kredit_tersisa: 250,
-    doc_generated_count: 14,
-    school: 'SMA Negeri 1 Jakarta'
+    is_premium: false,
+    kredit_tersisa: 0,
+    doc_generated_count: 0,
+    school: 'SD Negeri 05 Kebayoran'
   });
 
   const [allUsers, setAllUsers] = useState([
     { id: 'usr_admin_master', name: 'Root Admin Trisula', email: 'admin@trisula.ai', role: 'admin', is_premium: true, kredit_tersisa: 999999, doc_generated_count: 0, school: 'HQ Trisula Engine' },
     { id: 'usr_premium_01', name: 'Budi Santoso, M.Pd.', email: 'budi.santoso@guru.sma.sch.id', role: 'guru', is_premium: true, kredit_tersisa: 250, doc_generated_count: 14, school: 'SMA Negeri 1 Jakarta' },
-    { id: 'usr_free_01', name: 'Siti Rahmawati, S.Pd.', email: 'siti.rahma@sd.kemdikbud.go.id', role: 'guru', is_premium: false, kredit_tersisa: 1, doc_generated_count: 1, school: 'SD Negeri 05 Kebayoran' }
+    { id: 'usr_free_01', name: 'Siti Rahmawati, S.Pd.', email: 'siti.rahma@sd.kemdikbud.go.id', role: 'guru', is_premium: false, kredit_tersisa: 0, doc_generated_count: 0, school: 'SD Negeri 05 Kebayoran' }
   ]);
 
   const [documents, setDocuments] = useState([
@@ -1840,22 +1877,6 @@ Peserta didik mampu menganalisis interaksi antar komponen ekosistem, memahami pe
 - **Mindful Learning**: Siswa diajak melakukan sesi hening STOP untuk membangun kesadaran belajar.
 - **Meaningful Learning**: Menganalisis isu lingkungan lokal di sekitar sekolah.
 - **Joyful Learning**: Kuis interaktif berbasis kelompok dan presentasi solutif.`
-    },
-    {
-      id: 'doc_02',
-      title: 'Perangkat Ajar Matematika - Analisis Data & Peluang',
-      subject: 'Matematika',
-      phase: 'Fase F (Kelas 11 SMA)',
-      topic: 'Analisis Data, Statistika & Peluang',
-      status: 'Completed',
-      content: `# PERANGKAT AJAR MATEMATIKA FASE F
-
-## I. INFORMASI UMUM
-- **Mata Pelajaran**: Matematika
-- **Fase / Kelas**: Fase F (Kelas 11 SMA)
-
-## II. CAPAIAN PEMBELAJARAN (CP)
-Peserta didik mampu melakukan evaluasi kritis terhadap penyajian data statistik.`
     }
   ]);
 
@@ -1899,7 +1920,7 @@ Peserta didik mampu melakukan evaluasi kritis terhadap penyajian data statistik.
   const handleAddCredits = (userId, amount) => {
     setAllUsers(prev => prev.map(u => u.id === userId ? { ...u, kredit_tersisa: (u.kredit_tersisa || 0) + amount } : u));
     if (currentUser && currentUser.id === userId) {
-      const updated = { ...currentUser, kredit_tersisa: currentUser.kredit_tersisa + amount };
+      const updated = { ...currentUser, kredit_tersisa: (currentUser.kredit_tersisa || 0) + amount };
       setCurrentUser(updated);
       syncUserToGoogleSheets(updated, 'ADD_CREDITS');
     }
@@ -1907,6 +1928,17 @@ Peserta didik mampu melakukan evaluasi kritis terhadap penyajian data statistik.
 
   const handleAddUser = (newUserPayload) => {
     setAllUsers(prev => [newUserPayload, ...prev]);
+  };
+
+  // Check quota access before creating a new document
+  const handleOpenWizard = () => {
+    const hasQuota = currentUser.is_premium || (currentUser.kredit_tersisa && currentUser.kredit_tersisa > 0) || (currentUser.doc_generated_count === 0);
+    if (!hasQuota) {
+      showToast('⚠️ Kuota modul Anda telah habis. Silakan top up Paket 1 Modul Ajar (Rp10.000) atau Paket Bulanan!');
+      setCurrentView('workspace'); // Opens workspace which displays Paywall Modal
+      return;
+    }
+    setIsWizardOpen(true);
   };
 
   const handleCreateDocument = (newDoc) => {
@@ -1960,18 +1992,21 @@ Peserta didik mampu melakukan evaluasi kritis terhadap penyajian data statistik.
               <Icons.Cpu className="w-5 h-5 text-slate-950" />
             </div>
             <div>
-              <span className="font-extrabold text-sm text-white tracking-wider block">TRISULAPROMPT</span>
+              {/* UPDATED APP TITLE */}
+              <span className="font-extrabold text-xs sm:text-sm text-white tracking-wider block">
+                TRISULA SMART LEARNING ENGINE
+              </span>
             </div>
           </button>
           
-          <span className="hidden sm:inline-block px-2.5 py-0.5 bg-slate-800/90 text-[#D4AF37] border border-[#D4AF37]/30 text-[10px] font-bold rounded-full uppercase tracking-wider">
+          <span className="hidden lg:inline-block px-2.5 py-0.5 bg-slate-800/90 text-[#D4AF37] border border-[#D4AF37]/30 text-[10px] font-bold rounded-full uppercase tracking-wider">
             DEEP LEARNING ENGINE V3.0
           </span>
         </div>
 
         <div className="flex items-center gap-3">
           <button
-            onClick={() => setIsWizardOpen(true)}
+            onClick={handleOpenWizard}
             className="px-4 py-2 bg-[#D4AF37] hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-xs flex items-center gap-1.5 transition-all shadow-md shadow-amber-500/10 cursor-pointer"
           >
             <Icons.Plus className="w-4 h-4 text-slate-950" />
@@ -2104,7 +2139,7 @@ Peserta didik mampu melakukan evaluasi kritis terhadap penyajian data statistik.
 
                   <div className="flex flex-wrap items-center gap-3 pt-2">
                     <button
-                      onClick={() => setIsWizardOpen(true)}
+                      onClick={handleOpenWizard}
                       className="px-5 py-2.5 bg-gradient-to-r from-[#D4AF37] to-amber-500 text-slate-950 font-bold text-xs rounded-xl hover:brightness-110 shadow-lg shadow-amber-500/20 transition-all flex items-center gap-2 cursor-pointer"
                     >
                       <span>✨ Mulai Wizard Deep Learning</span>
@@ -2194,7 +2229,8 @@ Peserta didik mampu melakukan evaluasi kritis terhadap penyajian data statistik.
               <AIWorkspace 
                 activeDocument={activeDocument}
                 onBackToDashboard={() => setCurrentView('dashboard')} 
-                externalUserStatus={currentUser}
+                currentUser={currentUser}
+                onUpdateCurrentUser={(updated) => setCurrentUser(updated)}
               />
             </div>
           )}
@@ -2205,7 +2241,7 @@ Peserta didik mampu melakukan evaluasi kritis terhadap penyajian data statistik.
               onOpenDocument={handleOpenDocumentInWorkspace}
               onOpenInEditor={handleOpenDocumentInEditor}
               onDeleteDocument={handleDeleteDocument}
-              onOpenWizard={() => setIsWizardOpen(true)}
+              onOpenWizard={handleOpenWizard}
             />
           )}
 
