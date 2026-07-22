@@ -1,4 +1,4 @@
-/
+/*
 
 TRISULA SMART LEARNING ENGINE v3.0 - MAIN APP ARCHITECTURE
 
@@ -298,8 +298,8 @@ const [password, setPassword] = useState('');
 const [fullName, setFullName] = useState('');
 const [schoolName, setSchoolName] = useState('');
 
-// NEW FITUR: Pilihan Paket Berlangganan Saat Registrasi
-const [selectedPackage, setSelectedPackage] = useState('free'); // 'free' | 'pro_monthly' | 'single_modul' | 'b2b'
+// PILIHAN PAKET BERLANGGANAN SAAT REGISTRASI
+const [selectedPackage, setSelectedPackage] = useState('free'); // 'free' | 'pro_monthly' | 'single_modul'
 
 const [showPassword, setShowPassword] = useState(false);
 const [rememberMe, setRememberMe] = useState(true);
@@ -340,13 +340,13 @@ setTimeout(() => {
       isPrem = false;
       kredit = 1;
       packageName = 'Paket 1 Modul Ajar (Rp10.000)';
-    } else if (selectedPackage === 'b2b') {
-      isPrem = true;
-      kredit = 999;
-      packageName = 'Lisensi Sekolah / B2B';
+    } else {
+      isPrem = false;
+      kredit = 1;
+      packageName = 'Gratis (1 Token)';
     }
   } else {
-    isPrem = email.includes('admin') || email.includes('premium') || email.includes('budi');
+    isPrem = selectedRole === 'admin' || email.includes('admin') || email.includes('premium') || email.includes('budi');
     kredit = isPrem ? 250 : 1;
     packageName = isPrem ? 'PRO Unlimited' : 'Gratis';
   }
@@ -491,7 +491,7 @@ return (
             </div>
           </div>
 
-          {/* FITUR OPSIONAL: PILIHAN PAKET BERLANGGANAN SAAT REGISTRASI */}
+          {/* PILIHAN PAKET BERLANGGANAN SAAT REGISTRASI */}
           <div>
             <label className="block text-xs font-bold text-[#D4AF37] mb-1.5 flex items-center gap-1">
               <span>⭐</span> Pilih Opsi Berlangganan / Akun
@@ -507,7 +507,7 @@ return (
                 <div className="flex items-center gap-2.5">
                   <input
                     type="radio"
-                    name="subscription_pack"
+                    name="subscription_pack_main"
                     value="free"
                     checked={selectedPackage === 'free'}
                     onChange={() => setSelectedPackage('free')}
@@ -531,7 +531,7 @@ return (
                 <div className="flex items-center gap-2.5">
                   <input
                     type="radio"
-                    name="subscription_pack"
+                    name="subscription_pack_main"
                     value="pro_monthly"
                     checked={selectedPackage === 'pro_monthly'}
                     onChange={() => setSelectedPackage('pro_monthly')}
@@ -557,7 +557,7 @@ return (
                 <div className="flex items-center gap-2.5">
                   <input
                     type="radio"
-                    name="subscription_pack"
+                    name="subscription_pack_main"
                     value="single_modul"
                     checked={selectedPackage === 'single_modul'}
                     onChange={() => setSelectedPackage('single_modul')}
