@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 
-// Google Apps Script Webhook URL (Ganti dengan Web App URL Deployment Google Apps Script kamu)
+// Google Apps Script Webhook URL (Isi dengan Web App URL Deployment Google Apps Script kamu)
 const GOOGLE_SHEETS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyJJp3CVGiAEkCQ-6zDTgS1Rz2Fz2vQYCvpn_hB-JkN13q9aWQOAFfAtpWH3cHnby6LEg/exec";
 
 const syncUserToGoogleSheets = async (userData, action = 'SYNC_USER') => {
@@ -113,10 +113,19 @@ const Icons = {
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
     </svg>
+  ),
+  Trash: ({ className = "w-4 h-4 text-rose-400" }) => (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+    </svg>
+  ),
+  Copy: ({ className = "w-4 h-4 text-slate-400" }) => (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+    </svg>
   )
 };
 
-// Helper sanitasi LaTeX formula ke teks simbol visual cantik
 const formatMathFormula = (formulaStr) => {
   return formulaStr
     .replace(/\\mathbf\{(.*?)\}/g, '$1')
@@ -130,7 +139,6 @@ const formatMathFormula = (formulaStr) => {
     .replace(/\\div/g, '÷');
 };
 
-// Parser Markdown & LaTeX ke HTML Premium untuk Kanvas Dokumen
 const parseMarkdownToHTML = (markdown) => {
   if (!markdown) return '';
 
@@ -226,6 +234,41 @@ const parseMarkdownToHTML = (markdown) => {
   }
 
   return htmlResult.join('');
+};
+
+const generateRichAIContent = (instruction, subject = 'Informatika & STEM') => {
+  const text = instruction.toLowerCase();
+  const upperSubject = subject.toUpperCase();
+
+  if (text.includes('asesmen') || text.includes('rubrik') || text.includes('kktp')) {
+    return `\n\n---\n## V. KRITERIA KETERCAPAIAN TUJUAN PEMBELAJARAN (KKTP) & RUBRIK ASESMEN\n### 📊 Rubrik Observasi & Asesmen Kinerja (${upperSubject})\n\n| Kriteria Penilaian | Belum Memenuhi (1) | Cukup (2) | Baik (3) | Sangat Baik (4) |\n| :--- | :--- | :--- | :--- | :--- |\n| **Penerapan Konsep** | Belum memahami konsep dasar | Memahami 50% konsep dasar | Memahami 85% konsep dengan benar | Memahami 100% konsep & mampu mengaplikasikan |\n| **Analisis & Logika** | Tidak mampu menyusun alur | Menyusun alur namun ada kesalahan | Menyusun alur terstruktur & logis | Menyusun alur sangat presisi & optimal |\n| **Kolaborasi Tim** | Pasif dalam diskusi kelompok | Berpartisipasi jika diminta | Aktif berkontribusi dalam tim | Memimpin & membantu rekan kelompok |\n\n> 🎯 **Teknik Asesmen**: Formatif (Observasi diskusi & jurnal) & Sumatif (Unjuk kerja proyek kelompok).`;
+  } 
+  
+  if (text.includes('lkpd') || text.includes('lembar kerja')) {
+    return `\n\n---\n## XII. LEMBAR KERJA PESERTA DIDIK (LKPD)\n### 👥 Nama Kelompok: ____________________\n**Anggota Kelompok**: 1. _______________ 2. _______________ 3. _______________ \n\n#### A. PETUNJUK PENGERJAAN\n1. Bacalah studi kasus lingkungan lokal di bawah ini secara cermat.\n2. Diskusikan bersama anggota kelompokmu selama 20 menit.\n3. Susunlah model analisis menggunakan formula matematika dan diagram alir.\n\n#### B. TANTANGAN STUDI KASUS & FORMULA\nHitunglah estimasi efisiensi menggunakan rumus deviasi berikut:\n\n$$S = \\sqrt{\\frac{\\sum (x_i - \\bar{x})^2}{n - 1}}$$\n\n| No | Indikator Variabel | Nilai Pengamatan ($x_i$) | Selisih ($x_i - \\bar{x}$) |\n| :--- | :--- | :--- | :--- |\n| **1** | Sampel Data Pertama | 15.5 | +2.1 |\n| **2** | Sampel Data Kedua | 13.4 | -0.0 |\n| **3** | Sampel Data Ketiga | 18.0 | +4.6 |\n\n#### C. PERTANYAAN REFLEKSI GROUPS\n1. Berdasarkan nilai $S$ yang kamu peroleh, apa kesimpulan kelompokmu? Tuliskan dalam 3 kalimat!`;
+  }
+
+  if (text.includes('prosem') || text.includes('program semester')) {
+    return `\n\n---\n## VII. PROGRAM SEMESTER (PROSEM)\n### 📅 Alokasi Pemetaan Jam Pelajaran Semester 1 & 2 (${upperSubject})\n\n| No | Materi / Tujuan Pembelajaran | JP | Juli | Ags | Sep | Okt | Nov | Des |\n| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |\n| **1** | Analisis Data & Pemodelan Matematika | 6 JP | x | x | | | | |\n| **2** | Perancangan Flowchart & Diagram Logika | 6 JP | | | x | x | | |\n| **3** | Pengujian Program & Grafik Statistika | 6 JP | | | | | x | x |`;
+  }
+
+  if (text.includes('prota') || text.includes('program tahunan')) {
+    return `\n\n---\n## VI. PROGRAM TAHUNAN (PROTA)\n### 🗓️ Alokasi Efektif Jam Pelajaran Tahunan (${upperSubject})\n\n| No | Bab / Elemen Materi Utama | Alokasi Waktu (JP) | Keterangan Semester |\n| :--- | :--- | :--- | :--- |\n| **1** | Pemodelan Sistem, Analisis Data & Algoritma | 18 JP | Semester 1 |\n| **2** | Rekayasa Perangkat Lunak & Proyek STEM | 18 JP | Semester 2 |`;
+  }
+
+  if (text.includes('atp') || text.includes('alur tujuan')) {
+    return `\n\n---\n## IV. ALUR TUJUAN PEMBELAJARAN (ATP)\n### 🗺️ Pemetaan Runtutan ATP (${upperSubject})\n\n| Kode ATP | Alokasi Waktu | Indikator Ketercapaian | Rencana Asesmen |\n| :--- | :--- | :--- | :--- |\n| **ATP.01** | 2 JP | Mampu menganalisis efisiensi model matematika | Formatif Latihan Soal |\n| **ATP.02** | 2 JP | Mampu membuat diagram alir terstruktur | Unjuk Kerja Kelompok |`;
+  }
+
+  if (text.includes('tp') || text.includes('tujuan pembelajaran')) {
+    return `\n\n---\n## III. TUJUAN PEMBELAJARAN (TP)\n### 🎯 Poin Tujuan Pembelajaran ABCD (${upperSubject})\n\n- **TP1**: Menganalisis kompleksitas masalah menggunakan persamaan logika $\\bar{x} = \\frac{\\sum x_i}{n}$.\n- **TP2**: Menyusun diagram alir pemecahan masalah kontekstual.\n- **TP3**: Mempresentasikan hasil proyek kelompok secara kolaboratif.`;
+  }
+
+  if (text.includes('cp') || text.includes('capaian')) {
+    return `\n\n---\n## II. CAPAIAN PEMBELAJARAN (CP)\n### 📘 Analisis Capaian Pembelajaran Elemen (${upperSubject})\n\nPeserta didik mampu menerapkan konsep analisis data, menyusun model logika, serta merancang pemecahan masalah kontekstual secara kritis, mandiri, dan kolaboratif.`;
+  }
+
+  return `\n\n---\n## TANGGAPAN AI & REVISI PERANGKAT AJAR\n- **Instruksi Diterapkan**: "${instruction}"\n- **Penguatan Mindful**: Sesi hening 3 menit diawal pembelajaran untuk fokus mental.\n- **Penguatan Meaningful**: Studi kasus kontekstual isu lokal sekitar sekolah.\n- **Penguatan Joyful**: Permainan tim interaktif dan apresiasi sejaya.`;
 };
 
 function LoginPage({ onLoginSuccess }) {
@@ -912,98 +955,98 @@ function AIWorkspace({ activeDocument, onBackToDashboard, externalUserStatus }) 
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
   const defaultDoc = {
-    title: 'Modul Ajar STEM & Informatika - Model Matematika, Algoritma & Prosem',
-    subject: 'Informatika & STEM',
-    phase: 'Fase F (Kelas 11 SMA)',
-    content: `# MODUL AJAR DEEP LEARNING: INFORMATIKA & STEM FASE F (KELAS 11 SMA)
+    title: 'Modul Ajar IPA & Biologi - Ekosistem & Keanekaragaman Hayati',
+    subject: 'IPA & Biologi',
+    phase: 'Fase E (Kelas 10 SMA)',
+    content: `# MODUL AJAR DEEP LEARNING: IPA & BIOLOGI FASE E (KELAS 10 SMA)
 
 ## I. INFORMASI UMUM
-- **Mata Pelajaran**: Informatika & STEM Integrated
-- **Fase / Kelas**: Fase F (Kelas 11 SMA)
-- **Topik Utama**: Analisis Data, Algoritma Logika & Pemrograman
+- **Mata Pelajaran**: IPA & Biologi
+- **Fase / Kelas**: Fase E (Kelas 10 SMA)
+- **Topik Utama**: Ekosistem, Keanekaragaman Hayati & Perubahan Lingkungan
 - **Alokasi Waktu**: 2 JP x 45 Menit
 
 ---
 
 ## II. CAPAIAN PEMBELAJARAN (CP)
-### 📘 Analisis Capaian Pembelajaran Elemen (INFORMATIKA)
-Peserta didik mampu menerapkan konsep analisis data, menyusun algoritma pemrosesan logika, serta merancang diagram alir pemecahan masalah kontekstual secara kritis dan kolaboratif.
+### 📘 Analisis Capaian Pembelajaran Elemen (IPA & BIOLOGI)
+Peserta didik mampu menganalisis interaksi antar komponen ekosistem, memahami pentingnya keanekaragaman hayati lokal, serta merancang solusi kreatif atas perubahan lingkungan secara kritis dan kolaboratif.
 
 ---
 
 ## III. TUJUAN PEMBELAJARAN (TP)
-### 🎯 Poin Tujuan Pembelajaran ABCD (INFORMATIKA)
-- **TP1**: Menganalisis kompleksitas algoritma menggunakan persamaan logika $O(n \\log n)$.
-- **TP2**: Menyusun diagram alir logika pemrosesan data menggunakan sintaks flowchart.
-- **TP3**: Memprediksi tren data hasil eksekusi program berdasarkan grafik frekuensi.
+### 🎯 Poin Tujuan Pembelajaran ABCD (IPA & BIOLOGI)
+- **TP1**: Menganalisis struktur rantai makanan dan piramida energi ekosistem menggunakan formula matematis $P(t) = P_0 e^{rt}$.
+- **TP2**: Menyusun grafik fluktuasi populasi spesies lokal berdasarkan data sampel dilapangan.
+- **TP3**: Mempresentasikan hasil analisis proyek pelestarian lingkungan secara kolaboratif.
 
 ---
 
 ## IV. ALUR TUJUAN PEMBELAJARAN (ATP)
-### 🗺️ Pemetaan Runtutan ATP (INFORMATIKA)
+### 🗺️ Pemetaan Runtutan ATP (IPA & BIOLOGI)
 | Kode ATP | Alokasi Waktu | Indikator Ketercapaian | Rencana Asesmen |
 | :--- | :--- | :--- | :--- |
-| **ATP.11.1** | 2 JP | Mampu menganalisis efisiensi algoritma | Formatif Latihan Soal |
-| **ATP.11.2** | 2 JP | Mampu membuat diagram alir logika terstruktur | Unjuk Kerja Kelompok |
+| **ATP.10.1** | 2 JP | Mampu menganalisis interaksi trophic level | Formatif Latihan Soal |
+| **ATP.10.2** | 2 JP | Mampu menyusun laporan proyek pelestarian | Unjuk Kerja Kelompok |
 
 ---
 
 ## V. KRITERIA KETERCAPAIAN TUJUAN PEMBELAJARAN (KKTP)
-### 📊 Rubrik Observasi Unjuk Kerja Pemecahan Masalah (INFORMATIKA)
+### 📊 Rubrik Observasi Unjuk Kerja Pemecahan Masalah (IPA & BIOLOGI)
 | Kriteria Penilaian | Belum Memenuhi (1) | Memenuhi (2-3) | Sangat Baik (4) |
 | :--- | :--- | :--- | :--- |
-| **Penerapan Algoritma** | Salah menyusun instruksi | Tepat menyusun 80% logika | Tepat 100% & optimalisasi memori |
-| **Diagram Logika** | Diagram tidak terstruktur | Diagram rapi dan alur benar | Diagram sangat presisi & solutif |
+| **Penerapan Konsep** | Salah mengidentifikasi rantai makanan | Tepat mengidentifikasi 80% komponen | Tepat 100% & menganalisis dampak lingkungan |
+| **Laporan Proyek** | Laporan tidak terstruktur | Laporan rapi dan alur benar | Laporan sangat presisi & solutif |
 
 ---
 
 ## VI. PROGRAM TAHUNAN (PROTA)
-### 🗓️ Alokasi Efektif Jam Pelajaran Tahunan (INFORMATIKA)
+### 🗓️ Alokasi Efektif Jam Pelajaran Tahunan (IPA & BIOLOGI)
 | No | Bab / Elemen Materi Utama | Alokasi Waktu (JP) | Keterangan Semester |
 | :--- | :--- | :--- | :--- |
-| **1** | Analisis Data & Algoritma Pemrograman | 18 JP | Semester 1 |
-| **2** | Rekayasa Perangkat Lunak & Proyek STEM | 18 JP | Semester 2 |
+| **1** | Keanekaragaman Hayati & Ekosistem | 18 JP | Semester 1 |
+| **2** | Perubahan Lingkungan & Pemanasan Global | 18 JP | Semester 2 |
 
 ---
 
 ## VII. PROGRAM SEMESTER (PROSEM)
-### 📅 Alokasi Pemetaan Jam Pelajaran Semester 1 & 2 (INFORMATIKA)
+### 📅 Alokasi Pemetaan Jam Pelajaran Semester 1 & 2 (IPA & BIOLOGI)
 | No | Materi / Tujuan Pembelajaran | JP | Juli | Ags | Sep | Okt | Nov | Des |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **1** | Analisis Kompleksitas Algoritma | 6 JP | x | x | | | | |
-| **2** | Pembuatan Diagram Alir Flowchart | 6 JP | | | x | x | | |
-| **3** | Pengujian Program & Grafik Statistika | 6 JP | | | | | x | x |
+| **1** | Analisis Interaksi Ekosistem | 6 JP | x | x | | | | |
+| **2** | Pemetaan Keanekaragaman Hayati | 6 JP | | | x | x | | |
+| **3** | Proyek Konservasi Lingkungan | 6 JP | | | | | x | x |
 
 ---
 
 ## VIII. INTEGRASI 3 PILAR DEEP LEARNING
 
 ### 1. Mindful Learning (Penyadaran Diri)
-- **Latihan Hening STOP**: Siswa diajak hening selama 3 menit untuk menyadarkan fokus pikiran sebelum memecahkan rumus algoritma kompleks.
-- **Refleksi Awal**: Siswa menuliskan tingkat kepercayaan diri dalam mengoperasikan logika program.
+- **Latihan Hening STOP**: Siswa diajak hening selama 3 menit untuk mengamati lingkungan sekitar dan menyiapkan kestabilan mental sebelum belajar.
+- **Refleksi Awal**: Siswa mengisi jurnal singkat mengenai harapan dan pemahaman awal materi ekosistem.
 
 ### 2. Meaningful Learning (Keterhubungan Masalah Nyata)
-- **Konteks Lokal**: Membahas data statistik hasil panen lokal dan grafik tren fluktuasi harga pasar daerah.
-- **Problem Solving**: Merancang model algoritma untuk memprediksi keuntungan hasil tani.
+- **Konteks Lokal**: Membahas isu pencemaran sungai lokal dan grafik tren perubahan keanekaragaman spesies lokal.
+- **Problem Solving**: Merancang solusi daur ulang limbah organik sekolah.
 
 ### 3. Joyful Learning (Kolaboratif & Menggembirakan)
-- **Game Simulasi**: Tantangan logika "Tebak Algoritma & Diagram Alir" berbasis kelompok.
-- **Apresiasi Sebaya**: Sesi saling memberi masukan konstruktif atas program kelompok lain.
+- **Gamifikasi Pembelajaran**: Tantangan tim interaktif berbasis kuis/permainan "BONGKAR LOGIKA EKOSISTEM".
+- **Apresiasi Sebaya**: Sesi saling memberikan umpan balik positif antar kelompok.
 
 ---
 
 ## IX. DUKUNGAN RUMUS MATEMATIKA (LATEX FORMULA)
 
-Berikut adalah formula dasar perhitungan efisiensi algoritma dan statistika:
-- **Rata-rata Kompleksitas**: $\\bar{x} = \\frac{\\sum_{i=1}^{n} x_i}{n}$
-- **Persamaan Laju Pertumbuhan**: $$T(n) = 2 T\\left(\\frac{n}{2}\\right) + O(n)$$
+Berikut adalah formula dasar perhitungan laju pertumbuhan populasi dan rata-rata sampel:
+- **Model Laju Pertumbuhan Populasi**: $$P(t) = P_0 e^{rt}$$
+- **Rata-rata Sampel**: $\\bar{x} = \\frac{\\sum x_i}{n}$
 
 ---
 
 ## X. LEMBAR KERJA PESERTA DIDIK (LKPD)
 ### 👥 Nama Kelompok: ____________________
-1. Hitunglah nilai $T(n)$ jika diketahui $n = 16$!
-2. Analisis diagram alir di atas dan tuliskan langkah perbaikannya!`
+1. Hitunglah populasi $P(t)$ jika diketahui $P_0 = 100$, $r = 0.05$, $t = 10$!
+2. Analisis interaksi antar spesies pada tabel observasi di atas dan tuliskan solusinya!`
   };
 
   const currentDocument = activeDocument || defaultDoc;
@@ -1011,7 +1054,7 @@ Berikut adalah formula dasar perhitungan efisiensi algoritma dan statistika:
   const [inputInstruction, setInputInstruction] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [messages, setMessages] = useState([
-    { id: 1, sender: 'ai', text: `Halo Bapak/Ibu Guru! Saya Deep Learning Engine v3.0. Dokumen ${currentDocument.subject || 'STEM'} Anda siap disempurnakan!` }
+    { id: 1, sender: 'ai', text: `Halo Bapak/Ibu Guru! Saya Deep Learning Engine v3.0. Dokumen ${currentDocument.subject || 'Pembelajaran'} Anda siap disempurnakan dengan sintesis AI!` }
   ]);
 
   useEffect(() => {
@@ -1035,13 +1078,19 @@ Berikut adalah formula dasar perhitungan efisiensi algoritma dan statistika:
     setIsGenerating(true);
 
     setTimeout(() => {
-      setDocContent(prev => prev + `\n\n---\n## TANGGAPAN AI & REVISI\n- **Instruksi**: ${textToSend}\n- **Hasil**: Penyesuaian pilar Mindful, Meaningful, & Joyful berhasil disuntikkan.`);
+      const generatedMarkdownBlock = generateRichAIContent(textToSend, currentDocument.subject);
+      
+      setDocContent(prev => prev + generatedMarkdownBlock);
       setUserStatus(prev => ({
         ...prev,
         doc_generated_count: prev.doc_generated_count + 1,
         kredit_tersisa: Math.max(0, prev.kredit_tersisa - 1)
       }));
-      setMessages(prev => [...prev, { id: Date.now() + 1, sender: 'ai', text: '✨ Seksi perangkat ajar berhasil ditambahkan ke kanvas!' }]);
+      setMessages(prev => [...prev, { 
+        id: Date.now() + 1, 
+        sender: 'ai', 
+        text: `✨ **[SINTESIS DEEP LEARNING SELESAI]**\n\nSaya telah menyusun dan menyuntikkan seksi baru berdasarkan instruksi: "${textToSend}".\n\nSeksi baru kini aktif dan dapat Anda lihat langsung di kanvas dokumen sebelah kanan!` 
+      }]);
       setIsGenerating(false);
     }, 1000);
   };
@@ -1111,7 +1160,7 @@ Berikut adalah formula dasar perhitungan efisiensi algoritma dan statistika:
       const line = sec.trim().split('\n')[0].toUpperCase();
       switch (tabId) {
         case 'cp': return line.includes('CAPAIAN PEMBELAJARAN') || line.includes('CP');
-        case 'tp': return line.includes('TUJUAN PEMBELAJARAN') && !line.includes('ALUR');
+        case 'tp': return line.includes('TUJUAN PEMBELAJARAN') && !line.includes('ALUR') && !line.includes('KRITERIA');
         case 'atp': return line.includes('ALUR TUJUAN');
         case 'kktp': return line.includes('KRITERIA KETERCAPAIAN');
         case 'prota': return line.includes('PROGRAM TAHUNAN');
@@ -1119,8 +1168,10 @@ Berikut adalah formula dasar perhitungan efisiensi algoritma dan statistika:
         default: return false;
       }
     });
-    return matched ? matched.trim() : `# SEKSI ${tabId.toUpperCase()} BELUM TERSEDIA\n\nSilakan gunakan AI Co-Pilot untuk menghasilkan draf seksi ini.`;
+    return matched ? matched.trim() : null;
   };
+
+  const activeTabContent = filterContentByTab(docContent, activeSubTab);
 
   return (
     <div className="h-full flex flex-col md:flex-row gap-4 font-sans">
@@ -1145,7 +1196,7 @@ Berikut adalah formula dasar perhitungan efisiensi algoritma dan statistika:
               🎯 + Asesmen & Rubrik
             </button>
             <button onClick={() => handleSendMessage('Tolong buatkan LKPD IPAS lengkap')} className="px-2.5 py-1 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded-lg text-[10px] font-semibold shrink-0 cursor-pointer">
-              📄 + LKPD IPAS
+              📄 + LKPD Lengkap
             </button>
           </div>
           <div className="flex gap-2">
@@ -1154,7 +1205,7 @@ Berikut adalah formula dasar perhitungan efisiensi algoritma dan statistika:
               value={inputInstruction}
               onChange={(e) => setInputInstruction(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-              placeholder="Ketik instruksi, misal: 'Tambahkan LKPD SD'..."
+              placeholder="Ketik instruksi, misal: 'Tolong buatkan seksi PROSEM'..."
               className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#D4AF37]"
             />
             <button onClick={() => handleSendMessage()} className="px-4 py-2 bg-[#D4AF37] hover:bg-amber-500 text-slate-950 font-bold rounded-xl text-xs cursor-pointer">Kirim</button>
@@ -1194,10 +1245,28 @@ Berikut adalah formula dasar perhitungan efisiensi algoritma dan statistika:
 
         {/* CANVAS PREVIEW RICH TEXT */}
         <div className="flex-1 bg-white text-slate-900 p-8 rounded-2xl overflow-y-auto shadow-2xl">
-          <div
-            className="prose prose-slate max-w-none text-xs leading-relaxed"
-            dangerouslySetInnerHTML={{ __html: parseMarkdownToHTML(filterContentByTab(docContent, activeSubTab)) }}
-          />
+          {activeTabContent ? (
+            <div
+              className="prose prose-slate max-w-none text-xs leading-relaxed"
+              dangerouslySetInnerHTML={{ __html: parseMarkdownToHTML(activeTabContent) }}
+            />
+          ) : (
+            <div className="text-center py-16 space-y-4">
+              <div className="text-3xl">📄</div>
+              <h3 className="text-base font-bold text-slate-800">
+                Seksi {activeSubTab.toUpperCase()} Belum Dibuat
+              </h3>
+              <p className="text-xs text-slate-500 max-w-md mx-auto">
+                Seksi ini belum ada di dokumen kamu. Klik tombol di bawah ini untuk meminta AI Co-Pilot membuatkan drafnya secara otomatis!
+              </p>
+              <button
+                onClick={() => handleSendMessage(`Tolong buatkan seksi ${activeSubTab.toUpperCase()} secara lengkap dan rinci`)}
+                className="px-5 py-2.5 bg-[#1E3A8A] text-white font-bold rounded-xl text-xs hover:bg-indigo-900 transition-all shadow-md cursor-pointer"
+              >
+                ✨ Generasikan Draf {activeSubTab.toUpperCase()} Sekarang
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -1280,6 +1349,184 @@ Berikut adalah formula dasar perhitungan efisiensi algoritma dan statistika:
   );
 }
 
+function MyFilesView({ documents, onOpenDocument, onDeleteDocument, onOpenWizard }) {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filtered = documents.filter(doc => 
+    doc.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    doc.subject.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  return (
+    <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800 pb-6">
+        <div>
+          <span className="px-3 py-1 bg-indigo-500/10 text-indigo-300 border border-indigo-500/30 text-xs font-bold rounded-full uppercase tracking-wider">
+            Pengelola Berkas & Perangkat Ajar
+          </span>
+          <h1 className="text-2xl md:text-3xl font-extrabold text-white mt-2">
+            Berkas Saya ({documents.length})
+          </h1>
+          <p className="text-xs text-slate-400 mt-1">
+            Kelola, sunting, atau ekspor seluruh draf perangkat ajar yang telah dibuat.
+          </p>
+        </div>
+
+        <button
+          onClick={onOpenWizard}
+          className="px-4 py-2.5 bg-gradient-to-r from-[#D4AF37] to-amber-500 text-slate-950 font-bold text-xs rounded-xl hover:brightness-110 shadow-lg shadow-amber-500/20 flex items-center gap-2 cursor-pointer transition-all"
+        >
+          <Icons.Plus />
+          <span>+ Buat Perangkat Baru</span>
+        </button>
+      </div>
+
+      <div className="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl flex items-center justify-between gap-4">
+        <input
+          type="text"
+          placeholder="Cari judul perangkat ajar atau mata pelajaran..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-[#D4AF37] w-full md:w-96"
+        />
+        <span className="text-xs text-slate-400">Menampilkan {filtered.length} berkas</span>
+      </div>
+
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {filtered.map(doc => (
+          <div key={doc.id} className="bg-[#0D1C2E] border border-slate-800 rounded-2xl p-5 space-y-3 hover:border-[#D4AF37]/50 transition-all flex flex-col justify-between">
+            <div className="space-y-2">
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                  {doc.subject} • {doc.phase}
+                </span>
+                <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${doc.status === 'Completed' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'}`}>
+                  {doc.status || 'In Progress'}
+                </span>
+              </div>
+
+              <h3 className="text-sm font-bold text-white line-clamp-2">{doc.title}</h3>
+              <p className="text-xs text-slate-400 line-clamp-3 leading-relaxed">
+                {doc.topic ? `Topik: ${doc.topic}` : 'Modul Ajar Deep Learning Kurikulum Merdeka.'}
+              </p>
+            </div>
+
+            <div className="flex items-center justify-between pt-3 border-t border-slate-800/80 text-xs">
+              <button
+                onClick={() => onDeleteDocument(doc.id)}
+                className="p-1.5 hover:bg-rose-950/50 rounded-lg text-slate-400 hover:text-rose-400 transition-colors cursor-pointer"
+                title="Hapus Berkas"
+              >
+                <Icons.Trash />
+              </button>
+
+              <button
+                onClick={() => onOpenDocument(doc)}
+                className="text-[#D4AF37] font-bold hover:underline flex items-center gap-1 cursor-pointer"
+              >
+                <span>Buka di Workspace</span>
+                <span>→</span>
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function CleanEditorView({ activeDocument, onSaveDocument }) {
+  const [title, setTitle] = useState(activeDocument?.title || 'Modul Ajar Deep Learning');
+  const [content, setContent] = useState(activeDocument?.content || `# MODUL AJAR DEEP LEARNING\n\n## I. INFORMASI UMUM\n- **Mata Pelajaran**: General\n- **Fase**: Fase E`);
+  const [toast, setToast] = useState(null);
+
+  const showToast = (msg) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 3000);
+  };
+
+  const handleSave = () => {
+    if (onSaveDocument) {
+      onSaveDocument({ ...activeDocument, title, content });
+    }
+    showToast('✨ Dokumen berhasil disimpan!');
+  };
+
+  const handleInsertHeader = (level) => {
+    const prefix = '#'.repeat(level) + ' ';
+    setContent(prev => prev + `\n\n${prefix}JUDUL SEKSI BARU\n`);
+  };
+
+  const handleInsertTable = () => {
+    const tableTemplate = `\n\n| Kolom 1 | Kolom 2 | Kolom 3 |\n| :--- | :--- | :--- |\n| Data A | Data B | Data C |\n| Data D | Data E | Data F |\n`;
+    setContent(prev => prev + tableTemplate);
+  };
+
+  return (
+    <div className="h-full flex flex-col p-4 md:p-6 space-y-4 font-sans max-w-7xl mx-auto">
+      {toast && (
+        <div className="fixed top-4 right-4 z-50 bg-[#D4AF37] text-slate-950 font-bold px-4 py-2 rounded-xl text-xs shadow-2xl animate-bounce">
+          {toast}
+        </div>
+      )}
+
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800 pb-4">
+        <div>
+          <span className="px-3 py-1 bg-amber-500/10 text-[#D4AF37] border border-[#D4AF37]/30 text-xs font-bold rounded-full uppercase tracking-wider">
+            Editor Teks Rapih & Markdown Studio
+          </span>
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="text-lg md:text-xl font-bold bg-transparent text-white focus:outline-none focus:border-b border-[#D4AF37] mt-1 w-full md:w-96"
+          />
+        </div>
+
+        <button
+          onClick={handleSave}
+          className="px-5 py-2.5 bg-[#D4AF37] hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-xl transition-all shadow-md cursor-pointer"
+        >
+          💾 Simpan Perubahan
+        </button>
+      </div>
+
+      <div className="flex items-center gap-2 bg-slate-900 border border-slate-800 p-2 rounded-xl overflow-x-auto text-xs">
+        <button onClick={() => handleInsertHeader(1)} className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded font-bold">H1</button>
+        <button onClick={() => handleInsertHeader(2)} className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded font-bold">H2</button>
+        <button onClick={() => handleInsertHeader(3)} className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded font-bold">H3</button>
+        <span className="text-slate-700">|</span>
+        <button onClick={handleInsertTable} className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded">📊 + Tabel</button>
+      </div>
+
+      <div className="flex-1 grid md:grid-cols-2 gap-4 min-h-[500px]">
+        <div className="flex flex-col bg-[#0D1C2E] border border-slate-800 rounded-2xl overflow-hidden">
+          <div className="p-3 bg-slate-900 border-b border-slate-800 text-xs font-bold text-slate-400">
+            📝 EDITOR MARKDOWN MURNI
+          </div>
+          <textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            className="flex-1 w-full bg-slate-950 p-4 text-xs font-mono text-slate-200 focus:outline-none resize-none leading-relaxed"
+          />
+        </div>
+
+        <div className="flex flex-col bg-[#0D1C2E] border border-slate-800 rounded-2xl overflow-hidden">
+          <div className="p-3 bg-slate-900 border-b border-slate-800 text-xs font-bold text-[#D4AF37]">
+            👁️ PRATINJAU KANVAS HASIL (LIVE PREVIEW)
+          </div>
+          <div className="flex-1 bg-white p-6 overflow-y-auto text-slate-900">
+            <div
+              className="prose prose-slate max-w-none text-xs leading-relaxed"
+              dangerouslySetInnerHTML={{ __html: parseMarkdownToHTML(content) }}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function WizardModal({ isOpen, onClose, onCreateDocument }) {
   const [subject, setSubject] = useState('IPA & Biologi');
   const [phase, setPhase] = useState('Fase E (Kelas 10 SMA)');
@@ -1322,14 +1569,47 @@ Peserta didik mampu memahami konsep utama ${topic}, mengaitkan dengan fenomena n
 
 ---
 
-## IV. INTEGRASI 3 PILAR DEEP LEARNING
+## IV. ALUR TUJUAN PEMBELAJARAN (ATP)
+### 🗺️ Pemetaan Runtutan ATP (${subject.toUpperCase()})
+| Kode ATP | Alokasi Waktu | Indikator Ketercapaian | Rencana Asesmen |
+| :--- | :--- | :--- | :--- |
+| **ATP.01** | 2 JP | Mampu menganalisis efisiensi model matematika | Formatif Latihan Soal |
+| **ATP.02** | 2 JP | Mampu membuat diagram alir terstruktur | Unjuk Kerja Kelompok |
+
+---
+
+## V. KRITERIA KETERCAPAIAN TUJUAN PEMBELAJARAN (KKTP)
+### 📊 Rubrik Observasi Unjuk Kerja Pemecahan Masalah (${subject.toUpperCase()})
+| Kriteria Penilaian | Belum Memenuhi (1) | Memenuhi (2-3) | Sangat Baik (4) |
+| :--- | :--- | :--- | :--- |
+| **Penerapan Konsep** | Salah mengidentifikasi komponen | Tepat mengidentifikasi 80% komponen | Tepat 100% & solutif |
+
+---
+
+## VI. PROGRAM TAHUNAN (PROTA)
+### 🗓️ Alokasi Efektif Jam Pelajaran Tahunan (${subject.toUpperCase()})
+| No | Bab / Elemen Materi Utama | Alokasi Waktu (JP) | Keterangan Semester |
+| :--- | :--- | :--- | :--- |
+| **1** | ${topic} | 18 JP | Semester 1 |
+
+---
+
+## VII. PROGRAM SEMESTER (PROSEM)
+### 📅 Alokasi Pemetaan Jam Pelajaran Semester 1 & 2 (${subject.toUpperCase()})
+| No | Materi / Tujuan Pembelajaran | JP | Juli | Ags | Sep | Okt | Nov | Des |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **1** | ${topic} | 6 JP | x | x | | | | |
+
+---
+
+## VIII. INTEGRASI 3 PILAR DEEP LEARNING
 ${pillars.mindful ? '- **Mindful Learning**: Siswa diajak melakukan sesi hening STOP untuk membangun kesadaran belajar.' : ''}
 ${pillars.meaningful ? '- **Meaningful Learning**: Menganalisis isu lingkungan lokal di sekitar lingkungan sekolah.' : ''}
 ${pillars.joyful ? '- **Joyful Learning**: Kuis interaktif berbasis kelompok dan presentasi solutif.' : ''}
 
 ---
 
-## V. DUKUNGAN RUMUS MATEMATIKA (LATEX FORMULA)
+## IX. DUKUNGAN RUMUS MATEMATIKA (LATEX FORMULA)
 - **Model Laju Pertumbuhan Populasi**: $$P(t) = P_0 e^{rt}$$
 - **Rata-rata Sampel**: $\\bar{x} = \\frac{\\sum x_i}{n}$`
     };
@@ -1445,8 +1725,98 @@ export default function App() {
     { id: 'usr_free_01', name: 'Siti Rahmawati, S.Pd.', email: 'siti.rahma@sd.kemdikbud.go.id', role: 'guru', is_premium: false, kredit_tersisa: 1, doc_generated_count: 1, school: 'SD Negeri 05 Kebayoran' }
   ]);
 
-  const [currentView, setCurrentView] = useState('dashboard'); // 'dashboard', 'workspace', 'admin'
-  const [activeDocument, setActiveDocument] = useState(null);
+  const [documents, setDocuments] = useState([
+    {
+      id: 'doc_01',
+      title: 'Modul Ajar IPA & Biologi - Ekosistem & Keanekaragaman Hayati',
+      subject: 'IPA & Biologi',
+      phase: 'Fase E (Kelas 10 SMA)',
+      topic: 'Ekosistem, Keanekaragaman Hayati & Perubahan Lingkungan',
+      status: 'In Progress',
+      content: `# MODUL AJAR DEEP LEARNING: IPA & BIOLOGI FASE E (KELAS 10 SMA)
+
+## I. INFORMASI UMUM
+- **Mata Pelajaran**: IPA & Biologi
+- **Fase / Kelas**: Fase E (Kelas 10 SMA)
+- **Topik Utama**: Ekosistem, Keanekaragaman Hayati & Perubahan Lingkungan
+- **Alokasi Waktu**: 2 JP x 45 Menit
+
+---
+
+## II. CAPAIAN PEMBELAJARAN (CP)
+### 📘 Analisis Capaian Pembelajaran Elemen (IPA & BIOLOGI)
+Peserta didik mampu menganalisis interaksi antar komponen ekosistem, memahami pentingnya keanekaragaman hayati lokal, serta merancang solusi kreatif atas perubahan lingkungan secara kritis dan kolaboratif.
+
+---
+
+## III. TUJUAN PEMBELAJARAN (TP)
+### 🎯 Poin Tujuan Pembelajaran ABCD (IPA & BIOLOGI)
+- **TP1**: Menganalisis struktur rantai makanan dan piramida energi ekosistem menggunakan formula matematis $P(t) = P_0 e^{rt}$.
+- **TP2**: Menyusun grafik fluktuasi populasi spesies lokal berdasarkan data sampel dilapangan.
+- **TP3**: Mempresentasikan hasil analisis proyek pelestarian lingkungan secara kolaboratif.
+
+---
+
+## IV. ALUR TUJUAN PEMBELAJARAN (ATP)
+### 🗺️ Pemetaan Runtutan ATP (IPA & BIOLOGI)
+| Kode ATP | Alokasi Waktu | Indikator Ketercapaian | Rencana Asesmen |
+| :--- | :--- | :--- | :--- |
+| **ATP.10.1** | 2 JP | Mampu menganalisis interaksi trophic level | Formatif Latihan Soal |
+| **ATP.10.2** | 2 JP | Mampu menyusun laporan proyek pelestarian | Unjuk Kerja Kelompok |
+
+---
+
+## V. KRITERIA KETERCAPAIAN TUJUAN PEMBELAJARAN (KKTP)
+### 📊 Rubrik Observasi Unjuk Kerja Pemecahan Masalah (IPA & BIOLOGI)
+| Kriteria Penilaian | Belum Memenuhi (1) | Memenuhi (2-3) | Sangat Baik (4) |
+| :--- | :--- | :--- | :--- |
+| **Penerapan Konsep** | Salah mengidentifikasi rantai makanan | Tepat mengidentifikasi 80% komponen | Tepat 100% & menganalisis dampak |
+
+---
+
+## VI. PROGRAM TAHUNAN (PROTA)
+### 🗓️ Alokasi Efektif Jam Pelajaran Tahunan (IPA & BIOLOGI)
+| No | Bab / Elemen Materi Utama | Alokasi Waktu (JP) | Keterangan Semester |
+| :--- | :--- | :--- | :--- |
+| **1** | Keanekaragaman Hayati & Ekosistem | 18 JP | Semester 1 |
+| **2** | Perubahan Lingkungan & Pemanasan Global | 18 JP | Semester 2 |
+
+---
+
+## VII. PROGRAM SEMESTER (PROSEM)
+### 📅 Alokasi Pemetaan Jam Pelajaran Semester 1 & 2 (IPA & BIOLOGI)
+| No | Materi / Tujuan Pembelajaran | JP | Juli | Ags | Sep | Okt | Nov | Des |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **1** | Analisis Interaksi Ekosistem | 6 JP | x | x | | | | |
+| **2** | Pemetaan Keanekaragaman Hayati | 6 JP | | | x | x | | |
+
+---
+
+## VIII. INTEGRASI 3 PILAR DEEP LEARNING
+- **Mindful Learning**: Siswa diajak melakukan sesi hening STOP untuk membangun kesadaran belajar.
+- **Meaningful Learning**: Menganalisis isu lingkungan lokal di sekitar sekolah.
+- **Joyful Learning**: Kuis interaktif berbasis kelompok dan presentasi solutif.`
+    },
+    {
+      id: 'doc_02',
+      title: 'Perangkat Ajar Matematika - Analisis Data & Peluang',
+      subject: 'Matematika',
+      phase: 'Fase F (Kelas 11 SMA)',
+      topic: 'Analisis Data, Statistika & Peluang',
+      status: 'Completed',
+      content: `# PERANGKAT AJAR MATEMATIKA FASE F
+
+## I. INFORMASI UMUM
+- **Mata Pelajaran**: Matematika
+- **Fase / Kelas**: Fase F (Kelas 11 SMA)
+
+## II. CAPAIAN PEMBELAJARAN (CP)
+Peserta didik mampu melakukan evaluasi kritis terhadap penyajian data statistik.`
+    }
+  ]);
+
+  const [currentView, setCurrentView] = useState('dashboard'); // 'dashboard', 'workspace', 'files', 'editor', 'admin'
+  const [activeDocument, setActiveDocument] = useState(documents[0]);
   const [isWizardOpen, setIsWizardOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
 
@@ -1496,9 +1866,26 @@ export default function App() {
   };
 
   const handleCreateDocument = (newDoc) => {
+    setDocuments(prev => [newDoc, ...prev]);
     setActiveDocument(newDoc);
     setCurrentView('workspace');
     showToast(`Perangkat Ajar "${newDoc.title}" berhasil dibuat!`);
+  };
+
+  const handleOpenDocumentInWorkspace = (doc) => {
+    setActiveDocument(doc);
+    setCurrentView('workspace');
+  };
+
+  const handleDeleteDocument = (docId) => {
+    setDocuments(prev => prev.filter(d => d.id !== docId));
+    showToast('Berkas berhasil dihapus dari daftar.');
+  };
+
+  const handleSaveEditorDocument = (updatedDoc) => {
+    setDocuments(prev => prev.map(d => d.id === updatedDoc.id ? updatedDoc : d));
+    setActiveDocument(updatedDoc);
+    showToast('Perubahan berkas berhasil disimpan!');
   };
 
   if (!currentUser) {
@@ -1605,15 +1992,23 @@ export default function App() {
               </button>
 
               <button
-                onClick={() => setCurrentView('dashboard')}
-                className="w-full px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 transition-all flex items-center gap-2.5 cursor-pointer"
+                onClick={() => setCurrentView('files')}
+                className={`w-full px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2.5 cursor-pointer ${
+                  currentView === 'files'
+                    ? 'bg-slate-800/90 text-white border border-slate-700/80 shadow-sm'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
+                }`}
               >
                 <Icons.Folder /> Berkas Saya
               </button>
 
               <button
-                onClick={() => setCurrentView('workspace')}
-                className="w-full px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 transition-all flex items-center gap-2.5 cursor-pointer"
+                onClick={() => setCurrentView('editor')}
+                className={`w-full px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2.5 cursor-pointer ${
+                  currentView === 'editor'
+                    ? 'bg-slate-800/90 text-white border border-slate-700/80 shadow-sm'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
+                }`}
               >
                 <Icons.Edit /> Editor Teks Rapih
               </button>
@@ -1666,10 +2061,10 @@ export default function App() {
                       <span>✨ Mulai Wizard Deep Learning</span>
                     </button>
                     <button
-                      onClick={() => setCurrentView('workspace')}
+                      onClick={() => setCurrentView('files')}
                       className="px-4 py-2.5 bg-slate-800/80 hover:bg-slate-800 text-slate-200 border border-slate-700 font-bold text-xs rounded-xl transition-all cursor-pointer"
                     >
-                      Lihat Semua Proyek (2)
+                      Lihat Semua Proyek ({documents.length})
                     </button>
                   </div>
                 </div>
@@ -1679,19 +2074,23 @@ export default function App() {
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="bg-[#0D1C2E] border border-slate-800 p-4 rounded-2xl space-y-1">
                   <div className="text-[11px] text-slate-400">Total Perangkat Ajar</div>
-                  <div className="text-2xl font-bold text-white">2</div>
-                  <div className="text-[10px] text-emerald-400">+2 minggu ini</div>
+                  <div className="text-2xl font-bold text-white">{documents.length}</div>
+                  <div className="text-[10px] text-emerald-400">+{documents.length} minggu ini</div>
                 </div>
 
                 <div className="bg-[#0D1C2E] border border-slate-800 p-4 rounded-2xl space-y-1">
                   <div className="text-[11px] text-slate-400">Dalam Proses (Draft)</div>
-                  <div className="text-2xl font-bold text-amber-400">1</div>
+                  <div className="text-2xl font-bold text-amber-400">
+                    {documents.filter(d => d.status !== 'Completed').length}
+                  </div>
                   <div className="text-[10px] text-amber-300">Butuh peninjauan TP/ATP</div>
                 </div>
 
                 <div className="bg-[#0D1C2E] border border-slate-800 p-4 rounded-2xl space-y-1">
                   <div className="text-[11px] text-slate-400">Selesai & Siap Cetak</div>
-                  <div className="text-2xl font-bold text-emerald-400">1</div>
+                  <div className="text-2xl font-bold text-emerald-400">
+                    {documents.filter(d => d.status === 'Completed').length}
+                  </div>
                   <div className="text-[10px] text-emerald-300">Siap di-export PDF/Word</div>
                 </div>
 
@@ -1709,59 +2108,33 @@ export default function App() {
                 </h2>
 
                 <div className="grid md:grid-cols-2 gap-4">
-                  {/* CARD 1 */}
-                  <div className="bg-[#0D1C2E] border border-slate-800 rounded-2xl p-5 space-y-3 hover:border-slate-700 transition-all">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                        Informatika • Fase E (Kelas 10)
-                      </span>
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                        In Progress
-                      </span>
+                  {documents.slice(0, 2).map((doc) => (
+                    <div key={doc.id} className="bg-[#0D1C2E] border border-slate-800 rounded-2xl p-5 space-y-3 hover:border-slate-700 transition-all">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                          {doc.subject} • {doc.phase}
+                        </span>
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${doc.status === 'Completed' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'}`}>
+                          {doc.status || 'In Progress'}
+                        </span>
+                      </div>
+
+                      <h3 className="text-sm font-bold text-white">{doc.title}</h3>
+                      <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+                        {doc.topic ? `Topik Utama: ${doc.topic}` : 'Perangkat Ajar Kurikulum Merdeka.'}
+                      </p>
+
+                      <div className="flex justify-between items-center pt-2 border-t border-slate-800 text-xs">
+                        <span className="text-slate-500">Deep Learning Engine</span>
+                        <button
+                          onClick={() => handleOpenDocumentInWorkspace(doc)}
+                          className="text-[#D4AF37] font-bold hover:underline cursor-pointer"
+                        >
+                          Buka AI Workspace →
+                        </button>
+                      </div>
                     </div>
-
-                    <h3 className="text-sm font-bold text-white">Modul Ajar Informatika - Algoritma Pemrograman</h3>
-                    <p className="text-xs text-slate-400 leading-relaxed">
-                      Peserta didik mampu menerapkan strategi algoritmik standar untuk menghasilkan beberapa solusi persoalan dengan data diskrit volume besar.
-                    </p>
-
-                    <div className="flex justify-between items-center pt-2 border-t border-slate-800 text-xs">
-                      <span className="text-slate-500">Edit di Notion Studio</span>
-                      <button
-                        onClick={() => setCurrentView('workspace')}
-                        className="text-[#D4AF37] font-bold hover:underline cursor-pointer"
-                      >
-                        Buka AI Workspace →
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* CARD 2 */}
-                  <div className="bg-[#0D1C2E] border border-slate-800 rounded-2xl p-5 space-y-3 hover:border-slate-700 transition-all">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                        Matematika • Fase F (Kelas 11)
-                      </span>
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                        Completed
-                      </span>
-                    </div>
-
-                    <h3 className="text-sm font-bold text-white">Perangkat Ajar Matematika - Analisis Data & Peluang</h3>
-                    <p className="text-xs text-slate-400 leading-relaxed">
-                      Peserta didik mampu melakukan evaluasi kritis terhadap penyajian data statistik.
-                    </p>
-
-                    <div className="flex justify-between items-center pt-2 border-t border-slate-800 text-xs">
-                      <span className="text-slate-500">Edit di Notion Studio</span>
-                      <button
-                        onClick={() => setCurrentView('workspace')}
-                        className="text-[#D4AF37] font-bold hover:underline cursor-pointer"
-                      >
-                        Buka AI Workspace →
-                      </button>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -1775,6 +2148,22 @@ export default function App() {
                 externalUserStatus={currentUser}
               />
             </div>
+          )}
+
+          {currentView === 'files' && (
+            <MyFilesView
+              documents={documents}
+              onOpenDocument={handleOpenDocumentInWorkspace}
+              onDeleteDocument={handleDeleteDocument}
+              onOpenWizard={() => setIsWizardOpen(true)}
+            />
+          )}
+
+          {currentView === 'editor' && (
+            <CleanEditorView
+              activeDocument={activeDocument}
+              onSaveDocument={handleSaveEditorDocument}
+            />
           )}
 
           {currentView === 'admin' && (
