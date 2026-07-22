@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 /**
- * TRISULAPROMPT - Notion Studio Component v2.6 (Multi-Layer Copy Protection)
+ * TRISULAPROMPT - Notion Studio Component v2.7 (Ironclad Copy Protection)
  * Author: TRISULACODER v9.6 - Lead Solution Architect
  * AI-Powered Markdown & WYSIWYG Editor + Native Document Export Engine
  */
@@ -157,18 +157,28 @@ export default function NotionStudio({ activeDoc, onSaveDoc, onBackToDashboard }
     }, 500);
   };
 
-  // Anti-Copy & Cut Event Handler
+  // Anti-Copy & Cut Event Handler dengan pengosongan clipboard paksa
   const handlePreventCopyCut = (e) => {
     e.preventDefault();
     e.stopPropagation();
+    if (e.clipboardData) {
+      e.clipboardData.setData('text/plain', ''); // Paksa isi clipboard jadi kosong
+    }
     showToast('⚠️ Menyalin / memotong teks dari editor dilarang!');
   };
 
-  // Keyboard Shortcut Interceptor (Ctrl+C, Cmd+C, Ctrl+X, Cmd+X)
+  // Direct Physical Keyboard Interceptor (Ctrl+C, Cmd+C, Ctrl+X, Cmd+X)
   const handleKeyDownProtection = (e) => {
-    if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'C' || e.key === 'x' || e.key === 'X')) {
+    const isCtrlOrCmd = e.ctrlKey || e.metaKey;
+    const isCopyKey = e.key === 'c' || e.key === 'C' || e.code === 'KeyC';
+    const isCutKey = e.key === 'x' || e.key === 'X' || e.code === 'KeyX';
+
+    if (isCtrlOrCmd && (isCopyKey || isCutKey)) {
       e.preventDefault();
       e.stopPropagation();
+      if (e.clipboardData) {
+        e.clipboardData.setData('text/plain', '');
+      }
       showToast('⚠️ Kombinasi tombol Salin/Potong (Ctrl+C / Ctrl+X) dilarang!');
     }
   };
@@ -176,6 +186,7 @@ export default function NotionStudio({ activeDoc, onSaveDoc, onBackToDashboard }
   // Context Menu Disabler for Editor and Preview
   const handleContextMenuProtection = (e) => {
     e.preventDefault();
+    e.stopPropagation();
     showToast('⚠️ Menu klik kanan dinonaktifkan di area ini!');
   };
 
