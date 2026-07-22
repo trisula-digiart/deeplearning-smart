@@ -2,35 +2,45 @@ import React, { useState } from 'react';
 import { generatePerangkatAjar } from '../services/geminiService';
 
 /**
- * TRISULAPROMPT - Deep Learning Wizard Component v2.5 (Fully Patched)
- * Modal Multi-Step Form untuk pembuatan Perangkat Ajar Kurikulum Merdeka
+ * TRISULA SMART LEARNING ENGINE - Deep Learning Wizard Component v3.0
+ * Multi-Step & Single-View Form Modal for Kurikulum Merdeka + 3 Pillars
  */
 
 const PRESET_TOPICS = [
-  { subject: 'Informatika', phase: 'Fase E (Kelas 10)', topic: 'Algoritma Pemrograman' },
-  { subject: 'Matematika', phase: 'Fase F (Kelas 11)', topic: 'Analisis Data & Peluang' },
-  { subject: 'Bahasa Indonesia', phase: 'Fase D (Kelas 7)', topic: 'Teks Laporan Hasil Observasi' },
-  { subject: 'IPAS', phase: 'Fase C (Kelas 5)', topic: 'Ekosistem dan Keseimbangan Alam' }
+  { subject: 'Informatika', phase: 'Fase E (Kelas 10 SMA)', topic: 'Algoritma Pemrograman & Flowchart' },
+  { subject: 'IPA & Biologi', phase: 'Fase E (Kelas 10 SMA)', topic: 'Ekosistem & Keanekaragaman Hayati' },
+  { subject: 'Matematika', phase: 'Fase F (Kelas 11 SMA)', topic: 'Analisis Data, Statistika & Peluang' },
+  { subject: 'IPAS', phase: 'Fase C (Kelas 5 SD)', topic: 'Ekosistem dan Keseimbangan Alam' }
 ];
 
-export default function DeepLearningWizard({ isOpen, onClose, onSuccess }) {
+export default function DeepLearningWizard({ isOpen, onClose, onSuccess, onCreateDocument }) {
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
-  // Form State
   const [formData, setFormData] = useState({
-    jenisDokumen: 'Modul Ajar',
-    mataPelajaran: 'Informatika',
-    fase: 'Fase E (Kelas 10)',
-    topik: 'Algoritma Pemrograman',
-    durasi: '2 JP (2 x 45 Menit)',
-    pilarFocus: ['Mindful', 'Meaningful', 'Joyful']
+    mataPelajaran: 'IPA & Biologi',
+    fase: 'Fase E (Kelas 10 SMA)',
+    topik: 'Ekosistem & Keanekaragaman Hayati',
+    durasi: '2 JP x 45 Menit',
+    components: {
+      modulAjar: true,
+      cp: true,
+      tp: true,
+      atp: true,
+      kktp: true,
+      prota: true,
+      prosem: true
+    },
+    pilarFocus: {
+      mindful: true,
+      meaningful: true,
+      joyful: true
+    }
   });
 
   if (!isOpen) return null;
 
-  // Handle Input Change
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -39,18 +49,26 @@ export default function DeepLearningWizard({ isOpen, onClose, onSuccess }) {
     }
   };
 
-  // Handle Checkbox Pilar
-  const handlePilarToggle = (pilar) => {
-    setFormData((prev) => {
-      const exists = prev.pilarFocus.includes(pilar);
-      const updated = exists
-        ? prev.pilarFocus.filter((p) => p !== pilar)
-        : [...prev.pilarFocus, pilar];
-      return { ...prev, pilarFocus: updated.length > 0 ? updated : prev.pilarFocus };
-    });
+  const handleComponentToggle = (key) => {
+    setFormData((prev) => ({
+      ...prev,
+      components: {
+        ...prev.components,
+        [key]: !prev.components[key]
+      }
+    }));
   };
 
-  // Preset Fast Loader
+  const handlePilarToggle = (key) => {
+    setFormData((prev) => ({
+      ...prev,
+      pilarFocus: {
+        ...prev.pilarFocus,
+        [key]: !prev.pilarFocus[key]
+      }
+    }));
+  };
+
   const handleApplyPreset = (preset) => {
     setFormData((prev) => ({
       ...prev,
@@ -60,12 +78,9 @@ export default function DeepLearningWizard({ isOpen, onClose, onSuccess }) {
     }));
   };
 
-  // Form Validation
   const validateStep = (currentStep) => {
     const newErrors = {};
     if (currentStep === 1) {
-      if (!formData.jenisDokumen) newErrors.jenisDokumen = 'Pilih jenis dokumen terlebih dahulu.';
-    } else if (currentStep === 2) {
       if (!formData.mataPelajaran.trim()) newErrors.mataPelajaran = 'Mata pelajaran wajib diisi.';
       if (!formData.topik.trim()) newErrors.topik = 'Topik utama wajib diisi.';
     }
@@ -73,47 +88,81 @@ export default function DeepLearningWizard({ isOpen, onClose, onSuccess }) {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleNext = () => {
-    if (validateStep(step)) {
-      setStep((prev) => Math.min(prev + 1, 3));
+  const generateMarkdownStructure = () => {
+    const upperSub = formData.mataPelajaran.toUpperCase();
+    const upperPhase = formData.fase.toUpperCase();
+
+    let content = `# MODUL AJAR DEEP LEARNING: ${upperSub} ${upperPhase}
+
+## I. INFORMASI UMUM
+- **Mata Pelajaran**: ${formData.mataPelajaran}
+- **Fase / Kelas**: ${formData.fase}
+- **Topik Utama**: ${formData.topik}
+- **Alokasi Waktu**: ${formData.durasi}`;
+
+    if (formData.components.cp) {
+      content += `\n\n---\n## II. CAPAIAN PEMBELAJARAN (CP)\n### 📘 Analisis Capaian Pembelajaran Elemen (${upperSub})\nPeserta didik mampu menganalisis interaksi komponen ${formData.topik}, memahami keterhubungan fenomena nyata, serta merancang solusi solutif secara kritis dan kolaboratif.`;
     }
+
+    if (formData.components.tp) {
+      content += `\n\n---\n## III. TUJUAN PEMBELAJARAN (TP)\n### 🎯 Poin Tujuan Pembelajaran ABCD (${upperSub})\n- **TP1**: Menganalisis konsep dan fungsi dasar dari ${formData.topik}.\n- **TP2**: Menyusun model analisis terstruktur dan grafik pemrosesan data.\n- **TP3**: Mempresentasikan hasil analisis proyek kelompok secara kolaboratif.`;
+    }
+
+    if (formData.components.atp) {
+      content += `\n\n---\n## IV. ALUR TUJUAN PEMBELAJARAN (ATP)\n### 🗺️ Pemetaan Runtutan ATP (${upperSub})\n| Kode ATP | Alokasi Waktu | Indikator Ketercapaian | Rencana Asesmen |\n| :--- | :--- | :--- | :--- |\n| **ATP.01** | 2 JP | Mampu menganalisis konsep dasar ${formData.topik} | Formatif Latihan Soal |\n| **ATP.02** | 2 JP | Mampu menyusun laporan proyek pelestarian | Unjuk Kerja Kelompok |`;
+    }
+
+    if (formData.components.kktp) {
+      content += `\n\n---\n## V. KRITERIA KETERCAPAIAN TUJUAN PEMBELAJARAN (KKTP)\n### 📊 Rubrik Observasi Unjuk Kerja Pemecahan Masalah (${upperSub})\n| Kriteria Penilaian | Belum Memenuhi (1) | Memenuhi (2-3) | Sangat Baik (4) |\n| :--- | :--- | :--- | :--- |\n| **Penerapan Konsep** | Belum menguasai alur dasar | Tepat mengidentifikasi 80% komponen | Tepat 100% & solutif |`;
+    }
+
+    if (formData.components.prota) {
+      content += `\n\n---\n## VI. PROGRAM TAHUNAN (PROTA)\n### 🗓️ Alokasi Efektif Jam Pelajaran Tahunan (${upperSub})\n| No | Bab / Elemen Materi Utama | Alokasi Waktu (JP) | Keterangan Semester |\n| :--- | :--- | :--- | :--- |\n| **1** | ${formData.topik} | 18 JP | Semester 1 |`;
+    }
+
+    if (formData.components.prosem) {
+      content += `\n\n---\n## VII. PROGRAM SEMESTER (PROSEM)\n### 📅 Alokasi Pemetaan Jam Pelajaran Semester 1 & 2 (${upperSub})\n| No | Materi / Tujuan Pembelajaran | JP | Juli | Ags | Sep | Okt | Nov | Des |\n| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |\n| **1** | ${formData.topik} | 6 JP | x | x | | | | |`;
+    }
+
+    content += `\n\n---\n## VIII. INTEGRASI 3 PILAR DEEP LEARNING\n${formData.pilarFocus.mindful ? '- **Mindful Learning**: Siswa diajak melakukan sesi hening STOP 3 menit untuk membangun kesadaran belajar.\n' : ''}${formData.pilarFocus.meaningful ? '- **Meaningful Learning**: Menganalisis isu lingkungan/kasus nyata di sekitar lingkungan sekolah.\n' : ''}${formData.pilarFocus.joyful ? '- **Joyful Learning**: Kuis interaktif berbasis kelompok dan presentasi solutif.' : ''}`;
+
+    return content;
   };
 
-  const handlePrev = () => {
-    setStep((prev) => Math.max(prev - 1, 1));
-  };
-
-  // Submit Handler & Call AI Engine
-  const handleSubmit = async () => {
-    if (!validateStep(2)) return;
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validateStep(1)) return;
 
     setIsLoading(true);
     try {
-      const payload = {
+      const activePilars = Object.keys(formData.pilarFocus)
+        .filter((k) => formData.pilarFocus[k])
+        .map((k) => k.toUpperCase());
+
+      const activeComps = Object.keys(formData.components)
+        .filter((k) => formData.components[k])
+        .map((k) => k.toUpperCase());
+
+      const generatedContent = generateMarkdownStructure();
+
+      const newDocument = {
+        id: `doc_${Date.now()}`,
+        title: `Modul Ajar ${formData.mataPelajaran} - ${formData.topik}`,
         subject: formData.mataPelajaran,
         phase: formData.fase,
         topic: formData.topik,
-        instruction: `Buatkan ${formData.jenisDokumen} dengan durasi ${formData.durasi}. Fokus pilar: ${formData.pilarFocus.join(', ')}.`
+        status: 'In Progress',
+        content: generatedContent,
+        summary: `Komponen: [${activeComps.join(', ')}] | Pilar: [${activePilars.join(', ')}]`
       };
 
-      const result = await generatePerangkatAjar(payload);
-
-      if (result.success && onSuccess) {
-        // Konstruksi Objek Terstruktur agar Sinkron dengan App.jsx & AI Workspace
-        const formattedDocument = {
-          title: `${formData.jenisDokumen} ${formData.mataPelajaran} - ${formData.topik}`,
-          subject: formData.mataPelajaran,
-          phase: formData.fase,
-          topic: formData.topik,
-          summary: `Dokumen ${formData.jenisDokumen} Kurikulum Merdeka terintegrasi 3 Pilar (${formData.pilarFocus.join(', ')}).`,
-          content: typeof result.data === 'string' ? result.data : JSON.stringify(result.data, null, 2)
-        };
-
-        onSuccess(formattedDocument);
-        onClose();
-        // Reset State ke awal
-        setStep(1);
+      if (onCreateDocument) {
+        onCreateDocument(newDocument);
+      } else if (onSuccess) {
+        onSuccess(newDocument);
       }
+
+      onClose();
     } catch (err) {
       console.error("[WIZARD ERROR]", err);
       setErrors({ global: 'Gagal merancang dokumen. Silakan coba lagi.' });
@@ -123,274 +172,187 @@ export default function DeepLearningWizard({ isOpen, onClose, onSuccess }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md">
-      <div className="w-full max-w-2xl bg-[#0F172A] border border-slate-700/60 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+      <div className="w-full max-w-xl bg-[#0F172A] border border-[#D4AF37]/50 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         
         {/* Header Modal */}
-        <div className="px-6 py-5 border-b border-slate-800 flex items-center justify-between bg-[#0B192C]">
+        <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-[#0B192C]">
           <div>
-            <h2 className="text-xl font-bold text-slate-100 flex items-center gap-2">
-              <span className="text-[#D4AF37]">✨</span> Wizard Deep Learning
+            <h2 className="text-base font-bold text-[#D4AF37] flex items-center gap-2">
+              <span>✨</span> Wizard Generator Perangkat Ajar
             </h2>
             <p className="text-xs text-slate-400 mt-0.5">
-              Rancang Perangkat Ajar Kurikulum Merdeka Terintegrasi 3 Pilar
+              Rancang Perangkat Ajar Terintegrasi 3 Pilar Deep Learning
             </p>
           </div>
           <button
             onClick={onClose}
             disabled={isLoading}
-            className="text-slate-400 hover:text-white p-1 rounded-lg transition-colors"
+            className="text-slate-400 hover:text-white font-bold p-1 rounded-lg transition-colors cursor-pointer"
           >
             ✕
           </button>
         </div>
 
-        {/* Step Indicator */}
-        <div className="px-6 py-3 bg-slate-900/50 border-b border-slate-800 flex items-center justify-between">
-          {[
-            { id: 1, label: '1. Jenis Dokumen' },
-            { id: 2, label: '2. Parameter Pembelajaran' },
-            { id: 3, label: '3. Integrasi 3 Pilar' }
-          ].map((s) => (
-            <div
-              key={s.id}
-              className={`flex items-center gap-2 text-xs font-semibold ${
-                step === s.id
-                  ? 'text-[#D4AF37]'
-                  : step > s.id
-                  ? 'text-emerald-400'
-                  : 'text-slate-500'
-              }`}
-            >
-              <span
-                className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${
-                  step === s.id
-                    ? 'bg-[#D4AF37] text-black font-bold'
-                    : step > s.id
-                    ? 'bg-emerald-500/20 text-emerald-400'
-                    : 'bg-slate-800 text-slate-500'
-                }`}
-              >
-                {step > s.id ? '✓' : s.id}
-              </span>
-              <span>{s.label}</span>
-            </div>
-          ))}
-        </div>
-
-        {/* Modal Body */}
-        <div className="p-6 overflow-y-auto space-y-6 flex-1">
+        {/* Modal Form Body */}
+        <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-4 flex-1 text-slate-100">
           {errors.global && (
             <div className="p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-xs text-rose-400">
               {errors.global}
             </div>
           )}
 
-          {/* STEP 1: PILIH DOKUMEN */}
-          {step === 1 && (
-            <div className="space-y-4">
-              <label className="block text-sm font-medium text-slate-300">
-                Pilih Jenis Perangkat Ajar yang Ingin Dibuat:
-              </label>
-              <div className="grid grid-cols-2 gap-3">
-                {[
-                  { title: 'Modul Ajar', desc: 'Rencana pembelajaran lengkap + LKPD & Asesmen' },
-                  { title: 'Tujuan Pembelajaran (TP)', desc: 'Rumusan TP berdasarkan CP Kurikulum Merdeka' },
-                  { title: 'Alur Tujuan Pembelajaran (ATP)', desc: 'Pemetaan sekuensial pembelajaran 1 Tahun' },
-                  { title: 'Kriteria KKTP', desc: 'Indikator ketercapaian & rubrik penilaian' },
-                  { title: 'Program Tahunan (Prota)', desc: 'Alokasi waktu pembelajaran 2 Semester' },
-                  { title: 'Program Semester (Prosem)', desc: 'Rincian jadwal mingguan per bulan' }
-                ].map((item) => (
-                  <button
-                    key={item.title}
-                    type="button"
-                    onClick={() => setFormData({ ...formData, jenisDokumen: item.title })}
-                    className={`p-4 rounded-xl border text-left transition-all ${
-                      formData.jenisDokumen === item.title
-                        ? 'border-[#D4AF37] bg-[#D4AF37]/10 text-white shadow-lg shadow-[#D4AF37]/5'
-                        : 'border-slate-800 bg-slate-900/40 text-slate-400 hover:border-slate-700 hover:text-slate-200'
-                    }`}
-                  >
-                    <div className="font-semibold text-sm text-slate-100">{item.title}</div>
-                    <div className="text-xs text-slate-400 mt-1 leading-relaxed">{item.desc}</div>
-                  </button>
-                ))}
-              </div>
-              {errors.jenisDokumen && (
-                <p className="text-xs text-rose-400">{errors.jenisDokumen}</p>
-              )}
+          {/* Preset Quick Buttons */}
+          <div>
+            <span className="text-[11px] font-semibold text-slate-400 block mb-1.5">⚡ Preset Cepat:</span>
+            <div className="flex flex-wrap gap-1.5">
+              {PRESET_TOPICS.map((preset) => (
+                <button
+                  key={preset.topic}
+                  type="button"
+                  onClick={() => handleApplyPreset(preset)}
+                  className="px-2.5 py-1 bg-slate-900 hover:bg-slate-800 border border-slate-700/80 rounded-lg text-[11px] text-slate-300 transition-colors cursor-pointer"
+                >
+                  {preset.subject}
+                </button>
+              ))}
             </div>
-          )}
-
-          {/* STEP 2: PARAMETER PEMBELAJARAN */}
-          {step === 2 && (
-            <div className="space-y-4">
-              {/* Presets */}
-              <div>
-                <span className="text-xs text-slate-400 block mb-2">Preset Cepat:</span>
-                <div className="flex flex-wrap gap-2">
-                  {PRESET_TOPICS.map((preset) => (
-                    <button
-                      key={preset.topic}
-                      type="button"
-                      onClick={() => handleApplyPreset(preset)}
-                      className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-xs text-slate-300 transition-colors"
-                    >
-                      ⚡ {preset.subject} - {preset.topic}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1">
-                    Mata Pelajaran *
-                  </label>
-                  <input
-                    type="text"
-                    name="mataPelajaran"
-                    value={formData.mataPelajaran}
-                    onChange={handleChange}
-                    placeholder="Contoh: Informatika"
-                    className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-[#D4AF37]"
-                  />
-                  {errors.mataPelajaran && <p className="text-xs text-rose-400 mt-1">{errors.mataPelajaran}</p>}
-                </div>
-
-                <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1">
-                    Fase & Kelas *
-                  </label>
-                  <select
-                    name="fase"
-                    value={formData.fase}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-[#D4AF37]"
-                  >
-                    <option value="Fase A (Kelas 1-2)">Fase A (Kelas 1-2 SD)</option>
-                    <option value="Fase B (Kelas 3-4)">Fase B (Kelas 3-4 SD)</option>
-                    <option value="Fase C (Kelas 5-6)">Fase C (Kelas 5-6 SD)</option>
-                    <option value="Fase D (Kelas 7-9)">Fase D (Kelas 7-9 SMP)</option>
-                    <option value="Fase E (Kelas 10)">Fase E (Kelas 10 SMA/SMK)</option>
-                    <option value="Fase F (Kelas 11-12)">Fase F (Kelas 11-12 SMA/SMK)</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">
-                  Topik Utama / Materi Pokok *
-                </label>
-                <input
-                  type="text"
-                  name="topik"
-                  value={formData.topik}
-                  onChange={handleChange}
-                  placeholder="Contoh: Algoritma Pemrograman & Flowchart"
-                  className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-[#D4AF37]"
-                />
-                {errors.topik && <p className="text-xs text-rose-400 mt-1">{errors.topik}</p>}
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">
-                  Alokasi Waktu
-                </label>
-                <input
-                  type="text"
-                  name="durasi"
-                  value={formData.durasi}
-                  onChange={handleChange}
-                  placeholder="Contoh: 2 JP (2 x 45 Menit)"
-                  className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-[#D4AF37]"
-                />
-              </div>
-            </div>
-          )}
-
-          {/* STEP 3: INTEGRASI 3 PILAR DEEP LEARNING */}
-          {step === 3 && (
-            <div className="space-y-4">
-              <label className="block text-sm font-medium text-slate-300">
-                Pilih Fokus 3 Pilar Deep Learning:
-              </label>
-              <div className="space-y-3">
-                {[
-                  { id: 'Mindful', title: '🧠 Mindful Learning', desc: 'Siswa menyadari tujuan belajar, mengolah regulasi emosi, dan melakukan refleksi kritis di awal/akhir pembelajaran.' },
-                  { id: 'Meaningful', title: '🎯 Meaningful Learning', desc: 'Materi dihubungkan langsung dengan dunia nyata, pemecahan masalah kontekstual, dan pengalaman siswa.' },
-                  { id: 'Joyful', title: '🚀 Joyful Learning', desc: 'Pembelajaran yang menggugah rasa ingin tahu, kolaboratif, gamifikasi, dan menyenangkan.' }
-                ].map((pilar) => {
-                  const isChecked = formData.pilarFocus.includes(pilar.id);
-                  return (
-                    <div
-                      key={pilar.id}
-                      onClick={() => handlePilarToggle(pilar.id)}
-                      className={`p-4 rounded-xl border cursor-pointer transition-all ${
-                        isChecked
-                          ? 'border-[#D4AF37] bg-[#D4AF37]/10 text-white'
-                          : 'border-slate-800 bg-slate-900/40 text-slate-400 hover:border-slate-700'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="font-semibold text-sm text-slate-100">{pilar.title}</span>
-                        <input
-                          type="checkbox"
-                          checked={isChecked}
-                          onChange={() => {}}
-                          className="accent-[#D4AF37] w-4 h-4 rounded"
-                        />
-                      </div>
-                      <p className="text-xs text-slate-400 mt-1 leading-relaxed">{pilar.desc}</p>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Modal Footer */}
-        <div className="px-6 py-4 bg-[#0B192C] border-t border-slate-800 flex items-center justify-between">
-          <button
-            type="button"
-            onClick={handlePrev}
-            disabled={step === 1 || isLoading}
-            className="px-4 py-2 rounded-xl border border-slate-700 text-xs text-slate-300 hover:bg-slate-800 disabled:opacity-40 transition-colors"
-          >
-            ← Kembali
-          </button>
-
-          <div className="flex items-center gap-3">
-            {step < 3 ? (
-              <button
-                type="button"
-                onClick={handleNext}
-                className="px-5 py-2 rounded-xl bg-[#D4AF37] hover:bg-[#C5A059] text-black font-semibold text-xs transition-colors shadow-lg shadow-[#D4AF37]/10"
-              >
-                Lanjut →
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={handleSubmit}
-                disabled={isLoading}
-                className="px-6 py-2 rounded-xl bg-gradient-to-r from-[#D4AF37] to-amber-500 hover:from-amber-400 hover:to-amber-600 text-black font-bold text-xs transition-all shadow-lg shadow-[#D4AF37]/20 flex items-center gap-2"
-              >
-                {isLoading ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
-                    <span>Merancang AI...</span>
-                  </>
-                ) : (
-                  <>
-                    <span>🚀 Generate AI Document</span>
-                  </>
-                )}
-              </button>
-            )}
           </div>
-        </div>
+
+          {/* Form Inputs */}
+          <div>
+            <label className="block text-xs font-semibold text-slate-300 mb-1">Mata Pelajaran *</label>
+            <input
+              type="text"
+              name="mataPelajaran"
+              required
+              value={formData.mataPelajaran}
+              onChange={handleChange}
+              placeholder="Contoh: IPA & Biologi / Matematika"
+              className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-[#D4AF37]"
+            />
+            {errors.mataPelajaran && <p className="text-xs text-rose-400 mt-1">{errors.mataPelajaran}</p>}
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-300 mb-1">Fase / Kelas *</label>
+            <select
+              name="fase"
+              value={formData.fase}
+              onChange={handleChange}
+              className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-[#D4AF37]"
+            >
+              <option value="Fase A (Kelas 1-2 SD)">Fase A (Kelas 1-2 SD)</option>
+              <option value="Fase B (Kelas 3-4 SD)">Fase B (Kelas 3-4 SD)</option>
+              <option value="Fase C (Kelas 5-6 SD)">Fase C (Kelas 5-6 SD)</option>
+              <option value="Fase D (Kelas 7-9 SMP)">Fase D (Kelas 7-9 SMP)</option>
+              <option value="Fase E (Kelas 10 SMA)">Fase E (Kelas 10 SMA)</option>
+              <option value="Fase F (Kelas 11-12 SMA)">Fase F (Kelas 11-12 SMA)</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-300 mb-1">Topik Utama / Materi Pokok *</label>
+            <input
+              type="text"
+              name="topik"
+              required
+              value={formData.topik}
+              onChange={handleChange}
+              placeholder="Contoh: Ekosistem & Keanekaragaman Hayati"
+              className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-[#D4AF37]"
+            />
+            {errors.topik && <p className="text-xs text-rose-400 mt-1">{errors.topik}</p>}
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-300 mb-1">Alokasi Waktu</label>
+            <input
+              type="text"
+              name="durasi"
+              value={formData.durasi}
+              onChange={handleChange}
+              className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-[#D4AF37]"
+            />
+          </div>
+
+          {/* PILIHAN KOMPONEN DOKUMEN WAJIB */}
+          <div className="pt-1">
+            <label className="block text-xs font-bold text-[#D4AF37] mb-2">
+              Pilihan Komponen Perangkat Ajar Wajib:
+            </label>
+            <div className="grid grid-cols-2 gap-2 text-xs text-slate-300 bg-slate-950/80 p-3.5 rounded-2xl border border-slate-800">
+              {[
+                { key: 'modulAjar', label: '📘 Modul Ajar' },
+                { key: 'cp', label: '📘 CP (Capaian)' },
+                { key: 'tp', label: '🎯 TP (Tujuan)' },
+                { key: 'atp', label: '🗺️ ATP (Alur)' },
+                { key: 'kktp', label: '📊 KKTP & Rubrik' },
+                { key: 'prota', label: '🗓️ Prota' },
+                { key: 'prosem', label: '📅 Prosem' }
+              ].map((item) => (
+                <label key={item.key} className="flex items-center gap-2 cursor-pointer select-none hover:text-white">
+                  <input
+                    type="checkbox"
+                    checked={formData.components[item.key]}
+                    onChange={() => handleComponentToggle(item.key)}
+                    className="accent-[#D4AF37] rounded w-4 h-4 cursor-pointer"
+                  />
+                  <span>{item.label}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          {/* INTEGRASI 3 PILAR DEEP LEARNING */}
+          <div className="pt-1">
+            <label className="block text-xs font-bold text-slate-300 mb-2">
+              Integrasi 3 Pilar Deep Learning:
+            </label>
+            <div className="flex gap-4 text-xs text-slate-300 bg-slate-950/80 p-3 rounded-2xl border border-slate-800">
+              {[
+                { key: 'mindful', label: '🧠 Mindful' },
+                { key: 'meaningful', label: '🎯 Meaningful' },
+                { key: 'joyful', label: '🚀 Joyful' }
+              ].map((pilar) => (
+                <label key={pilar.key} className="flex items-center gap-1.5 cursor-pointer select-none hover:text-white">
+                  <input
+                    type="checkbox"
+                    checked={formData.pilarFocus[pilar.key]}
+                    onChange={() => handlePilarToggle(pilar.key)}
+                    className="accent-[#D4AF37] rounded w-4 h-4 cursor-pointer"
+                  />
+                  <span>{pilar.label}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          {/* Modal Actions */}
+          <div className="flex justify-end gap-2 pt-4 border-t border-slate-800">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 bg-slate-800 text-slate-300 hover:text-white rounded-xl text-xs font-semibold cursor-pointer"
+            >
+              Batal
+            </button>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="px-5 py-2.5 bg-gradient-to-r from-[#D4AF37] to-amber-500 hover:brightness-110 text-slate-950 font-bold text-xs rounded-xl shadow-lg shadow-amber-500/20 cursor-pointer flex items-center gap-2"
+            >
+              {isLoading ? (
+                <>
+                  <div className="w-3.5 h-3.5 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
+                  <span>Merancang Dokumen...</span>
+                </>
+              ) : (
+                <span>✨ Buat Dokumen</span>
+              )}
+            </button>
+          </div>
+        </form>
 
       </div>
     </div>
