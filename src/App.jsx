@@ -6,12 +6,12 @@ import AIWorkspace from './components/AIWorkspace';
 // ============================================================================
 // TRISULA SMART LEARNING ENGINE v8.7 - ENTERPRISE CORE ENGINE & STATE HUB
 // Stack: React / Tailwind CSS / Google Sheets Webhook
-// Architecture: Single Source of Truth / Zero Feature Loss
+// Architecture: Single Source of Truth / Zero Feature Loss / Clean String Array Engine
 // ============================================================================
 
 export const GOOGLE_SHEETS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyJJp3CVGiAEkCQ-6zDTgS1Rz2Fz2vQYCvpn_hB-JkN13q9aWQOAFfAtpWH3cHnby6LEg/exec";
 
-// Master Initial Documents (Clean ES String Formatting - Zero Unterminated Literal Error)
+// Master Initial Documents (Clean Array Join Formatting - 100% Safe from Unterminated Literal Errors)
 const INITIAL_DOCUMENTS = [
 {
 id: "doc_01",
@@ -22,58 +22,73 @@ topic: "Ekosistem, Keanekaragaman Hayati & Perubahan Lingkungan",
 fase_pembelajaran: "Modul Ajar",
 lastModified: "2026-07-22 14:30",
 status: "In Progress",
-content: "# MODUL AJAR DEEP LEARNING: IPA & BIOLOGI FASE E (KELAS 10 SMA)\n\n" +
-"## I. INFORMASI UMUM\n" +
-"- Mata Pelajaran: IPA & Biologi\n" +
-"- Fase / Kelas: Fase E (Kelas 10 SMA)\n" +
-"- Topik Utama: Ekosistem, Keanekaragaman Hayati & Perubahan Lingkungan\n" +
-"- Alokasi Waktu: 2 JP x 45 Menit\n\n" +
-"---\n\n" +
-"## II. CAPAIAN PEMBELAJARAN (CP)\n" +
-"### 📘 Analisis Capaian Pembelajaran Elemen (IPA & BIOLOGI)\n" +
-"Peserta didik mampu menganalisis interaksi antar komponen ekosistem, memahami pentingnya keanekaragaman hayati lokal, serta merancang solusi kreatif atas perubahan lingkungan secara kritis dan kolaboratif.\n\n" +
-"---\n\n" +
-"## III. TUJUAN PEMBELAJARAN (TP)\n" +
-"### 🎯 Poin Tujuan Pembelajaran ABCD (IPA & BIOLOGI)\n" +
-"- TP1: Menganalisis struktur rantai makanan dan piramida energi ekosistem menggunakan formula matematis $P(t) = P_0 e^{rt}$.\n" +
-"- TP2: Menyusun grafik fluktuasi populasi spesies lokal berdasarkan data sampel di lapangan.\n" +
-"- TP3: Mempresentasikan hasil analisis proyek pelestarian lingkungan secara kolaboratif.\n\n" +
+content: [
+"# MODUL AJAR DEEP LEARNING: IPA & BIOLOGI FASE E (KELAS 10 SMA)",
+"",
+"## I. INFORMASI UMUM",
+"- Mata Pelajaran: IPA & Biologi",
+"- Fase / Kelas: Fase E (Kelas 10 SMA)",
+"- Topik Utama: Ekosistem, Keanekaragaman Hayati & Perubahan Lingkungan",
+"- Alokasi Waktu: 2 JP x 45 Menit",
+"",
+"---",
+"",
+"## II. CAPAIAN PEMBELAJARAN (CP)",
+"### 📘 Analisis Capaian Pembelajaran Elemen (IPA & BIOLOGI)",
+"Peserta didik mampu menganalisis interaksi antar komponen ekosistem, memahami pentingnya keanekaragaman hayati lokal, serta merancang solusi kreatif atas perubahan lingkungan secara kritis dan kolaboratif.",
+"",
+"---",
+"",
+"## III. TUJUAN PEMBELAJARAN (TP)",
+"### 🎯 Poin Tujuan Pembelajaran ABCD (IPA & BIOLOGI)",
+"- TP1: Menganalisis struktur rantai makanan dan piramida energi ekosistem menggunakan formula matematis $P(t) = P_0 e^{rt}$.",
+"- TP2: Menyusun grafik fluktuasi populasi spesies lokal berdasarkan data sampel di lapangan.",
+"- TP3: Mempresentasikan hasil analisis proyek pelestarian lingkungan secara kolaboratif.",
+"",
 "
 
 $$E = m \cdot c^2 \quad \text{(Simulasi Energi Biomasa Ekosistem)}$$
 
-\n\n" +
-"---\n\n" +
-"## IV. ALUR TUJUAN PEMBELAJARAN (ATP)\n" +
-"### 🗺️ Pemetaan Runtutan ATP (IPA & BIOLOGI)\n" +
-"| Kode ATP | Alokasi Waktu | Indikator Ketercapaian | Rencana Asesmen |\n" +
-"| :--- | :--- | :--- | :--- |\n" +
-"| ATP.10.1 | 2 JP | Mampu menganalisis interaksi trophic level | Formatif Latihan Soal |\n" +
-"| ATP.10.2 | 2 JP | Mampu menyusun laporan proyek pelestarian | Unjuk Kerja Kelompok |\n\n" +
-"---\n\n" +
-"## V. KRITERIA KETERCAPAIAN TUJUAN PEMBELAJARAN (KKTP)\n" +
-"### 📊 Rubrik Observasi Unjuk Kerja Pemecahan Masalah (IPA & BIOLOGI)\n" +
-"| Kriteria Penilaian | Belum Memenuhi (1) | Memenuhi (2-3) | Sangat Baik (4) |\n" +
-"| :--- | :--- | :--- | :--- |\n" +
-"| Penerapan Konsep | Salah mengidentifikasi rantai makanan | Tepat mengidentifikasi 80% komponen | Tepat 100% & menganalisis dampak |\n\n" +
-"---\n\n" +
-"## VI. PROGRAM TAHUNAN (PROTA)\n" +
-"| No | Bab / Elemen Materi Utama | Alokasi Waktu (JP) | Keterangan Semester |\n" +
-"| :--- | :--- | :--- | :--- |\n" +
-"| 1 | Keanekaragaman Hayati & Ekosistem | 18 JP | Semester 1 |\n" +
-"| 2 | Perubahan Lingkungan & Pemanasan Global | 18 JP | Semester 2 |\n\n" +
-"---\n\n" +
-"## VII. PROGRAM SEMESTER (PROSEM)\n" +
-"| No | Materi / Tujuan Pembelajaran | JP | Juli | Ags | Sep | Okt | Nov | Des |\n" +
-"| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |\n" +
-"| 1 | Analisis Interaksi Ekosistem | 6 JP | x | x | | | | |\n" +
+",
+"",
+"---",
+"",
+"## IV. ALUR TUJUAN PEMBELAJARAN (ATP)",
+"### 🗺️ Pemetaan Runtutan ATP (IPA & BIOLOGI)",
+"| Kode ATP | Alokasi Waktu | Indikator Ketercapaian | Rencana Asesmen |",
+"| :--- | :--- | :--- | :--- |",
+"| ATP.10.1 | 2 JP | Mampu menganalisis interaksi trophic level | Formatif Latihan Soal |",
+"| ATP.10.2 | 2 JP | Mampu menyusun laporan proyek pelestarian | Unjuk Kerja Kelompok |",
+"",
+"---",
+"",
+"## V. KRITERIA KETERCAPAIAN TUJUAN PEMBELAJARAN (KKTP)",
+"### 📊 Rubrik Observasi Unjuk Kerja Pemecahan Masalah (IPA & BIOLOGI)",
+"| Kriteria Penilaian | Belum Memenuhi (1) | Memenuhi (2-3) | Sangat Baik (4) |",
+"| :--- | :--- | :--- | :--- |",
+"| Penerapan Konsep | Salah mengidentifikasi rantai makanan | Tepat mengidentifikasi 80% komponen | Tepat 100% & menganalisis dampak |",
+"",
+"---",
+"",
+"## VI. PROGRAM TAHUNAN (PROTA)",
+"| No | Bab / Elemen Materi Utama | Alokasi Waktu (JP) | Keterangan Semester |",
+"| :--- | :--- | :--- | :--- |",
+"| 1 | Keanekaragaman Hayati & Ekosistem | 18 JP | Semester 1 |",
+"| 2 | Perubahan Lingkungan & Pemanasan Global | 18 JP | Semester 2 |",
+"",
+"---",
+"",
+"## VII. PROGRAM SEMESTER (PROSEM)",
+"| No | Materi / Tujuan Pembelajaran | JP | Juli | Ags | Sep | Okt | Nov | Des |",
+"| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |",
+"| 1 | Analisis Interaksi Ekosistem | 6 JP | x | x | | | | |",
 "| 2 | Pemetaan Keanekaragaman Hayati | 6 JP | | | x | x | | |"
+].join("\n")
 }
 ];
 
 // Background Webhook Sync to Google Sheets
 export const syncUserToGoogleSheets = async (userData, actionType = 'SYNC_USER') => {
-console.log('[TRISULA SHEET WEBHOOK] Sync Payload (' + actionType + '):', userData);
 if (!GOOGLE_SHEETS_WEBHOOK_URL) return;
 try {
 const payload = {
@@ -109,43 +124,58 @@ const handleSubmit = (e) => {
 e.preventDefault();
 const upperSub = subject.toUpperCase();
 
-const generatedContent = "# MODUL AJAR DEEP LEARNING: " + upperSub + " (" + phase + ")\n\n" +
-  "## I. INFORMASI UMUM\n" +
-  "- **Mata Pelajaran**: " + subject + "\n" +
-  "- **Fase / Kelas**: " + phase + "\n" +
-  "- **Topik Utama**: " + topic + "\n" +
-  "- **Alokasi Waktu**: " + hours + "\n\n" +
-  "---\n\n" +
-  "## II. CAPAIAN PEMBELAJARAN (CP)\n" +
-  "### 📘 Analisis Capaian Pembelajaran Elemen (" + upperSub + ")\n" +
-  "Peserta didik mampu memahami konsep utama " + topic + ", mengaitkannya dengan fenomena nyata, serta merancang solusi kreatif melalui pendekatan analisis kritis.\n\n" +
-  "---\n\n" +
-  "## III. TUJUAN PEMBELAJARAN (TP)\n" +
-  "### 🎯 Poin Tujuan Pembelajaran ABCD (" + upperSub + ")\n" +
-  "- **TP1**: Menganalisis struktur dan dinamika " + topic + ".\n" +
-  "- **TP2**: Menyusun model matematika/logika sederhana terkait " + topic + ".\n" +
-  "- **TP3**: Mempresentasikan hasil analisis proyek kelompok secara kolaboratif.\n\n" +
-  "---\n\n" +
-  "## IV. ALUR TUJUAN PEMBELAJARAN (ATP)\n" +
-  "| Kode ATP | Alokasi Waktu | Indikator Ketercapaian | Rencana Asesmen |\n" +
-  "| :--- | :--- | :--- | :--- |\n" +
-  "| **ATP.01** | 2 JP | Mampu menganalisis efisiensi model | Formatif Latihan Soal |\n" +
-  "| **ATP.02** | 2 JP | Mampu membuat diagram alir terstruktur | Unjuk Kerja Kelompok |\n\n" +
-  "---\n\n" +
-  "## V. KRITERIA KETERCAPAIAN TUJUAN PEMBELAJARAN (KKTP)\n" +
-  "| Kriteria Penilaian | Belum Memenuhi (1) | Memenuhi (2-3) | Sangat Baik (4) |\n" +
-  "| :--- | :--- | :--- | :--- |\n" +
-  "| **Penerapan Konsep** | Salah mengidentifikasi | Tepat 80% komponen | Tepat 100% & Solutif |\n\n" +
-  "---\n\n" +
-  "## VI. PROGRAM TAHUNAN (PROTA)\n" +
-  "| No | Bab / Elemen Materi Utama | Alokasi Waktu (JP) | Keterangan Semester |\n" +
-  "| :--- | :--- | :--- | :--- |\n" +
-  "| **1** | " + topic + " | 18 JP | Semester 1 |\n\n" +
-  "---\n\n" +
-  "## VII. PROGRAM SEMESTER (PROSEM)\n" +
-  "| No | Materi / Tujuan Pembelajaran | JP | Juli | Ags | Sep | Okt | Nov | Des |\n" +
-  "| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |\n" +
-  "| **1** | " + topic + " | 6 JP | x | x | | | | |";
+const generatedContent = [
+  "# MODUL AJAR DEEP LEARNING: " + upperSub + " (" + phase + ")",
+  "",
+  "## I. INFORMASI UMUM",
+  "- **Mata Pelajaran**: " + subject,
+  "- **Fase / Kelas**: " + phase,
+  "- **Topik Utama**: " + topic,
+  "- **Alokasi Waktu**: " + hours,
+  "",
+  "---",
+  "",
+  "## II. CAPAIAN PEMBELAJARAN (CP)",
+  "### 📘 Analisis Capaian Pembelajaran Elemen (" + upperSub + ")",
+  "Peserta didik mampu memahami konsep utama " + topic + ", mengaitkannya dengan fenomena nyata, serta merancang solusi kreatif melalui pendekatan analisis kritis.",
+  "",
+  "---",
+  "",
+  "## III. TUJUAN PEMBELAJARAN (TP)",
+  "### 🎯 Poin Tujuan Pembelajaran ABCD (" + upperSub + ")",
+  "- **TP1**: Menganalisis struktur dan dinamika " + topic + ".",
+  "- **TP2**: Menyusun model matematika/logika sederhana terkait " + topic + ".",
+  "- **TP3**: Mempresentasikan hasil analisis proyek kelompok secara kolaboratif.",
+  "",
+  "---",
+  "",
+  "## IV. ALUR TUJUAN PEMBELAJARAN (ATP)",
+  "| Kode ATP | Alokasi Waktu | Indikator Ketercapaian | Rencana Asesmen |",
+  "| :--- | :--- | :--- | :--- |",
+  "| **ATP.01** | 2 JP | Mampu menganalisis efisiensi model | Formatif Latihan Soal |",
+  "| **ATP.02** | 2 JP | Mampu membuat diagram alir terstruktur | Unjuk Kerja Kelompok |",
+  "",
+  "---",
+  "",
+  "## V. KRITERIA KETERCAPAIAN TUJUAN PEMBELAJARAN (KKTP)",
+  "| Kriteria Penilaian | Belum Memenuhi (1) | Memenuhi (2-3) | Sangat Baik (4) |",
+  "| :--- | :--- | :--- | :--- |",
+  "| **Penerapan Konsep** | Salah mengidentifikasi | Tepat 80% komponen | Tepat 100% & Solutif |",
+  "",
+  "---",
+  "",
+  "## VI. PROGRAM TAHUNAN (PROTA)",
+  "| No | Bab / Elemen Materi Utama | Alokasi Waktu (JP) | Keterangan Semester |",
+  "| :--- | :--- | :--- | :--- |",
+  "| **1** | " + topic + " | 18 JP | Semester 1 |",
+  "",
+  "---",
+  "",
+  "## VII. PROGRAM SEMESTER (PROSEM)",
+  "| No | Materi / Tujuan Pembelajaran | JP | Juli | Ags | Sep | Okt | Nov | Des |",
+  "| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |",
+  "| **1** | " + topic + " | 6 JP | x | x | | | | |"
+].join("\n");
 
 const newDoc = {
   id: "doc_" + Date.now(),
@@ -172,7 +202,9 @@ return (
 
 ✨ Wizard Generator Perangkat Ajar Baru
 
+
 ✕
+
 
 
     <form onSubmit={handleSubmit} className="space-y-3 text-xs">
@@ -301,24 +333,24 @@ setTimeout(() => setToastMessage(null), 3200);
 const handleLoginSuccess = useCallback((userPayload) => {
 setCurrentUser(userPayload);
 setCurrentView(userPayload.role === 'admin' ? 'admin' : 'dashboard');
-showToast('Selamat datang kembali, ' + (userPayload.nama || userPayload.name || 'Pengajar') + '!');
+showToast("Selamat datang kembali, " + (userPayload.nama || userPayload.name || "Pengajar") + "!");
 }, []);
 
 const handleLogout = useCallback(() => {
 setCurrentUser(null);
 localStorage.removeItem('trisula_user_session');
 setCurrentView('dashboard');
-showToast('Sesi telah diakhiri.');
+showToast("Sesi telah diakhiri.");
 }, []);
 
 const handleTriggerPaywall = useCallback((reason) => {
-setPaywallReason(reason || 'Kuota token gratis Anda telah habis. Silakan tingkatkan ke Paket PRO Unlimited atau Top-Up Token!');
+setPaywallReason(reason || "Kuota token gratis Anda telah habis. Silakan tingkatkan ke Paket PRO Unlimited atau Top-Up Token!");
 setIsPaywallOpen(true);
 }, []);
 
 const handleOpenWizard = useCallback(() => {
 if (!currentUser?.is_premium && (currentUser?.kredit_tersisa || 0) <= 0) {
-handleTriggerPaywall('Pembuatan perangkat ajar memerlukan kuota token aktif atau akun PRO.');
+handleTriggerPaywall("Pembuatan perangkat ajar memerlukan kuota token aktif atau akun PRO.");
 return;
 }
 setIsWizardOpen(true);
@@ -328,12 +360,11 @@ setIsWizardOpen(true);
 const deductQuotaOnAction = useCallback((actionName) => {
 if (!currentUser) return;
 if (currentUser.is_premium) {
-console.log('[TRISULA TOKEN] Action ' + actionName + ' bypassed for PRO Member.');
 return;
 }
 
 if ((currentUser.kredit_tersisa || 0) <= 0) {
-  handleTriggerPaywall('Aksi ' + actionName + ' memerlukan kuota token.');
+  handleTriggerPaywall("Aksi " + actionName + " memerlukan kuota token.");
   return;
 }
 
@@ -343,8 +374,8 @@ const updatedUser = {
 };
 
 setCurrentUser(updatedUser);
-syncUserToGoogleSheets(updatedUser, 'DEDUCT_TOKEN_' + actionName);
-showToast('-1 Token Kuota digunakan untuk ' + actionName);
+syncUserToGoogleSheets(updatedUser, "DEDUCT_TOKEN_" + actionName);
+showToast("-1 Token Kuota digunakan untuk " + actionName);
 
 
 }, [currentUser, handleTriggerPaywall]);
@@ -352,7 +383,7 @@ showToast('-1 Token Kuota digunakan untuk ' + actionName);
 const handleSaveDocument = useCallback((updatedDoc) => {
 setDocuments(prev => prev.map(d => d.id === updatedDoc.id ? updatedDoc : d));
 setActiveDocument(updatedDoc);
-showToast('Perubahan berkas disimpan!');
+showToast("Perubahan berkas disimpan!");
 }, []);
 
 const handleDeleteDocument = useCallback((docId) => {
@@ -361,7 +392,7 @@ setDocuments(prev => prev.filter(d => d.id !== docId));
 if (activeDocument?.id === docId) {
 setActiveDocument(documents[0] || null);
 }
-showToast('Berkas dihapus.');
+showToast("Berkas dihapus.");
 }
 }, [activeDocument, documents]);
 
@@ -369,7 +400,7 @@ const handleCreateDocument = useCallback((newDoc) => {
 setDocuments(prev => [newDoc, ...prev]);
 setActiveDocument(newDoc);
 setCurrentView('workspace');
-showToast('Perangkat Ajar Baru Berhasil Dibuat!');
+showToast("Perangkat Ajar Baru Berhasil Dibuat!");
 deductQuotaOnAction('CREATE_DOC');
 }, [deductQuotaOnAction]);
 
@@ -575,9 +606,9 @@ return (
               onClick={() => {
                 const updated = { ...currentUser, kredit_tersisa: (currentUser.kredit_tersisa || 0) + 10 };
                 setCurrentUser(updated);
-                syncUserToGoogleSheets(updated, 'TOPUP_10_TOKENS');
+                syncUserToGoogleSheets(updated, "TOPUP_10_TOKENS");
                 setIsPaywallOpen(false);
-                showToast('Sukses +10 Token ditambahkan!');
+                showToast("Sukses +10 Token ditambahkan!");
               }}
               className="w-full bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold py-2 rounded-xl text-xs border border-amber-500/30 mt-2 cursor-pointer"
             >
@@ -589,11 +620,11 @@ return (
             <div className="text-xl font-black text-amber-400">Rp 99.000 <span className="text-[10px] font-normal text-slate-400">/ Bulan</span></div>
             <button
               onClick={() => {
-                const updated = { ...currentUser, is_premium: true, status_langganan: 'PRO_UNLIMITED' };
+                const updated = { ...currentUser, is_premium: true, status_langganan: "PRO_UNLIMITED" };
                 setCurrentUser(updated);
-                syncUserToGoogleSheets(updated, 'ACTIVATE_PRO_UNLIMITED');
+                syncUserToGoogleSheets(updated, "ACTIVATE_PRO_UNLIMITED");
                 setIsPaywallOpen(false);
-                showToast('Sukses! Akun PRO Unlimited Aktif!');
+                showToast("Sukses! Akun PRO Unlimited Aktif!");
               }}
               className="w-full bg-gradient-to-r from-amber-500 to-yellow-500 text-[#0B192C] font-black py-2 rounded-xl text-xs uppercase shadow-lg shadow-amber-500/20 mt-2 cursor-pointer"
             >
