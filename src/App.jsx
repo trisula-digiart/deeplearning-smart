@@ -1158,14 +1158,17 @@ Berikut adalah formula dasar perhitungan laju pertumbuhan populasi dan rata-rata
     }
   }, [activeDocument]);
 
-  const hasActiveAccess = currentUser?.is_premium || (currentUser?.kredit_tersisa && currentUser.kredit_tersisa > 0) || (currentUser?.doc_generated_count === 0);
+  // Strict check: Export/Print requires an active Premium plan OR remaining credit > 0
+  const canExport = Boolean(currentUser?.is_premium || (currentUser?.kredit_tersisa && currentUser.kredit_tersisa > 0));
 
   const handleSendMessage = (customPrompt) => {
     const textToSend = customPrompt || inputInstruction;
     if (!textToSend.trim()) return;
 
-    if (!hasActiveAccess) {
-      setPaywallReason('Kuota 1 Modul Gratis Anda telah digunakan. Silakan top up Paket 1 Modul Ajar (Rp10.000) atau Paket Bulanan (Rp29.000) untuk melanjutkan!');
+    const canGenerate = currentUser?.is_premium || (currentUser?.kredit_tersisa && currentUser.kredit_tersisa > 0) || (currentUser?.doc_generated_count === 0);
+
+    if (!canGenerate) {
+      setPaywallReason('Kuota 1 Modul Ajar Anda telah habis. Silakan top up Paket 1 Modul Ajar (Rp10.000) atau Paket Bulanan (Rp29.000) untuk melanjutkan!');
       setIsPaywallOpen(true);
       return;
     }
@@ -1205,8 +1208,8 @@ Berikut adalah formula dasar perhitungan laju pertumbuhan populasi dan rata-rata
   };
 
   const handleOpenExportModal = () => {
-    if (!hasActiveAccess) {
-      setPaywallReason('Cetak dan Export Dokumen (Word, PDF, TXT) membutuhkan kuota aktif atau Paket Bulanan.');
+    if (!canExport) {
+      setPaywallReason('Fitur Cetak dan Export Dokumen (Word, PDF, TXT) adalah fitur khusus member berbayar. Silakan pilih Paket 1 Modul Ajar (Rp10.000) atau Paket Bulanan (Rp29.000) di bawah ini!');
       setIsPaywallOpen(true);
       return;
     }
@@ -1977,9 +1980,9 @@ Peserta didik mampu menganalisis interaksi antar komponen ekosistem, memahami pe
   };
 
   const handleOpenWizard = () => {
-    const hasQuota = currentUser.is_premium || (currentUser.kredit_tersisa && currentUser.kredit_tersisa > 0) || (currentUser.doc_generated_count === 0);
-    if (!hasQuota) {
-      showToast('⚠️ Kuota modul Anda telah habis. Silakan top up Paket 1 Modul Ajar (Rp10.000) atau Paket Bulanan!');
+    const canCreate = currentUser?.is_premium || (currentUser?.kredit_tersisa && currentUser.kredit_tersisa > 0);
+    if (!canCreate) {
+      setActiveDocument(documents[0]);
       setCurrentView('workspace');
       return;
     }
