@@ -415,13 +415,12 @@ return (
 
 return (
 
+{/* GLOBAL TOAST NOTIFICATION */}
+{toastMessage && (
 
-  {/* GLOBAL TOAST NOTIFICATION */}
-  {toastMessage && (
-    <div className="fixed top-4 right-4 z-50 bg-[#D4AF37] text-[#0B192C] font-black px-4 py-2.5 rounded-2xl shadow-2xl text-xs flex items-center gap-2 border border-amber-300 animate-bounce">
-      ✨ {toastMessage}
-    </div>
-  )}
+✨ {toastMessage}
+
+)}
 
   {/* NAVBAR HEADER */}
   <Navbar
