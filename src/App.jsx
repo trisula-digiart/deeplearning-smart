@@ -254,7 +254,7 @@ const generateRichAIContent = (instruction, subject = 'Informatika & STEM') => {
   } 
   
   if (text.includes('lkpd') || text.includes('lembar kerja')) {
-    return `\n\n---\n## XII. LEMBAR KERJA PESERTA DIDIK (LKPD)\n### 👥 Nama Kelompok: ____________________\n**Anggota Kelompok**: 1. _______________ 2. _______________ 3. _______________ \n\n#### A. PETUNJUK PENGERJAAN\n1. Bacalah studi kasus lingkungan lokal di bawah ini secara cermat.\n2. Diskusikan bersama anggota kelompokmu selama 20 menit.\n3. Susunlah model analisis menggunakan formula matematika dan diagram alir.\n\n#### B. TANTANGAN STUDI KASUS & FORMULA\nHitunglah estimasi efisiensi menggunakan rumus deviasi berikut:\n\n$$S = \\sqrt{\\frac{\\sum (x_i - \\bar{x})^2}{n - 1}}$$\n\n| No | Indikator Variabel | Nilai Pengamatan ($x_i$) | Selisih ($x_i - \\bar{x}$) |\n| :--- | :--- | :--- | :--- |\n| **1** | Sampel Data Pertama | 15.5 | +2.1 |\n| **2** | Sampel Data Kedua | 13.4 | -0.0 |\n| **3** | Sampel Data Ketiga | 18.0 | +4.6 |\n\n#### C. PERTANYAAN REFLEKSI GROUPS\n1. Berdasarkan nilai $S$ yang kamu peroleh, apa kesimpulan kelompokmu? Tuliskan dalam 3 kalimat!`;
+    return `\n\n---\n## XII. LEMBAR KERJA PESERTA DIDIK (LKPD)\n### 👥 Nama Kelompok: ____________________\n**Anggota Kelompok**: 1. _______________ 2. _______________ 3. _______________ \n\n#### A. PETUNJUK PENGERJAAN\n1. Bacalah studi kasus lingkungan lokal di bawah ini secara cermat.\n2. Diskusikan bersama anggota kelompokmu selama 20 menit.\n3. Susunlah model analisis menggunakan formula matematika dan diagram alir.\n\n#### B. TANTANGAN STUDI KASUS & FORMULA\nHitunglah estimasi efisiensi menggunakan rumus deviation berikut:\n\n$$S = \\sqrt{\\frac{\\sum (x_i - \\bar{x})^2}{n - 1}}$$\n\n| No | Indikator Variabel | Nilai Pengamatan ($x_i$) | Selisih ($x_i - \\bar{x}$) |\n| :--- | :--- | :--- | :--- |\n| **1** | Sampel Data Pertama | 15.5 | +2.1 |\n| **2** | Sampel Data Kedua | 13.4 | -0.0 |\n| **3** | Sampel Data Ketiga | 18.0 | +4.6 |\n\n#### C. PERTANYAAN REFLEKSI GROUPS\n1. Berdasarkan nilai $S$ yang kamu peroleh, apa kesimpulan kelompokmu? Tuliskan dalam 3 kalimat!`;
   }
 
   if (text.includes('prosem') || text.includes('program semester')) {
@@ -318,7 +318,7 @@ function LoginPage({ onLoginSuccess }) {
         email: email,
         role: selectedRole,
         is_premium: selectedRole === 'admin' || email.includes('premium'),
-        kredit_tersisa: email.includes('premium') ? 250 : 0, // Free users start with 0 credits
+        kredit_tersisa: selectedRole === 'admin' || email.includes('premium') ? 250 : 1, // Free user starts with 1 credit
         doc_generated_count: 0,
         school: schoolName || 'SMA Negeri 1 Jakarta'
       };
@@ -333,7 +333,7 @@ function LoginPage({ onLoginSuccess }) {
     }, 1000);
   };
 
-  const handleDemoLogin = (type) => {
+  const handleDemoLogin = () => {
     setErrorMessage('');
     setSuccessMessage('');
     setIsLoading(true);
@@ -344,7 +344,7 @@ function LoginPage({ onLoginSuccess }) {
       email: 'siti.rahma@sd.kemdikbud.go.id',
       role: 'guru',
       is_premium: false,
-      kredit_tersisa: 0,
+      kredit_tersisa: 1,
       doc_generated_count: 0,
       school: 'SD Negeri 05 Kebayoran'
     };
@@ -532,7 +532,7 @@ function LoginPage({ onLoginSuccess }) {
           <div className="flex justify-center">
             <button
               type="button"
-              onClick={() => handleDemoLogin('guru_free')}
+              onClick={handleDemoLogin}
               className="w-full py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-[#D4AF37] rounded-xl text-xs text-slate-200 font-semibold transition-all text-center cursor-pointer"
             >
               User Gratis
@@ -570,7 +570,7 @@ function LoginPage({ onLoginSuccess }) {
   );
 }
 
-function AdminDashboard({ usersData, onUpdateUserStatus, onAddCredits, onAddUser, transactionsHistory }) {
+function AdminDashboard({ usersData, onUpdateUserStatus, onAddCredits, onAddUser }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [selectedUserForCredits, setSelectedUserForCredits] = useState(null);
@@ -594,7 +594,7 @@ function AdminDashboard({ usersData, onUpdateUserStatus, onAddCredits, onAddUser
 
   const defaultUsers = [
     { id: 'usr_001', name: 'Budi Santoso, M.Pd.', email: 'budi.santoso@guru.sma.sch.id', role: 'guru', is_premium: true, kredit_tersisa: 250, doc_generated_count: 14, school: 'SMA Negeri 1 Jakarta' },
-    { id: 'usr_002', name: 'Siti Rahmawati, S.Pd.', email: 'siti.rahma@sd.kemdikbud.go.id', role: 'guru', is_premium: false, kredit_tersisa: 0, doc_generated_count: 1, school: 'SD Negeri 05 Kebayoran' },
+    { id: 'usr_002', name: 'Siti Rahmawati, S.Pd.', email: 'siti.rahma@sd.kemdikbud.go.id', role: 'guru', is_premium: false, kredit_tersisa: 1, doc_generated_count: 1, school: 'SD Negeri 05 Kebayoran' },
     { id: 'usr_003', name: 'Ahmad Dahlan, M.T.', email: 'ahmad.dahlan@yayasan.ac.id', role: 'guru', is_premium: false, kredit_tersisa: 0, doc_generated_count: 3, school: 'Yayasan Islam Pusat' },
   ];
 
@@ -655,7 +655,7 @@ function AdminDashboard({ usersData, onUpdateUserStatus, onAddCredits, onAddUser
       email: newUserForm.email,
       role: newUserForm.role,
       is_premium: newUserForm.is_premium,
-      kredit_tersisa: parseInt(newUserForm.kredit_tersisa, 10) || 0,
+      kredit_tersisa: parseInt(newUserForm.kredit_tersisa, 10) || 1,
       doc_generated_count: 0,
       school: newUserForm.school || 'Instansi Pendidikan'
     };
@@ -1165,38 +1165,13 @@ Berikut adalah formula dasar perhitungan laju pertumbuhan populasi dan rata-rata
     const textToSend = customPrompt || inputInstruction;
     if (!textToSend.trim()) return;
 
-    const canGenerate = currentUser?.is_premium || (currentUser?.kredit_tersisa && currentUser.kredit_tersisa > 0) || (currentUser?.doc_generated_count === 0);
-
-    if (!canGenerate) {
-      setPaywallReason('Kuota 1 Modul Ajar Anda telah habis. Silakan top up Paket 1 Modul Ajar (Rp10.000) atau Paket Bulanan (Rp29.000) untuk melanjutkan!');
-      setIsPaywallOpen(true);
-      return;
-    }
-
     setInputInstruction('');
     setMessages(prev => [...prev, { id: Date.now(), sender: 'user', text: textToSend }]);
     setIsGenerating(true);
 
     setTimeout(() => {
       const generatedMarkdownBlock = generateRichAIContent(textToSend, currentDocument.subject);
-      
       setDocContent(prev => prev + generatedMarkdownBlock);
-
-      if (!currentUser.is_premium && currentUser.kredit_tersisa > 0) {
-        const updatedUser = {
-          ...currentUser,
-          doc_generated_count: (currentUser.doc_generated_count || 0) + 1,
-          kredit_tersisa: Math.max(0, currentUser.kredit_tersisa - 1)
-        };
-        if (onUpdateCurrentUser) onUpdateCurrentUser(updatedUser);
-        syncUserToGoogleSheets(updatedUser, 'DEDUCT_CREDIT');
-      } else if (!currentUser.is_premium) {
-        const updatedUser = {
-          ...currentUser,
-          doc_generated_count: (currentUser.doc_generated_count || 0) + 1
-        };
-        if (onUpdateCurrentUser) onUpdateCurrentUser(updatedUser);
-      }
 
       setMessages(prev => [...prev, { 
         id: Date.now() + 1, 
@@ -1209,14 +1184,28 @@ Berikut adalah formula dasar perhitungan laju pertumbuhan populasi dan rata-rata
 
   const handleOpenExportModal = () => {
     if (!canExport) {
-      setPaywallReason('Fitur Cetak dan Export Dokumen (Word, PDF, TXT) adalah fitur khusus member berbayar. Silakan pilih Paket 1 Modul Ajar (Rp10.000) atau Paket Bulanan (Rp29.000) di bawah ini!');
+      setPaywallReason('Fitur Cetak dan Export Dokumen (Word, PDF, TXT) membutuhkan kuota/lisensi aktif. Silakan pilih Paket 1 Modul Ajar (Rp10.000) atau Paket Bulanan (Rp29.000) di bawah ini!');
       setIsPaywallOpen(true);
       return;
     }
     setIsExportModalOpen(true);
   };
 
+  // Helper to execute credit deduction ONLY when actual download or print takes place
+  const deductQuotaOnAction = () => {
+    if (!currentUser.is_premium && currentUser.kredit_tersisa > 0) {
+      const updatedUser = {
+        ...currentUser,
+        doc_generated_count: (currentUser.doc_generated_count || 0) + 1,
+        kredit_tersisa: Math.max(0, currentUser.kredit_tersisa - 1)
+      };
+      if (onUpdateCurrentUser) onUpdateCurrentUser(updatedUser);
+      syncUserToGoogleSheets(updatedUser, 'DEDUCT_CREDIT');
+    }
+  };
+
   const handleDownloadWord = () => {
+    deductQuotaOnAction();
     const parsedHtmlBody = parseMarkdownToHTML(docContent);
     const htmlContent = `
       <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
@@ -1248,6 +1237,7 @@ Berikut adalah formula dasar perhitungan laju pertumbuhan populasi dan rata-rata
   };
 
   const handleDownloadTxt = () => {
+    deductQuotaOnAction();
     const blob = new Blob([docContent], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const downloadAnchor = document.createElement('a');
@@ -1261,6 +1251,7 @@ Berikut adalah formula dasar perhitungan laju pertumbuhan populasi dan rata-rata
   };
 
   const handlePrintPDF = () => {
+    deductQuotaOnAction();
     setIsExportModalOpen(false);
     setTimeout(() => window.print(), 300);
   };
@@ -1838,21 +1829,21 @@ function WizardModal({ isOpen, onClose, onCreateDocument }) {
 }
 
 export default function App() {
-  const [currentUser, setCurrentUser] = useState({
-    id: 'usr_free_01',
-    name: 'Siti Rahmawati, S.Pd.',
-    email: 'siti.rahma@sd.kemdikbud.go.id',
-    role: 'guru',
-    is_premium: false,
-    kredit_tersisa: 0,
-    doc_generated_count: 0,
-    school: 'SD Negeri 05 Kebayoran'
+  // PERSISTENT USER SESSION HANDLING: Read logged-in user from localStorage
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      const savedUser = localStorage.getItem('trisula_user_session');
+      return savedUser ? JSON.parse(savedUser) : null;
+    } catch (e) {
+      console.error('Failed to parse user session from localStorage', e);
+      return null;
+    }
   });
 
   const [allUsers, setAllUsers] = useState([
     { id: 'usr_admin_master', name: 'Root Admin Trisula', email: 'admin@trisula.ai', role: 'admin', is_premium: true, kredit_tersisa: 999999, doc_generated_count: 0, school: 'HQ Trisula Engine' },
     { id: 'usr_premium_01', name: 'Budi Santoso, M.Pd.', email: 'budi.santoso@guru.sma.sch.id', role: 'guru', is_premium: true, kredit_tersisa: 250, doc_generated_count: 14, school: 'SMA Negeri 1 Jakarta' },
-    { id: 'usr_free_01', name: 'Siti Rahmawati, S.Pd.', email: 'siti.rahma@sd.kemdikbud.go.id', role: 'guru', is_premium: false, kredit_tersisa: 0, doc_generated_count: 0, school: 'SD Negeri 05 Kebayoran' }
+    { id: 'usr_free_01', name: 'Siti Rahmawati, S.Pd.', email: 'siti.rahma@sd.kemdikbud.go.id', role: 'guru', is_premium: false, kredit_tersisa: 1, doc_generated_count: 0, school: 'SD Negeri 05 Kebayoran' }
   ]);
 
   const [documents, setDocuments] = useState([
@@ -1939,8 +1930,18 @@ Peserta didik mampu menganalisis interaksi antar komponen ekosistem, memahami pe
     setTimeout(() => setToastMessage(null), 3000);
   };
 
+  const handleUpdateCurrentUser = (updatedUser) => {
+    setCurrentUser(updatedUser);
+    try {
+      localStorage.setItem('trisula_user_session', JSON.stringify(updatedUser));
+    } catch (e) {
+      console.error('Failed to save user session to localStorage', e);
+    }
+    setAllUsers(prev => prev.map(u => u.id === updatedUser.id ? updatedUser : u));
+  };
+
   const handleLoginSuccess = (userPayload) => {
-    setCurrentUser(userPayload);
+    handleUpdateCurrentUser(userPayload);
     setAllUsers(prev => {
       if (!prev.some(u => u.email === userPayload.email)) {
         return [userPayload, ...prev];
@@ -1953,6 +1954,11 @@ Peserta didik mampu menganalisis interaksi antar komponen ekosistem, memahami pe
 
   const handleLogout = () => {
     setCurrentUser(null);
+    try {
+      localStorage.removeItem('trisula_user_session');
+    } catch (e) {
+      console.error('Failed to clear user session from localStorage', e);
+    }
     setCurrentView('dashboard');
     showToast('Anda telah keluar dari akun.');
   };
@@ -1961,7 +1967,7 @@ Peserta didik mampu menganalisis interaksi antar komponen ekosistem, memahami pe
     setAllUsers(prev => prev.map(u => u.id === userId ? { ...u, is_premium: newStatus } : u));
     if (currentUser && currentUser.id === userId) {
       const updated = { ...currentUser, is_premium: newStatus };
-      setCurrentUser(updated);
+      handleUpdateCurrentUser(updated);
       syncUserToGoogleSheets(updated, 'UPDATE_STATUS');
     }
   };
@@ -1970,7 +1976,7 @@ Peserta didik mampu menganalisis interaksi antar komponen ekosistem, memahami pe
     setAllUsers(prev => prev.map(u => u.id === userId ? { ...u, kredit_tersisa: (u.kredit_tersisa || 0) + amount } : u));
     if (currentUser && currentUser.id === userId) {
       const updated = { ...currentUser, kredit_tersisa: (currentUser.kredit_tersisa || 0) + amount };
-      setCurrentUser(updated);
+      handleUpdateCurrentUser(updated);
       syncUserToGoogleSheets(updated, 'ADD_CREDITS');
     }
   };
@@ -2277,7 +2283,7 @@ Peserta didik mampu menganalisis interaksi antar komponen ekosistem, memahami pe
                 activeDocument={activeDocument}
                 onBackToDashboard={() => setCurrentView('dashboard')} 
                 currentUser={currentUser}
-                onUpdateCurrentUser={(updated) => setCurrentUser(updated)}
+                onUpdateCurrentUser={handleUpdateCurrentUser}
               />
             </div>
           )}
