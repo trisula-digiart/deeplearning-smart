@@ -402,212 +402,31 @@ function LoginPage({ onLoginSuccess }) {
             <Icons.Cpu className="w-8 h-8 text-slate-950" />
           </div>
           <h1 className="text-2xl font-extrabold text-white tracking-tight flex items-center justify-center gap-2">
-            TRISULA AI PORTAL
+            TRISULA SMART LEARNING ENGINE
           </h1>
-          <p className="text-xs text-slate-400">
-            Engine Evaluasi Penilaian Otomatis, Modul Ajar, & Portal B2B Sekolah
+          <p className="text-xs text-slate-400 leading-relaxed">
+            Engine evaluasi penilaian otomatis, Modul ajar, CP, TP, ATP, KKTP, Prota, Prosem & Portal B2B Sekolah
           </p>
         </div>
 
-        <div className="bg-slate-900/80 p-1 rounded-2xl border border-slate-800 flex items-center justify-between text-xs font-semibold">
-          {[
-            { id: 'guru', label: 'Pengajar / Guru' },
-            { id: 'siswa', label: 'Siswa / Peserta' },
-            { id: 'admin', label: 'Administrator' }
-          ].map((r) => (
-            <button
-              key={r.id}
-              type="button"
-              onClick={() => setSelectedRole(r.id)}
-              className={`flex-1 py-2 text-center rounded-xl transition-all cursor-pointer ${
-                selectedRole === r.id
-                  ? 'bg-gradient-to-r from-[#D4AF37] to-amber-500 text-slate-950 font-bold shadow-md'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              {r.label}
-            </button>
-          ))}
-        </div>
-
-        {errorMessage && (
-          <div className="p-3 bg-rose-950/80 border border-rose-500/50 text-rose-200 text-xs rounded-xl flex items-center gap-2">
-            <span>⚠️</span> {errorMessage}
-          </div>
-        )}
-        {successMessage && (
-          <div className="p-3 bg-emerald-950/80 border border-emerald-500/50 text-emerald-200 text-xs rounded-xl flex items-center gap-2">
-            <Icons.CheckCircle /> {successMessage}
-          </div>
-        )}
-
-        <form onSubmit={handleAuthSubmit} className="space-y-4">
-          {authMode === 'register' && (
-            <>
-              <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Nama Lengkap & Gelar</label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Icons.User />
-                  </div>
-                  <input
-                    type="text"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    placeholder="Contoh: Budi Santoso, M.Pd."
-                    className="w-full pl-9 pr-4 py-2.5 bg-slate-900 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-[#D4AF37]"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Nama Sekolah / Instansi</label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Icons.Building />
-                  </div>
-                  <input
-                    type="text"
-                    value={schoolName}
-                    onChange={(e) => setSchoolName(e.target.value)}
-                    placeholder="Contoh: SMA Negeri 1 Jakarta"
-                    className="w-full pl-9 pr-4 py-2.5 bg-slate-900 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-[#D4AF37]"
-                  />
-                </div>
-              </div>
-            </>
-          )}
-
-          <div>
-            <label className="block text-xs font-medium text-slate-300 mb-1">Alamat Email Terdaftar</label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Icons.Mail />
-              </div>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="nama@sekolah.sch.id"
-                className="w-full pl-9 pr-4 py-2.5 bg-slate-900 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-[#D4AF37]"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-medium text-slate-300 mb-1">Kata Sandi</label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Icons.Lock />
-              </div>
-              <input
-                type={showPassword ? 'text' : 'password'}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full pl-9 pr-10 py-2.5 bg-slate-900 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-[#D4AF37]"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
-              >
-                {showPassword ? <Icons.EyeOff /> : <Icons.Eye />}
-              </button>
-            </div>
-          </div>
-
-          {authMode === 'login' && (
-            <div className="flex items-center justify-between text-xs text-slate-400">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                  className="rounded border-slate-700 bg-slate-900 text-[#D4AF37] focus:ring-0 cursor-pointer"
-                />
-                Ingat Saya
-              </label>
-              <button
-                type="button"
-                onClick={() => setAuthMode('forgot')}
-                className="hover:text-[#D4AF37] transition-colors cursor-pointer"
-              >
-                Lupa Sandi?
-              </button>
-            </div>
-          )}
-
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full py-3 rounded-xl bg-gradient-to-r from-[#D4AF37] to-amber-500 text-slate-950 font-bold text-xs hover:brightness-110 shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2 transition-all cursor-pointer"
-          >
-            {isLoading ? (
-              <div className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin"></div>
-            ) : (
-              <>
-                {authMode === 'login' ? 'Masuk Sekarang' : authMode === 'register' ? 'Buat Akun Baru' : 'Kirim Instruksi Reset'}
-                <Icons.ArrowRight />
-              </>
-            )}
-          </button>
-        </form>
+        {/* ... existing code ... */}
 
         <div className="pt-2 border-t border-slate-800 space-y-2">
           <div className="text-[10px] text-center uppercase tracking-wider text-slate-400 font-semibold">
             ⚡ PENGUJIAN CEPAT / AKUN DEMO
           </div>
-          <div className="grid grid-cols-3 gap-2">
-            <button
-              type="button"
-              onClick={() => handleDemoLogin('guru_premium')}
-              className="p-2 bg-slate-900 hover:bg-slate-800 border border-[#D4AF37]/30 hover:border-[#D4AF37] rounded-xl text-[10px] text-amber-300 font-semibold transition-all text-center cursor-pointer"
-            >
-              Guru Premium
-            </button>
+          <div className="flex justify-center">
             <button
               type="button"
               onClick={() => handleDemoLogin('guru_free')}
-              className="p-2 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-[10px] text-slate-300 font-semibold transition-all text-center cursor-pointer"
+              className="px-6 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-[10px] text-slate-300 font-semibold transition-all text-center cursor-pointer"
             >
               User Gratis
-            </button>
-            <button
-              type="button"
-              onClick={() => handleDemoLogin('admin')}
-              className="p-2 bg-slate-900 hover:bg-slate-800 border border-cyan-500/30 hover:border-cyan-400 rounded-xl text-[10px] text-cyan-300 font-semibold transition-all text-center cursor-pointer"
-            >
-              Root Admin
             </button>
           </div>
         </div>
 
-        <div className="text-center text-xs text-slate-400">
-          {authMode === 'login' ? (
-            <>
-              Belum memiliki akun?{' '}
-              <button
-                type="button"
-                onClick={() => setAuthMode('register')}
-                className="text-[#D4AF37] font-bold hover:underline cursor-pointer"
-              >
-                Daftar Sekarang
-              </button>
-            </>
-          ) : (
-            <>
-              Sudah memiliki akun?{' '}
-              <button
-                type="button"
-                onClick={() => setAuthMode('login')}
-                className="text-[#D4AF37] font-bold hover:underline cursor-pointer"
-              >
-                Masuk Kembali
-              </button>
-            </>
-          )}
-        </div>
+        {/* ... existing code ... */}
       </div>
     </div>
   );
@@ -1182,151 +1001,7 @@ Berikut adalah formula dasar perhitungan laju pertumbuhan populasi dan rata-rata
 
   return (
     <div className="h-full flex flex-col md:flex-row gap-4 font-sans">
-      <div className="w-full md:w-5/12 bg-[#0F172A] border border-slate-800 rounded-2xl flex flex-col overflow-hidden">
-        <div className="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-900/50">
-          <button onClick={onBackToDashboard} className="text-xs text-slate-400 hover:text-white cursor-pointer">← Kembali</button>
-          <span className="text-xs font-bold text-[#D4AF37]">AI Co-Pilot (Deep Learning v3.0)</span>
-        </div>
-
-        <div className="flex-1 p-4 overflow-y-auto space-y-3 text-xs">
-          {messages.map(m => (
-            <div key={m.id} className={`p-3 rounded-2xl max-w-[85%] ${m.sender === 'user' ? 'bg-indigo-600 ml-auto text-white' : 'bg-slate-900 border border-slate-800 text-slate-200'}`}>
-              {m.text}
-            </div>
-          ))}
-          {isGenerating && <div className="text-xs text-slate-400 italic">⏳ AI sedang merancang & menyuntikkan dokumen...</div>}
-        </div>
-
-        <div className="p-3 border-t border-slate-800 bg-slate-900/60 space-y-2">
-          <div className="flex gap-2 overflow-x-auto pb-1">
-            <button onClick={() => handleSendMessage('Tolong buatkan Asesmen & Rubrik Penilaian')} className="px-2.5 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-lg text-[10px] font-semibold shrink-0 cursor-pointer">
-              🎯 + Asesmen & Rubrik
-            </button>
-            <button onClick={() => handleSendMessage('Tolong buatkan LKPD IPAS lengkap')} className="px-2.5 py-1 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded-lg text-[10px] font-semibold shrink-0 cursor-pointer">
-              📄 + LKPD Lengkap
-            </button>
-          </div>
-          <div className="flex gap-2">
-            <input
-              type="text"
-              value={inputInstruction}
-              onChange={(e) => setInputInstruction(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-              placeholder="Ketik instruksi, misal: 'Tolong buatkan seksi PROSEM'..."
-              className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#D4AF37]"
-            />
-            <button onClick={() => handleSendMessage()} className="px-4 py-2 bg-[#D4AF37] hover:bg-amber-500 text-slate-950 font-bold rounded-xl text-xs cursor-pointer">Kirim</button>
-          </div>
-        </div>
-      </div>
-
-      <div className="w-full md:w-7/12 bg-[#0F172A] border border-slate-800 rounded-2xl flex flex-col overflow-hidden p-4 space-y-4">
-        <div className="flex flex-wrap justify-between items-center border-b border-slate-800 pb-3 gap-2">
-          <div className="flex gap-1 overflow-x-auto">
-            {[
-              { id: 'modul-ajar', label: 'Modul Ajar' },
-              { id: 'cp', label: 'CP' },
-              { id: 'tp', label: 'TP' },
-              { id: 'atp', label: 'ATP' },
-              { id: 'kktp', label: 'KKTP' },
-              { id: 'prota', label: 'Prota' },
-              { id: 'prosem', label: 'Prosem' }
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveSubTab(tab.id)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                  activeSubTab === tab.id ? 'bg-[#D4AF37] text-slate-950 shadow-md' : 'text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-
-          <button onClick={handleOpenExportModal} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs cursor-pointer flex items-center gap-1.5">
-            <Icons.Printer className="w-4 h-4" />
-            <span>🖨️ Cetak / Export Dokumen</span>
-          </button>
-        </div>
-
-        {/* CANVAS PREVIEW RICH TEXT */}
-        <div className="flex-1 bg-white text-slate-900 p-8 rounded-2xl overflow-y-auto shadow-2xl">
-          {activeTabContent ? (
-            <div
-              className="prose prose-slate max-w-none text-xs leading-relaxed"
-              dangerouslySetInnerHTML={{ __html: parseMarkdownToHTML(activeTabContent) }}
-            />
-          ) : (
-            <div className="text-center py-16 space-y-4">
-              <div className="text-3xl">📄</div>
-              <h3 className="text-base font-bold text-slate-800">
-                Seksi {activeSubTab.toUpperCase()} Belum Dibuat
-              </h3>
-              <p className="text-xs text-slate-500 max-w-md mx-auto">
-                Seksi ini belum ada di dokumen kamu. Klik tombol di bawah ini untuk meminta AI Co-Pilot membuatkan drafnya secara otomatis!
-              </p>
-              <button
-                onClick={() => handleSendMessage(`Tolong buatkan seksi ${activeSubTab.toUpperCase()} secara lengkap dan rinci`)}
-                className="px-5 py-2.5 bg-[#1E3A8A] text-white font-bold rounded-xl text-xs hover:bg-indigo-900 transition-all shadow-md cursor-pointer"
-              >
-                ✨ Generasikan Draf {activeSubTab.toUpperCase()} Sekarang
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* EXPORT MODAL CENTER */}
-      {isExportModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#0B192C] border border-[#D4AF37]/50 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl text-white">
-            <div className="flex justify-between items-center border-b border-slate-800 pb-3">
-              <h3 className="font-bold text-base text-[#D4AF37] flex items-center gap-2">
-                <Icons.FileText /> Export Center Dokumen
-              </h3>
-              <button onClick={() => setIsExportModalOpen(false)} className="text-slate-400 hover:text-white cursor-pointer">✕</button>
-            </div>
-            
-            <p className="text-xs text-slate-300">Pilih format unduhan untuk dokumen perangkat ajar Anda:</p>
-
-            <div className="space-y-2.5">
-              <button
-                onClick={handleDownloadWord}
-                className="w-full p-3 bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-[#D4AF37] rounded-xl text-left text-xs font-bold transition-all flex items-center justify-between cursor-pointer"
-              >
-                <div>
-                  <div className="text-white">🟦 Unduh Berkas Word (.doc)</div>
-                  <div className="text-[10px] text-slate-400 font-normal">Layout Tabel Native Presisi</div>
-                </div>
-                <span className="text-[#D4AF37]">Unduh →</span>
-              </button>
-
-              <button
-                onClick={handleDownloadTxt}
-                className="w-full p-3 bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-[#D4AF37] rounded-xl text-left text-xs font-bold transition-all flex items-center justify-between cursor-pointer"
-              >
-                <div>
-                  <div className="text-white">📄 Unduh Teks Polos (.txt)</div>
-                  <div className="text-[10px] text-slate-400 font-normal">Format Markdown murni</div>
-                </div>
-                <span className="text-[#D4AF37]">Unduh →</span>
-              </button>
-
-              <button
-                onClick={handlePrintPDF}
-                className="w-full p-3 bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-[#D4AF37] rounded-xl text-left text-xs font-bold transition-all flex items-center justify-between cursor-pointer"
-              >
-                <div>
-                  <div className="text-white">🖨️ Cetak / Simpan PDF</div>
-                  <div className="text-[10px] text-slate-400 font-normal">Mencetak kanvas dokumen A4</div>
-                </div>
-                <span className="text-[#D4AF37]">Cetak →</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* ... existing code ... */}
 
       {/* PAYWALL LOCK MODAL */}
       {isPaywallOpen && (
@@ -1337,16 +1012,23 @@ Berikut adalah formula dasar perhitungan laju pertumbuhan populasi dan rata-rata
               <button onClick={() => setIsPaywallOpen(false)} className="text-slate-400 cursor-pointer">✕</button>
             </div>
             <p className="text-xs text-slate-300">{paywallReason}</p>
+            
+            <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 text-xs space-y-1.5 font-sans">
+              <div className="flex justify-between"><span className="text-slate-400">BCA:</span> <span className="font-mono text-amber-300 font-bold">5765323549 (a.n. iis istianawahid)</span></div>
+              <div className="flex justify-between"><span className="text-slate-400">DANA:</span> <span className="font-mono text-amber-300 font-bold">081519234087 (a.n. iis istianawahid)</span></div>
+              <div className="flex justify-between"><span className="text-slate-400">WhatsApp:</span> <span className="font-semibold text-emerald-400">081298406844</span></div>
+            </div>
+
             <div className="grid grid-cols-2 gap-3 pt-2">
               <div className="bg-slate-900 p-4 border border-amber-500/40 rounded-xl space-y-2">
                 <div className="font-bold text-xs">Paket Bulanan</div>
                 <div className="text-lg font-black text-[#D4AF37]">Rp29.000</div>
-                <a href="https://wa.me/6281234567890?text=Halo%20Admin,%20saya%20mau%20beli%20Paket%20Bulanan" target="_blank" rel="noreferrer" className="block text-center py-1.5 bg-[#D4AF37] text-slate-950 font-bold rounded-lg text-xs">Beli via WA</a>
+                <a href="https://wa.me/6281298406844?text=Halo%20Admin,%20saya%20mau%20beli%20Paket%20Bulanan" target="_blank" rel="noreferrer" className="block text-center py-1.5 bg-[#D4AF37] text-slate-950 font-bold rounded-lg text-xs">Beli via WA</a>
               </div>
               <div className="bg-slate-900 p-4 border border-slate-800 rounded-xl space-y-2">
                 <div className="font-bold text-xs">Paket Kuota</div>
                 <div className="text-lg font-black text-indigo-400">Rp10.000</div>
-                <a href="https://wa.me/6281234567890?text=Halo%20Admin,%20saya%20mau%20beli%20Paket%20Kuota" target="_blank" rel="noreferrer" className="block text-center py-1.5 bg-indigo-600 text-white font-bold rounded-lg text-xs">Beli via WA</a>
+                <a href="https://wa.me/6281298406844?text=Halo%20Admin,%20saya%20mau%20beli%20Paket%20Kuota" target="_blank" rel="noreferrer" className="block text-center py-1.5 bg-indigo-600 text-white font-bold rounded-lg text-xs">Beli via WA</a>
               </div>
             </div>
           </div>
@@ -1943,11 +1625,7 @@ Peserta didik mampu melakukan evaluasi kritis terhadap penyajian data statistik.
 
   return (
     <div className="min-h-screen bg-[#070F1E] text-slate-100 font-sans flex flex-col selection:bg-[#D4AF37] selection:text-slate-950">
-      {toastMessage && (
-        <div className="fixed top-4 right-4 z-50 bg-[#D4AF37] text-slate-950 font-bold px-4 py-2.5 rounded-xl shadow-2xl text-xs flex items-center gap-2 border border-amber-300 animate-bounce">
-          <span>✨</span> {toastMessage}
-        </div>
-      )}
+      {/* ... existing code ... */}
 
       {/* HEADER TOP NAV BAR */}
       <header className="h-16 bg-[#0B1728]/95 border-b border-slate-800/80 px-4 md:px-6 flex items-center justify-between sticky top-0 z-40 backdrop-blur-md">
@@ -1960,7 +1638,7 @@ Peserta didik mampu melakukan evaluasi kritis terhadap penyajian data statistik.
               <Icons.Cpu className="w-5 h-5 text-slate-950" />
             </div>
             <div>
-              <span className="font-extrabold text-sm text-white tracking-wider block">TRISULAPROMPT</span>
+              <span className="font-extrabold text-sm text-white tracking-wider block">TRISULA SMART LEARNING ENGINE</span>
             </div>
           </button>
           
@@ -1969,272 +1647,10 @@ Peserta didik mampu melakukan evaluasi kritis terhadap penyajian data statistik.
           </span>
         </div>
 
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => setIsWizardOpen(true)}
-            className="px-4 py-2 bg-[#D4AF37] hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-xs flex items-center gap-1.5 transition-all shadow-md shadow-amber-500/10 cursor-pointer"
-          >
-            <Icons.Plus className="w-4 h-4 text-slate-950" />
-            <span>+ Buat Perangkat Baru</span>
-          </button>
-
-          <div className="flex items-center gap-2 pl-2 border-l border-slate-800">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-500 to-[#D4AF37] text-slate-950 font-extrabold flex items-center justify-center text-xs shadow-md">
-              {currentUser.name ? currentUser.name.substring(0, 2).toUpperCase() : 'GH'}
-            </div>
-            <div className="hidden md:block text-left text-xs leading-tight">
-              <div className="font-bold text-white flex items-center gap-1">
-                {currentUser.name}
-                {currentUser.is_premium && (
-                  <span className="text-[9px] px-1.5 py-0.2 bg-amber-500/20 text-[#D4AF37] border border-[#D4AF37]/30 rounded font-bold">
-                    PRO
-                  </span>
-                )}
-              </div>
-              <div className="text-[10px] text-slate-400 truncate max-w-[140px]">
-                {currentUser.school || 'Guru Penggerak'}
-              </div>
-            </div>
-          </div>
-
-          <button
-            onClick={handleLogout}
-            className="p-2 md:px-3 md:py-2 bg-slate-900 hover:bg-rose-950/80 border border-slate-800 hover:border-rose-500/50 text-slate-300 hover:text-rose-300 rounded-xl transition-all flex items-center gap-1.5 text-xs font-semibold cursor-pointer"
-            title="Keluar / Logout dari Akun"
-          >
-            <Icons.LogOut />
-            <span className="hidden md:inline">Keluar</span>
-          </button>
-        </div>
+        {/* ... existing code ... */}
       </header>
 
-      {/* MAIN BODY LAYOUT WITH SIDEBAR */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* SIDEBAR NAVIGASI UTAMA KIRI */}
-        <aside className="w-64 bg-[#0B1728] border-r border-slate-800/80 p-4 hidden md:flex flex-col justify-between shrink-0">
-          <div className="space-y-6">
-            <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-3">
-              NAVIGASI UTAMA
-            </div>
-
-            <nav className="space-y-1">
-              <button
-                onClick={() => setCurrentView('dashboard')}
-                className={`w-full px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2.5 cursor-pointer ${
-                  currentView === 'dashboard'
-                    ? 'bg-slate-800/90 text-white border border-slate-700/80 shadow-sm'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
-                }`}
-              >
-                <Icons.Home /> Halaman Depan
-              </button>
-
-              <button
-                onClick={() => setCurrentView('workspace')}
-                className={`w-full px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2.5 cursor-pointer ${
-                  currentView === 'workspace'
-                    ? 'bg-slate-800/90 text-white border border-slate-700/80 shadow-sm'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
-                }`}
-              >
-                <Icons.Bolt /> Ruang Bantu AI
-              </button>
-
-              <button
-                onClick={() => setCurrentView('files')}
-                className={`w-full px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2.5 cursor-pointer ${
-                  currentView === 'files'
-                    ? 'bg-slate-800/90 text-white border border-slate-700/80 shadow-sm'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
-                }`}
-              >
-                <Icons.Folder /> Berkas Saya
-              </button>
-
-              <button
-                onClick={() => setCurrentView('editor')}
-                className={`w-full px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2.5 cursor-pointer ${
-                  currentView === 'editor'
-                    ? 'bg-slate-800/90 text-white border border-slate-700/80 shadow-sm'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
-                }`}
-              >
-                <Icons.Edit /> Editor Teks Rapih
-              </button>
-
-              {(currentUser.role === 'admin' || currentUser.email.includes('admin')) && (
-                <button
-                  onClick={() => setCurrentView('admin')}
-                  className={`w-full px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2.5 cursor-pointer ${
-                    currentView === 'admin'
-                      ? 'bg-cyan-950/60 text-cyan-300 border border-cyan-500/30 shadow-sm'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
-                  }`}
-                >
-                  <Icons.Shield /> Panel Admin
-                </button>
-              )}
-            </nav>
-          </div>
-
-          <div className="p-3 bg-slate-900/80 border border-slate-800 rounded-2xl space-y-1 text-[10px] text-slate-400">
-            <div className="font-bold text-amber-300 flex items-center gap-1">
-              ⚡ 3 Pilar Active
-            </div>
-            <div>Mindful • Meaningful • Joyful Engine Connected</div>
-          </div>
-        </aside>
-
-        {/* CONTENT AREA */}
-        <main className="flex-1 overflow-y-auto">
-          {currentView === 'dashboard' && (
-            <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
-              {/* WELCOME BANNER */}
-              <div className="bg-gradient-to-r from-[#112238] via-[#0F1E33] to-[#0A1628] border border-slate-800 rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden">
-                <div className="space-y-3 max-w-2xl relative z-10">
-                  <span className="inline-block px-3 py-1 bg-amber-500/10 text-[#D4AF37] border border-[#D4AF37]/30 text-xs font-bold rounded-full uppercase tracking-wider">
-                    SaaS Engine Kurikulum Merdeka v2.5
-                  </span>
-                  <h1 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
-                    Selamat Datang, Bapak/Ibu Guru Hebat! 🚀
-                  </h1>
-                  <p className="text-xs md:text-sm text-slate-300 leading-relaxed">
-                    Rancang Modul Ajar, TP, ATP, KKTP, Prota, dan Prosem terintegrasi 3 Pilar Deep Learning (Mindful, Meaningful, Joyful) secara otomatis dan presisi.
-                  </p>
-
-                  <div className="flex flex-wrap items-center gap-3 pt-2">
-                    <button
-                      onClick={() => setIsWizardOpen(true)}
-                      className="px-5 py-2.5 bg-gradient-to-r from-[#D4AF37] to-amber-500 text-slate-950 font-bold text-xs rounded-xl hover:brightness-110 shadow-lg shadow-amber-500/20 transition-all flex items-center gap-2 cursor-pointer"
-                    >
-                      <span>✨ Mulai Wizard Deep Learning</span>
-                    </button>
-                    <button
-                      onClick={() => setCurrentView('files')}
-                      className="px-4 py-2.5 bg-slate-800/80 hover:bg-slate-800 text-slate-200 border border-slate-700 font-bold text-xs rounded-xl transition-all cursor-pointer"
-                    >
-                      Lihat Semua Proyek ({documents.length})
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* STATS METRICS GRID */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="bg-[#0D1C2E] border border-slate-800 p-4 rounded-2xl space-y-1">
-                  <div className="text-[11px] text-slate-400">Total Perangkat Ajar</div>
-                  <div className="text-2xl font-bold text-white">{documents.length}</div>
-                  <div className="text-[10px] text-emerald-400">+{documents.length} minggu ini</div>
-                </div>
-
-                <div className="bg-[#0D1C2E] border border-slate-800 p-4 rounded-2xl space-y-1">
-                  <div className="text-[11px] text-slate-400">Dalam Proses (Draft)</div>
-                  <div className="text-2xl font-bold text-amber-400">
-                    {documents.filter(d => d.status !== 'Completed').length}
-                  </div>
-                  <div className="text-[10px] text-amber-300">Butuh peninjauan TP/ATP</div>
-                </div>
-
-                <div className="bg-[#0D1C2E] border border-slate-800 p-4 rounded-2xl space-y-1">
-                  <div className="text-[11px] text-slate-400">Selesai & Siap Cetak</div>
-                  <div className="text-2xl font-bold text-emerald-400">
-                    {documents.filter(d => d.status === 'Completed').length}
-                  </div>
-                  <div className="text-[10px] text-emerald-300">Siap di-export PDF/Word</div>
-                </div>
-
-                <div className="bg-[#0D1C2E] border border-slate-800 p-4 rounded-2xl space-y-1">
-                  <div className="text-[11px] text-slate-400">Estimasi Waktu Dihemat</div>
-                  <div className="text-2xl font-bold text-[#D4AF37]">18.5 Jam</div>
-                  <div className="text-[10px] text-cyan-400">Otomasi Deep Learning</div>
-                </div>
-              </div>
-
-              {/* DRAFT PERANGKAT AJAR TERBARU */}
-              <div className="space-y-4">
-                <h2 className="text-base font-bold text-white flex items-center gap-2">
-                  <span>📋</span> Draft Perangkat Ajar Terbaru
-                </h2>
-
-                <div className="grid md:grid-cols-2 gap-4">
-                  {documents.slice(0, 2).map((doc) => (
-                    <div key={doc.id} className="bg-[#0D1C2E] border border-slate-800 rounded-2xl p-5 space-y-3 hover:border-slate-700 transition-all">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                          {doc.subject} • {doc.phase}
-                        </span>
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${doc.status === 'Completed' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'}`}>
-                          {doc.status || 'In Progress'}
-                        </span>
-                      </div>
-
-                      <h3 className="text-sm font-bold text-white">{doc.title}</h3>
-                      <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
-                        {doc.topic ? `Topik Utama: ${doc.topic}` : 'Perangkat Ajar Kurikulum Merdeka.'}
-                      </p>
-
-                      <div className="flex justify-between items-center pt-2 border-t border-slate-800 text-xs">
-                        <span className="text-slate-500">Deep Learning Engine</span>
-                        <button
-                          onClick={() => handleOpenDocumentInWorkspace(doc)}
-                          className="text-[#D4AF37] font-bold hover:underline cursor-pointer"
-                        >
-                          Buka AI Workspace →
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {currentView === 'workspace' && (
-            <div className="p-2 w-full h-[calc(100vh-4rem)]">
-              <AIWorkspace 
-                activeDocument={activeDocument}
-                onBackToDashboard={() => setCurrentView('dashboard')} 
-                externalUserStatus={currentUser}
-              />
-            </div>
-          )}
-
-          {currentView === 'files' && (
-            <MyFilesView
-              documents={documents}
-              onOpenDocument={handleOpenDocumentInWorkspace}
-              onOpenInEditor={handleOpenDocumentInEditor}
-              onDeleteDocument={handleDeleteDocument}
-              onOpenWizard={() => setIsWizardOpen(true)}
-            />
-          )}
-
-          {currentView === 'editor' && (
-            <CleanEditorView
-              activeDocument={activeDocument}
-              onSaveDocument={handleSaveEditorDocument}
-            />
-          )}
-
-          {currentView === 'admin' && (
-            <div className="w-full">
-              <AdminDashboard 
-                usersData={allUsers} 
-                onUpdateUserStatus={handleUpdateUserStatus}
-                onAddCredits={handleAddCredits}
-                onAddUser={handleAddUser}
-              />
-            </div>
-          )}
-        </main>
-      </div>
-
-      {/* WIZARD MODAL BUAT PERANGKAT BARU */}
-      <WizardModal
-        isOpen={isWizardOpen}
-        onClose={() => setIsWizardOpen(false)}
-        onCreateDocument={handleCreateDocument}
-      />
+      {/* ... existing code ... */}
     </div>
   );
 }
