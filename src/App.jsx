@@ -1055,11 +1055,32 @@ function AIWorkspace({ activeDocument, onBackToDashboard, currentUser, onUpdateC
     phase: 'Fase E (Kelas 10 SMA)',
     content: `# MODUL AJAR DEEP LEARNING: IPA & BIOLOGI FASE E (KELAS 10 SMA)
 
-## I. INFORMASI UMUM
-- **Mata Pelajaran**: IPA & Biologi
-- **Fase / Kelas**: Fase E (Kelas 10 SMA)
-- **Topik Utama**: Ekosistem, Keanekaragaman Hayati & Perubahan Lingkungan
-- **Alokasi Waktu**: 2 JP x 45 Menit
+## A. IDENTITAS MODUL
+| Komponen | Rincian Keterangan |
+| :--- | :--- |
+| **Nama Sekolah** | SMA Negeri 1 Jakarta |
+| **Nama Penyusun** | Intan Kartika Putri, S.Si. |
+| **Mata Pelajaran** | IPA & Biologi |
+| **Kelas / Fase / Semester** | X / Fase E / Ganjil |
+| **Alokasi Waktu** | 3 Jam Pelajaran (3 x 45 Menit) |
+| **Tahun Pelajaran** | 2024 / 2025 |
+
+---
+
+## B. IDENTIFIKASI KESIAPAN PESERTA DIDIK
+- **Pengetahuan Awal**: Pemahaman hirarki ekologi (individu, populasi, komunitas, ekosistem).
+- **Kebutuhan Belajar Berdiferensiasi**: Visual (diagram/video), Auditori (diskusi), Kinestetik (observasi lapangan).
+
+---
+
+## C. KARAKTERISTIK MATERI PELAJARAN
+- **Jenis Pengetahuan**: Konseptual & Prosedural interaksi ekosistem dan biogeokimia.
+- **Relevansi**: Penanganan isu lingkungan & pencemaran lokal.
+
+---
+
+## D. DIMENSI PROFIL LULUSAN
+- Penalaran Kritis, Kreativitas, Kolaborasi, dan Kepedulian Lingkungan.
 
 ---
 
@@ -1090,8 +1111,7 @@ Peserta didik mampu menganalisis interaksi antar komponen ekosistem, memahami pe
 ### 📊 Rubrik Observasi Unjuk Kerja Pemecahan Masalah (IPA & BIOLOGI)
 | Kriteria Penilaian | Belum Memenuhi (1) | Memenuhi (2-3) | Sangat Baik (4) |
 | :--- | :--- | :--- | :--- |
-| **Penerapan Konsep** | Salah mengidentifikasi rantai makanan | Tepat mengidentifikasi 80% komponen | Tepat 100% & menganalisis dampak lingkungan |
-| **Laporan Proyek** | Laporan tidak terstruktur | Laporan rapi dan alur benar | Laporan sangat presisi & solutif |
+| **Penerapan Konsep** | Salah mengidentifikasi rantai makanan | Tepat mengidentifikasi 80% komponen | Tepat 100% & menganalisis dampak |
 
 ---
 
@@ -1110,38 +1130,13 @@ Peserta didik mampu menganalisis interaksi antar komponen ekosistem, memahami pe
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | **1** | Analisis Interaksi Ekosistem | 6 JP | x | x | | | | |
 | **2** | Pemetaan Keanekaragaman Hayati | 6 JP | | | x | x | | |
-| **3** | Proyek Konservasi Lingkungan | 6 JP | | | | | x | x |
 
 ---
 
 ## VIII. INTEGRASI 3 PILAR DEEP LEARNING
-
-### 1. Mindful Learning (Penyadaran Diri)
-- **Latihan Hening STOP**: Siswa diajak hening selama 3 menit untuk mengamati lingkungan sekitar dan menyiapkan kestabilan mental sebelum belajar.
-- **Refleksi Awal**: Siswa mengisi jurnal singkat mengenai harapan dan pemahaman awal materi ekosistem.
-
-### 2. Meaningful Learning (Keterhubungan Masalah Nyata)
-- **Konteks Lokal**: Membahas isu pencemaran sungai lokal dan grafik tren perubahan keanekaragaman spesies lokal.
-- **Problem Solving**: Merancang solusi daur ulang limbah organik sekolah.
-
-### 3. Joyful Learning (Kolaboratif & Menggembirakan)
-- **Gamifikasi Pembelajaran**: Tantangan tim interaktif berbasis kuis/permainan "BONGKAR LOGIKA EKOSISTEM".
-- **Apresiasi Sebaya**: Sesi saling memberikan umpan balik positif antar kelompok.
-
----
-
-## IX. DUKUNGAN RUMUS MATEMATIKA (LATEX FORMULA)
-
-Berikut adalah formula dasar perhitungan laju pertumbuhan populasi dan rata-rata sampel:
-- **Model Laju Pertumbuhan Populasi**: $$P(t) = P_0 e^{rt}$$
-- **Rata-rata Sampel**: $\\bar{x} = \\frac{\\sum x_i}{n}$
-
----
-
-## X. LEMBAR KERJA PESERTA DIDIK (LKPD)
-### 👥 Nama Kelompok: ____________________
-1. Hitunglah populasi $P(t)$ jika diketahui $P_0 = 100$, $r = 0.05$, $t = 10$!
-2. Analisis interaksi antar spesies pada tabel observasi di atas dan tuliskan solusinya!`
+- **Mindful Learning**: Siswa diajak melakukan sesi hening STOP untuk membangun kesadaran belajar.
+- **Meaningful Learning**: Menganalisis isu lingkungan lokal di sekitar sekolah.
+- **Joyful Learning**: Kuis interaktif berbasis kelompok dan presentasi solutif.`
   };
 
   const currentDocument = activeDocument || defaultDoc;
@@ -1619,7 +1614,7 @@ function CleanEditorView({ activeDocument, onSaveDocument }) {
 
       <div className="flex items-center gap-2 bg-slate-900 border border-slate-800 p-2 rounded-xl overflow-x-auto text-xs">
         <button onClick={() => handleInsertHeader(1)} className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded font-bold">H1</button>
-        <button onClick={() => handleInsertHeader(2)} className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded font-bold">H3</button>
+        <button onClick={() => handleInsertHeader(2)} className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded font-bold">H2</button>
         <button onClick={() => handleInsertHeader(3)} className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded font-bold">H3</button>
         <span className="text-slate-700">|</span>
         <button onClick={handleInsertTable} className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded">📊 + Tabel</button>
@@ -1668,7 +1663,7 @@ function WizardModal({ isOpen, onClose, onCreateDocument }) {
   const [subject, setSubject] = useState('IPA & Biologi');
   const [phase, setPhase] = useState('Fase E (Kelas 10 SMA)');
   const [topic, setTopic] = useState('Ekosistem, Keanekaragaman Hayati & Perubahan Lingkungan');
-  const [hours, setHours] = useState('2 JP x 45 Menit');
+  const [hours, setHours] = useState('3 Jam Pelajaran (3 x 45 Menit)');
   
   const [selectedComponents, setSelectedComponents] = useState({
     modulAjar: true,
@@ -1684,105 +1679,104 @@ function WizardModal({ isOpen, onClose, onCreateDocument }) {
 
   if (!isOpen) return null;
 
-// ... existing code ...
   const handleSubmit = (e) => {
     e.preventDefault();
     const upperSub = subject.toUpperCase();
 
-    // WIZARD GENERATOR v3.1: KOMPREHENSIF 12 HALAMAN UTUH SETARA DOKUMEN REFERENSI
+    // WIZARD GENERATOR v3.2: STRUKTUR KOMPREHENSIF 12 HALAMAN UTUH TANPA RUSAK TAG HTML
     let generatedContent = `# MODUL AJAR DEEP LEARNING: ${upperSub}
 ## BAB: ${topic.toUpperCase()}
 
 ---
 
 ## A. IDENTITAS MODUL
-| Komponen | Rincian Keterangan |
+| Komponen Utama | Rincian Keterangan Formal |
 | :--- | :--- |
-| **Nama Sekolah** | SMA Negeri 1 Jakarta |
-| **Nama Penyusun** | Tim Kurikulum & Guru Penggerak |
+| **Nama Sekolah** | SMA Negeri 1 Unggulan / Sesuai Instansi |
+| **Nama Penyusun** | Tim Kurikulum & Guru Penggerak Profesional |
 | **Mata Pelajaran** | ${subject} |
 | **Kelas / Fase / Semester** | ${phase} / Ganjil |
-| **Alokasi Waktu** | ${hours} |
-| **Tahun Pelajaran** | 2024 / 2025 |
+| **Alokasi Waktu** | ${hours} (Eksplorasi Mendalam & Praktikum) |
+| **Tahun Pelajaran** | 2026 / 2027 |
 
 ---
 
 ## B. IDENTIFIKASI KESIAPAN PESERTA DIDIK
-Sebelum memulai pembelajaran tentang ${topic}, asesmen diagnostik dilakukan untuk mengidentifikasi kesiapan peserta didik:
+Sebelum memulai pembelajaran mendalam terkait ${topic}, asesmen diagnostik komprehensif dilakukan untuk memetakan kesiapan murid:
 
-- **Pengetahuan Awal**:
-  - Pemahaman dasar tentang konsep utama ${topic} dan fenomena alam terkait.
-  - Pengenalan variabel abiotik dan biotik yang memengaruhi sistem.
-  - Konsep dasar hubungan kausalitas dan interaksi di alam/kehidupan nyata.
+- **Pengetahuan Awal (Kognitif)**:
+  - Pemahaman fundamental mengenai konsep utama ${topic} dan hubungannya dengan fenomena alam/sosial nyata.
+  - Kemampuan mengidentifikasi variabel-variabel pengamatan abiotik dan biotik yang memengaruhi sistem.
+  - Penguasaan kaidah dasar penalaran kausalitas dan hubungan timbal balik dalam sistem.
 
 - **Minat & Ketertarikan Murid**:
-  - Melalui kuesioner awal, guru memetakan ketertarikan peserta didik terhadap isu lingkungan, eksperimen laboratorium, atau riset lapangan.
-  - Mengamati respon spontan murid terhadap studi kasus nyata di sekitar sekolah.
+  - Pemetaan hasil kuesioner awal terkait ketertarikan peserta didik terhadap isu lingkungan, eksperimen laboratorium, atau investigasi lapangan.
+  - Pengamatan respons spontan murid terhadap studi kasus faktual yang disajikan di awal bab.
 
 - **Kebutuhan Belajar Berdiferensiasi**:
-  - **Visual**: Membutuhkan diagram alir, infografis data, grafik statistik, dan video pembelajaran.
-  - **Auditori**: Mengoptimalkan diskusi kelompok interaktif, debat terarah, dan penjelasan lisan.
-  - **Kinestetik**: Membutuhkan praktikum langsung, eksplorasi lingkungan luar kelas, dan pembuatan model proyek nyata.
-  - **Dukungan ABK / Kesulitan Belajar**: Penyederhanaan instruksi, panduan visual bertahap, serta fleksibilitas waktu pengerjaan.
-  - **Pengayaan Murid Berkemampuan Tinggi**: Diberikan tantangan studi kasus ilmiah mendalam dan investigasi mandiri.
+  - **Gaya Belajar Visual**: Membutuhkan diagram alir, infografis data statistik, grafik kurva, dan video simulasi interaktif.
+  - **Gaya Belajar Auditori**: Mengoptimalkan diskusi kelompok terarah, debat ilmiah, dan presentasi lisan interaktif.
+  - **Gaya Belajar Kinestetik**: Membutuhkan praktikum langsung, eksplorasi lingkungan luar kelas, dan perancangan model fisik proyek.
+  - **Dukungan ABK / Kesulitan Belajar**: Penyederhanaan instruksi bertahap, panduan visual pendukung, serta fleksibilitas waktu pengerjaan tugas.
+  - **Pengayaan Murid Berkemampuan Tinggi**: Tantangan studi kasus ilmiah tingkat lanjut, analisis data sekunder, dan investigasi mandiri.
 
 ---
 
 ## C. KARAKTERISTIK MATERI PELAJARAN
-- **Jenis Pengetahuan**: Konseptual, Prosedural, dan Metakognitif mendalam terkait ${topic}.
-- **Relevansi Kontekstual**: Terhubung langsung dengan permasalahan nyata di lingkungan sekolah dan daerah sekitar.
-- **Tingkat Kesulitan**: Tingkat sedang dengan transisi dari pemahaman konkrit menuju pemecahan masalah abstrak.
-- **Integrasi Nilai & Karakter**: Kepedulian Lingkungan, Tanggung Jawab Sosial, Kolaborasi, Berpikir Kritis, dan Rasa Ingin Tahu Ilmiah.
+- **Jenis Pengetahuan**: Konseptual, Prosedural, dan Metakognitif tingkat tinggi terkait ${topic}.
+- **Relevansi Kontekstual**: Terhubung langsung dengan permasalahan nyata di lingkungan sekolah, daerah, dan isu global mutakhir.
+- **Tingkat Kesulitan**: Tingkat sedang hingga tinggi dengan transisi mulus dari pemahaman konkrit menuju pemecahan masalah abstrak.
+- **Integrasi Nilai & Karakter**: Kepedulian Lingkungan, Tanggung Jawab Sosial, Kolaborasi Inklusif, Berpikir Kritis, dan Rasa Ingin Tahu Ilmiah.
 
 ---
 
 ## D. DIMENSI PROFIL LULUSAN (PROFIL PELAJAR PANCASILA)
-- **Beriman, Bertakwa kepada Tuhan YME, & Berakhlak Mulia**: Mensyukuri keteraturan ekosistem ciptaan Tuhan dan menjaga kelestarian alam.
-- **Penalaran Kritis**: Menganalisis data empiris, mengevaluasi informasi, dan merumuskan argumen logis.
-- **Kreativitas**: Menghasilkan ide-ide solutif dan inovatif untuk menjawab tantangan seputar ${topic}.
-- **Kolaborasi**: Berpartisipasi aktif, menghargai pendapat, dan bekerja sama secara harmonis dalam kelompok.
-- **Kemandirian**: Mengatur strategi belajar pribadi dan bertanggung jawab menyelesaikan tugas.
+- **Beriman, Bertakwa kepada Tuhan YME, & Berakhlak Mulia**: Mensyukuri keteraturan sistem alam ciptaan Tuhan dan menjaga kelestarian bumi.
+- **Penalaran Kritis**: Menganalisis data empiris, mengevaluasi validitas informasi, dan merumuskan argumen logis berbasis bukti.
+- **Kreativitas**: Menghasilkan ide-ide solutif, inovatif, dan estetis dalam menjawab tantangan seputar ${topic}.
+- **Kolaborasi**: Berpartisipasi aktif, menghargai ragam pendapat, dan bekerja sama secara harmonis dalam tim heterogen.
+- **Kemandirian**: Mengatur strategi belajar pribadi, regulasi emosi, dan bertanggung jawab menuntaskan penugasan.
 
 ---
 
 ## E. DESAIN PEMBELAJARAN KOMPREHENSIF
 
 ### 1. CAPAIAN PEMBELAJARAN (CP) RESMI KEMDIKBUD
-Peserta didik mampu memahami konsep esensial ${topic}, mengaitkannya dengan fenomena faktual, serta merancang solusi kreatif melalui pendekatan inkuiri ilmiah dan kolaboratif.`;
+Peserta didik mampu memahami konsep esensial ${topic}, mengaitkannya dengan fenomena faktual, serta merancang solusi kreatif melalui pendekatan inkuiri ilmiah, pemodelan logika, dan kolaborasi bermakna.`;
 
     if (selectedComponents.cp) {
-      generatedContent += `\n\n---\n## II. CAPAIAN PEMBELAJARAN (CP)\n### 📘 Analisis Capaian Pembelajaran Elemen (${upperSub})\nPeserta didik mampu menerapkan pemahaman ${subject} untuk menganalisis ${topic}, menyusun model logika, serta merancang pemecahan masalah kontekstual secara kritis dan kolaboratif.`;
+      generatedContent += `\n\n---\n## II. CAPAIAN PEMBELAJARAN (CP)\n### 📘 Analisis Capaian Pembelajaran Elemen (${upperSub})\nPeserta didik mampu menerapkan pemahaman ${subject} untuk menganalisis ${topic}, menyusun model logika, serta merancang pemecahan masalah kontekstual secara kritis, mandiri, dan kolaboratif.`;
     }
 
     if (selectedComponents.tp) {
-      generatedContent += `\n\n---\n## III. TUJUAN PEMBELAJARAN (TP)\n### 🎯 Poin Tujuan Pembelajaran ABCD (${upperSub})\n- **TP1**: Menganalisis struktur dan dinamika ${topic} berbasis data empiris.\n- **TP2**: Menyusun model matematika/logika sederhana terkait ${topic}.\n- **TP3**: Mempresentasikan hasil analisis proyek kelompok secara kolaboratif.`;
+      generatedContent += `\n\n---\n## III. TUJUAN PEMBELAJARAN (TP)\n### 🎯 Poin Tujuan Pembelajaran ABCD (${upperSub})\n- **TP1**: Menganalisis struktur, komponen, dan dinamika ${topic} berdasarkan data empiris lapangan.\n- **TP2**: Menyusun model matematika, diagram alir, atau logika terstruktur terkait sistem ${topic}.\n- **TP3**: Mempresentasikan hasil analisis proyek kelompok secara kolaboratif dengan argumen ilmiah yang valid.`;
     }
 
     if (selectedComponents.atp) {
-      generatedContent += `\n\n---\n## IV. ALUR TUJUAN PEMBELAJARAN (ATP)\n### 🗺️ Pemetaan Runtutan ATP (${upperSub})\n| Kode ATP | Alokasi Waktu | Indikator Ketercapaian | Rencana Asesmen |\n| :--- | :--- | :--- | :--- |\n| **ATP.01** | 3 JP | Mampu memetakan komponen utama & analisis konsep | Formatif Latihan Soal |\n| **ATP.02** | 3 JP | Mampu membuat diagram alir & model terstruktur | Unjuk Kerja Kelompok |`;
+      generatedContent += `\n\n---\n## IV. ALUR TUJUAN PEMBELAJARAN (ATP)\n### 🗺️ Pemetaan Runtutan ATP (${upperSub})\n| Kode ATP | Alokasi Waktu | Indikator Ketercapaian Tujuan Pembelajaran | Rencana Asesmen |\n| :--- | :--- | :--- | :--- |\n| **ATP.01** | 3 JP | Mampu memetakan komponen utama & analisis konsep dasar | Formatif Latihan Soal & Kuis |\n| **ATP.02** | 3 JP | Mampu membuat diagram alir, grafik, & model terstruktur | Unjuk Kerja Kelompok |\n| **ATP.03** | 3 JP | Mampu melakukan investigasi mandiri & evaluasi solusi | Penilaian Proyek & Laporan |`;
     }
 
     if (selectedComponents.kktp) {
-      generatedContent += `\n\n---\n## V. KRITERIA KETERCAPAIAN TUJUAN PEMBELAJARAN (KKTP)\n### 📊 Rubrik Observasi Unjuk Kerja Pemecahan Masalah (${upperSub})\n| Kriteria Penilaian | Belum Memenuhi (1) | Cukup (2) | Baik (3) | Sangat Baik (4) |\n| :--- | :--- | :--- | :--- | :--- |\n| **Penerapan Konsep** | Salah mengidentifikasi komponen | Memahami 60% konsep | Memahami 85% konsep | Memahami 100% konsep & solutif |\n| **Analisis & Logika** | Tidak mampu menyusun alur | Ada kekeliruan alur | Alur terstruktur & logis | Sangat presisi & solutif |`;
+      generatedContent += `\n\n---\n## V. KRITERIA KETERCAPAIAN TUJUAN PEMBELAJARAN (KKTP)\n### 📊 Rubrik Observasi Unjuk Kerja Pemecahan Masalah (${upperSub})\n| Kriteria Penilaian | Belum Memenuhi (1) | Cukup (2) | Baik (3) | Sangat Baik (4) |\n| :--- | :--- | :--- | :--- | :--- |\n| **Penerapan Konsep** | Salah mengidentifikasi komponen | Memahami 60% konsep | Memahami 85% konsep dengan benar | Memahami 100% konsep & sangat solutif |\n| **Analisis & Logika** | Tidak mampu menyusun alur | Ada kekeliruan alur logika | Alur terstruktur & logis | Sangat presisi, mendalam, & solutif |\n| **Kolaborasi Tim** | Pasif dalam kerja kelompok | Berpartisipasi jika diminta | Aktif berkontribusi & berdiskusi | Memimpin, merangkul, & membantu rekan |`;
     }
 
     if (selectedComponents.prota) {
-      generatedContent += `\n\n---\n## VI. PROGRAM TAHUNAN (PROTA)\n### 🗓️ Alokasi Efektif Jam Pelajaran Tahunan (${upperSub})\n| No | Bab / Elemen Materi Utama | Alokasi Waktu (JP) | Keterangan Semester |\n| :--- | :--- | :--- | :--- |\n| **1** | ${topic} | 18 JP | Semester 1 |\n| **2** | Pendalaman & Proyek Terapan | 18 JP | Semester 2 |`;
+      generatedContent += `\n\n---\n## VI. PROGRAM TAHUNAN (PROTA)\n### 🗓️ Alokasi Efektif Jam Pelajaran Tahunan (${upperSub})\n| No | Bab / Elemen Materi Utama | Alokasi Waktu (JP) | Keterangan Semester |\n| :--- | :--- | :--- | :--- |\n| **1** | Eksplorasi & Analisis Mendalam ${topic} | 18 JP | Semester Ganjil |\n| **2** | Perancangan Proyek Terapan & Evaluasi | 18 JP | Semester Genap |`;
     }
 
     if (selectedComponents.prosem) {
-      generatedContent += `\n\n---\n## VII. PROGRAM SEMESTER (PROSEM)\n### 📅 Alokasi Pemetaan Jam Pelajaran Semester 1 & 2 (${upperSub})\n| No | Materi / Tujuan Pembelajaran | JP | Juli | Ags | Sep | Okt | Nov | Des |\n| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |\n| **1** | Analisis Konsep & Pemodelan ${topic} | 6 JP | x | x | | | | |\n| **2** | Perancangan Proyek & Observasi Lapangan | 6 JP | | | x | x | | |\n| **3** | Evaluasi & Kampanye Solutif | 6 JP | | | | | x | x |`;
+      generatedContent += `\n\n---\n## VII. PROGRAM SEMESTER (PROSEM)\n### 📅 Alokasi Pemetaan Jam Pelajaran Semester 1 & 2 (${upperSub})\n| No | Materi / Tujuan Pembelajaran | JP | Juli | Ags | Sep | Okt | Nov | Des |\n| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |\n| **1** | Analisis Konsep & Pemodelan ${topic} | 6 JP | x | x | | | | |\n| **2** | Perancangan Proyek & Observasi Lapangan | 6 JP | | | x | x | | |\n| **3** | Evaluasi, Presentasi & Kampanye Solutif | 6 JP | | | | | x | x |`;
     }
 
-    generatedContent += `\n\n---\n## VIII. INTEGRASI 3 PILAR DEEP LEARNING\n${pillars.mindful ? '- **Mindful Learning**: Siswa diajak melakukan sesi hening STOP selama 3 menit untuk membangun kesadaran dan fokus belajar.' : ''}\n${pillars.meaningful ? '- **Meaningful Learning**: Menganalisis isu dan studi kasus nyata yang ada di lingkungan sekitar sekolah.' : ''}\n${pillars.joyful ? '- **Joyful Learning**: Kuis interaktif berbasis kelompok, permainan simulasi, dan sesi apresiasi sebaya.' : ''}`;
+    generatedContent += `\n\n---\n## VIII. INTEGRASI 3 PILAR DEEP LEARNING\n${pillars.mindful ? '- **Mindful Learning**: Siswa diajak melakukan sesi hening STOP (Sedar, Tenang, Observasi, Pernafasan) selama 3 menit untuk membangun kesadaran diri dan fokus mental.' : ''}\n${pillars.meaningful ? '- **Meaningful Learning**: Menganalisis isu dan studi kasus nyata yang relevan dengan kehidupan sehari-hari di lingkungan sekitar.' : ''}\n${pillars.joyful ? '- **Joyful Learning**: Kuis interaktif berbasis gamifikasi kelompok, permainan simulasi peran, dan sesi apresiasi sebaya yang menggembirakan.' : ''}`;
 
-    generatedContent += `\n\n---\n## IX. RUMUS & MODEL LOGIKA (LATEX FORMULA)\nBerikut adalah formula dasar perhitungan dan evaluasi data:\n- **Model Pertumbuhan / Laju**: $$P(t) = P_0 e^{rt}$$\n- **Rata-rata Sampel Observasi**: $\\bar{x} = \\frac{\\sum x_i}{n}$\n- **Deviasi Standar**: $$S = \\sqrt{\\frac{\\sum (x_i - \\bar{x})^2}{n - 1}}$$`;
+    generatedContent += `\n\n---\n## IX. RUMUS & MODEL LOGIKA (LATEX FORMULA)\nBerikut adalah formula dasar perhitungan, pemodelan, dan evaluasi data dalam sistem:\n- **Model Pertumbuhan / Laju Sistem**: $$P(t) = P_0 e^{rt}$$\n- **Rata-rata Sampel Observasi**: $\\bar{x} = \\frac{\\sum x_i}{n}$\n- **Deviasi Standar Pengamatan**: $$S = \\sqrt{\\frac{\\sum (x_i - \\bar{x})^2}{n - 1}}$$`;
 
-    generatedContent += `\n\n---\n## X. LANGKAH-LANGKAH PEMBELAJARAN BERDIFERENSIASI RINCI\n### PERTEMUAN 1: PENGENALAN KONSEP & OBSERVASI (3 JP)\n\n#### A. KEGIATAN PENDAHULUAN (15 Menit - Mindful, Meaningful, Joyful)\n1. **Pembukaan & Ice Breaking (5 Menit)**: Guru menyapa peserta didik, berdoa, dan ice breaking kesadaran diri.\n2. **Apersepsi & Pertanyaan Pemantik (5 Menit)**: Menampilkan visual isu ${topic} dan memicu diskusi awal.\n3. **Asesmen Diagnostik Singkat (5 Menit)**: Kuesioner cepat memetakan pengetahuan awal.\n\n#### B. KEGIATAN INTI (105 Menit - Memahami, Mengaplikasi, Merefleksi)\n1. **Eksplorasi Direct Observation (20 Menit)**: Menganalisis sampel dan fenomena nyata.\n2. **Identifikasi Masalah Kelompok (30 Menit)**: Pembagian 6 kelompok heterogen untuk mengumpulkan data.\n3. **Pengolahan Data & Diskusi (30 Menit)**: Menyusun grafik dan diagram alir analisis.\n4. **Presentasi & Clarification (25 Menit)**: Tanya jawab dan penguatan konsep oleh guru.\n\n#### C. KEGIATAN PENUTUP (15 Menit)\n1. **Refleksi Diri 3-2-1 (10 Menit)**: Menuliskan poin pemahaman dan kendala.\n2. **Kesimpulan & Penugasan (5 Menit)**: Menyimpulkan materi dan instruksi tugas mandiri.`;
+    generatedContent += `\n\n---\n## X. LANGKAH-LANGKAH PEMBELAJARAN BERDIFERENSIASI RINCI\n### PERTEMUAN 1: EKSPLORASI KONSEP & OBSERVASI FAKTUAL (3 JP)\n\n#### A. KEGIATAN PENDAHULUAN (15 Menit - Mindful, Meaningful, Joyful)\n1. **Pembukaan & Kesadaran Diri (5 Menit)**: Guru menyapa murid, berdoa bersama, dan memimpin latihan hening STOP.\n2. **Apersepsi & Pertanyaan Pemantik (5 Menit)**: Menampilkan visual fenomena ${topic} dan memicu rasa ingin tahu awal.\n3. **Asesmen Diagnostik (5 Menit)**: Kuesioner cepat memetakan pengetahuan awal dan kesiapan kognitif.\n\n#### B. KEGIATAN INTI (105 Menit - Memahami, Mengaplikasi, Merefleksi)\n1. **Eksplorasi & Direct Observation (20 Menit)**: Mengamati sampel data dan fenomena nyata secara terbimbing.\n2. **Identifikasi Masalah Kelompok (30 Menit)**: Pembagian kelompok heterogen untuk merumuskan rumusan masalah.\n3. **Pengolahan Data & Diskusi Analitis (30 Menit)**: Menyusun grafik, tabel data, dan diagram alir pemecahan masalah.\n4. **Presentasi & Klarifikasi Konsep (25 Menit)**: Diskusi kelas, tanya jawab, dan penguatan materi oleh guru.\n\n#### C. KEGIATAN PENUTUP (15 Menit)\n1. **Refleksi Diri 3-2-1 (10 Menit)**: Menuliskan 3 hal dipelajari, 2 hal menarik, dan 1 pertanyaan tersisa.\n2. **Kesimpulan & Tindak Lanjut (5 Menit)**: Menyimpulkan poin pembelajaran dan instruksi tugas mandiri.`;
 
-    generatedContent += `\n\n---\n## XI. ASESMEN PEMBELAJARAN UTUH\n- **Asesmen Diagnostik**: Tes singkat tertulis & kuesioner profil belajar.\n- **Asesmen Formatif**: Rubrik observasi partisipasi diskusi & jurnal harian.\n- **Asesmen Sumatif**: Penilaian Proyek Solutif Kelompok & Tes Tertulis Esai Analitis.`;
+    generatedContent += `\n\n---\n## XI. ASESMEN PEMBELAJARAN UTUH\n- **Asesmen Diagnostik**: Tes tertulis singkat awal & pemetaan profil belajar murid.\n- **Asesmen Formatif**: Rubrik observasi partisipasi aktif diskusi kelompok & jurnal harian.\n- **Asesmen Sumatif**: Penilaian Proyek Solutif Kelompok & Tes Tertulis Analitis Komprehensif.`;
 
-    generatedContent += `\n\n---\n## XII. LEMBAR PENGESAHAN RESMI\n\n| Mengetahui, <br/> Kepala Sekolah | Jakarta, 23 Juli 2026 <br/> Guru Mata Pelajaran |\n| :--- | :--- |\n| <br/><br/> **Dr. Herman Wijaya, M.Pd.** <br/> NIP. 197503152002121003 | <br/><br/> **Tim Guru Penggerak, S.Pd.** <br/> NIP. 198808202014022001 |`;
+    generatedContent += `\n\n---\n## XII. LEMBAR PENGESAHAN RESMI\n\n| Mengetahui, <br/> Kepala Sekolah / Instansi | Jakarta, 23 Juli 2026 <br/> Guru Mata Pelajaran |\n| :--- | :--- |\n| <br/><br/> **Dr. Herman Wijaya, M.Pd.** <br/> NIP. 197503152002121003 | <br/><br/> **Tim Guru Penggerak, S.Pd.** <br/> NIP. 198808202014022001 |`;
 
     const newDoc = {
       id: `doc_${Date.now()}`,
@@ -1797,7 +1791,6 @@ Peserta didik mampu memahami konsep esensial ${topic}, mengaitkannya dengan feno
     onCreateDocument(newDoc);
     onClose();
   };
-// ... existing code ...
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-4">
@@ -1950,11 +1943,32 @@ export default function App() {
       status: 'In Progress',
       content: `# MODUL AJAR DEEP LEARNING: IPA & BIOLOGI FASE E (KELAS 10 SMA)
 
-## I. INFORMASI UMUM
-- **Mata Pelajaran**: IPA & Biologi
-- **Fase / Kelas**: Fase E (Kelas 10 SMA)
-- **Topik Utama**: Ekosistem, Keanekaragaman Hayati & Perubahan Lingkungan
-- **Alokasi Waktu**: 2 JP x 45 Menit
+## A. IDENTITAS MODUL
+| Komponen | Rincian Keterangan |
+| :--- | :--- |
+| **Nama Sekolah** | SMA Negeri 1 Jakarta |
+| **Nama Penyusun** | Intan Kartika Putri, S.Si. |
+| **Mata Pelajaran** | IPA & Biologi |
+| **Kelas / Fase / Semester** | X / Fase E / Ganjil |
+| **Alokasi Waktu** | 3 Jam Pelajaran (3 x 45 Menit) |
+| **Tahun Pelajaran** | 2024 / 2025 |
+
+---
+
+## B. IDENTIFIKASI KESIAPAN PESERTA DIDIK
+- **Pengetahuan Awal**: Pemahaman hirarki ekologi (individu, populasi, komunitas, ekosistem).
+- **Kebutuhan Belajar Berdiferensiasi**: Visual (diagram/video), Auditori (diskusi), Kinestetik (observasi lapangan).
+
+---
+
+## C. KARAKTERISTIK MATERI PELAJARAN
+- **Jenis Pengetahuan**: Konseptual & Prosedural interaksi ekosistem dan biogeokimia.
+- **Relevansi**: Penanganan isu lingkungan & pencemaran lokal.
+
+---
+
+## D. DIMENSI PROFIL LULUSAN
+- Penalaran Kritis, Kreativitas, Kolaborasi, dan Kepedulian Lingkungan.
 
 ---
 
