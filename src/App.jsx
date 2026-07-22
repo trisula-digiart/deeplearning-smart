@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 
 // Google Apps Script Webhook URL for Google Sheets syncing
 const GOOGLE_SHEETS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyJJp3CVGiAEkCQ-6zDTgS1Rz2Fz2vQYCvpn_hB-JkN13q9aWQOAFfAtpWH3cHnby6LEg/exec";
@@ -254,7 +254,7 @@ const generateRichAIContent = (instruction, subject = 'Informatika & STEM') => {
   } 
   
   if (text.includes('lkpd') || text.includes('lembar kerja')) {
-    return `\n\n---\n## XII. LEMBAR KERJA PESERTA DIDIK (LKPD)\n### 👥 Nama Kelompok: ____________________\n**Anggota Kelompok**: 1. _______________ 2. _______________ 3. _______________ \n\n#### A. PETUNJUK PENGERJAAN\n1. Bacalah studi kasus lingkungan lokal di bawah ini secara cermat.\n2. Diskusikan bersama anggota kelompokmu selama 20 menit.\n3. Susunlah model analisis menggunakan formula matematika dan diagram alir.\n\n#### B. TANTANGAN STUDI KASUS & FORMULA\nHitunglah estimasi efisiensi menggunakan rumus deviation berikut:\n\n$$S = \\sqrt{\\frac{\\sum (x_i - \\bar{x})^2}{n - 1}}$$\n\n| No | Indikator Variabel | Nilai Pengamatan ($x_i$) | Selisih ($x_i - \\bar{x}$) |\n| :--- | :--- | :--- | :--- |\n| **1** | Sampel Data Pertama | 15.5 | +2.1 |\n| **2** | Sampel Data Kedua | 13.4 | -0.0 |\n| **3** | Sampel Data Ketiga | 18.0 | +4.6 |\n\n#### C. PERTANYAAN REFLEKSI GROUPS\n1. Berdasarkan nilai $S$ yang kamu peroleh, apa kesimpulan kelompokmu? Tuliskan dalam 3 kalimat!`;
+    return `\n\n---\n## XII. LEMBAR KERJA PESERTA DIDIK (LKPD)\n### 👥 Nama Kelompok: ____________________\n**Anggota Kelompok**: 1. _______________ 2. _______________ 3. _______________ \n\n#### A. PETUNJUK PENGERJAAN\n1. Bacalah studi kasus lingkungan lokal di bawah ini secara cermat.\n2. Diskusikan bersama anggota kelompokmu selama 20 menit.\n3. Susunlah model analisis menggunakan formula matematika dan diagram alir.\n\n#### B. TANTANGAN STUDI KASUS & FORMULA\nHitunglah estimasi efisiensi menggunakan rumus deviasi berikut:\n\n$$S = \\sqrt{\\frac{\\sum (x_i - \\bar{x})^2}{n - 1}}$$\n\n| No | Indikator Variabel | Nilai Pengamatan ($x_i$) | Selisih ($x_i - \\bar{x}$) |\n| :--- | :--- | :--- | :--- |\n| **1** | Sampel Data Pertama | 15.5 | +2.1 |\n| **2** | Sampel Data Kedua | 13.4 | -0.0 |\n| **3** | Sampel Data Ketiga | 18.0 | +4.6 |\n\n#### C. PERTANYAAN REFLEKSI GROUPS\n1. Berdasarkan nilai $S$ yang kamu peroleh, apa kesimpulan kelompokmu? Tuliskan dalam 3 kalimat!`;
   }
 
   if (text.includes('prosem') || text.includes('program semester')) {
@@ -312,13 +312,14 @@ function LoginPage({ onLoginSuccess }) {
 
     setTimeout(() => {
       setIsLoading(false);
+      const isPrem = email.includes('admin') || email.includes('premium') || email.includes('budi');
       const userPayload = {
         id: `usr_${Math.floor(1000 + Math.random() * 9000)}`,
         name: fullName || (email.includes('admin') ? 'Root Admin Trisula' : email.split('@')[0]),
         email: email,
         role: selectedRole,
-        is_premium: selectedRole === 'admin' || email.includes('premium'),
-        kredit_tersisa: selectedRole === 'admin' || email.includes('premium') ? 250 : 1, // Free user starts with 1 credit
+        is_premium: isPrem,
+        kredit_tersisa: isPrem ? 250 : 1,
         doc_generated_count: 0,
         school: schoolName || 'SMA Negeri 1 Jakarta'
       };
@@ -524,7 +525,6 @@ function LoginPage({ onLoginSuccess }) {
           </button>
         </form>
 
-        {/* SINGLE DEMO BUTTON: USER GRATIS ONLY */}
         <div className="pt-2 border-t border-slate-800 space-y-2">
           <div className="text-[10px] text-center uppercase tracking-wider text-slate-400 font-semibold">
             ⚡ PENGUJIAN CEPAT / AKUN DEMO
@@ -933,7 +933,7 @@ function PaywallModal({ isOpen, onClose, userContext = {}, paywallReason = '' })
       <div className="bg-[#0B192C] border border-[#D4AF37] rounded-3xl max-w-xl w-full p-6 space-y-4 text-white shadow-2xl relative my-6">
         <div className="flex justify-between items-center border-b border-slate-800 pb-3">
           <h3 className="font-bold text-base text-[#D4AF37] flex items-center gap-2">
-            <span>🔒</span> Buka Akses Feature / Top Up Modul
+            <span>🔒</span> Buka Akses Feature / Top Up Kuota Modul
           </h3>
           <button onClick={onClose} className="text-slate-400 hover:text-white cursor-pointer font-bold text-sm">✕</button>
         </div>
@@ -995,9 +995,8 @@ function PaywallModal({ isOpen, onClose, userContext = {}, paywallReason = '' })
               <div className="text-base font-black text-indigo-400">Rp10.000 <span className="text-[9px] text-slate-400 font-normal">/ modul</span></div>
               <ul className="text-[10px] text-slate-300 space-y-1 pt-1 border-t border-slate-800/80">
                 <li className="flex items-center gap-1"><span className="text-emerald-400">✓</span> Hak Akses 1 Modul</li>
-                <li className="flex items-center gap-1"><span className="text-emerald-400">✓</span> Bebas Generate & Edit</li>
-                <li className="flex items-center gap-1"><span className="text-emerald-400">✓</span> Bebas Cetak Word/PDF</li>
-                <li className="flex items-center gap-1"><span className="text-emerald-400">✓</span> Tanpa Hangus</li>
+                <li className="flex items-center gap-1"><span className="text-emerald-400">✓</span> Bebas Generate & Cetak</li>
+                <li className="flex items-center gap-1"><span className="text-emerald-400">✓</span> Kuota Tanpa Hangus</li>
               </ul>
             </div>
             <a
@@ -1043,10 +1042,8 @@ function PaywallModal({ isOpen, onClose, userContext = {}, paywallReason = '' })
   );
 }
 
-function AIWorkspace({ activeDocument, onBackToDashboard, currentUser, onUpdateCurrentUser }) {
+function AIWorkspace({ activeDocument, onBackToDashboard, currentUser, onUpdateCurrentUser, onRequestPaywall }) {
   const [activeSubTab, setActiveSubTab] = useState('modul-ajar');
-  const [isPaywallOpen, setIsPaywallOpen] = useState(false);
-  const [paywallReason, setPaywallReason] = useState('');
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
   const defaultDoc = {
@@ -1158,7 +1155,7 @@ Berikut adalah formula dasar perhitungan laju pertumbuhan populasi dan rata-rata
     }
   }, [activeDocument]);
 
-  // Strict check: Export/Print requires an active Premium plan OR remaining credit > 0
+  // Check if user has active export privileges (Premium OR remaining credits > 0)
   const canExport = Boolean(currentUser?.is_premium || (currentUser?.kredit_tersisa && currentUser.kredit_tersisa > 0));
 
   const handleSendMessage = (customPrompt) => {
@@ -1184,14 +1181,15 @@ Berikut adalah formula dasar perhitungan laju pertumbuhan populasi dan rata-rata
 
   const handleOpenExportModal = () => {
     if (!canExport) {
-      setPaywallReason('Fitur Cetak dan Export Dokumen (Word, PDF, TXT) membutuhkan kuota/lisensi aktif. Silakan pilih Paket 1 Modul Ajar (Rp10.000) atau Paket Bulanan (Rp29.000) di bawah ini!');
-      setIsPaywallOpen(true);
+      if (onRequestPaywall) {
+        onRequestPaywall('Fitur Cetak dan Export Dokumen (Word, PDF, TXT) membutuhkan kuota modul atau akun Premium aktif.');
+      }
       return;
     }
     setIsExportModalOpen(true);
   };
 
-  // Helper to execute credit deduction ONLY when actual download or print takes place
+  // Credit Deduction ONLY when download or print occurs
   const deductQuotaOnAction = () => {
     if (!currentUser.is_premium && currentUser.kredit_tersisa > 0) {
       const updatedUser = {
@@ -1423,14 +1421,6 @@ Berikut adalah formula dasar perhitungan laju pertumbuhan populasi dan rata-rata
           </div>
         </div>
       )}
-
-      {/* PAYWALL MODAL */}
-      <PaywallModal
-        isOpen={isPaywallOpen}
-        onClose={() => setIsPaywallOpen(false)}
-        userContext={currentUser}
-        paywallReason={paywallReason}
-      />
     </div>
   );
 }
@@ -1829,13 +1819,20 @@ function WizardModal({ isOpen, onClose, onCreateDocument }) {
 }
 
 export default function App() {
-  // PERSISTENT USER SESSION HANDLING: Read logged-in user from localStorage
   const [currentUser, setCurrentUser] = useState(() => {
     try {
       const savedUser = localStorage.getItem('trisula_user_session');
-      return savedUser ? JSON.parse(savedUser) : null;
+      return savedUser ? JSON.parse(savedUser) : {
+        id: 'usr_free_01',
+        name: 'Siti Rahmawati, S.Pd.',
+        email: 'siti.rahma@sd.kemdikbud.go.id',
+        role: 'guru',
+        is_premium: false,
+        kredit_tersisa: 1,
+        doc_generated_count: 0,
+        school: 'SD Negeri 05 Kebayoran'
+      };
     } catch (e) {
-      console.error('Failed to parse user session from localStorage', e);
       return null;
     }
   });
@@ -1923,6 +1920,8 @@ Peserta didik mampu menganalisis interaksi antar komponen ekosistem, memahami pe
   const [currentView, setCurrentView] = useState('dashboard');
   const [activeDocument, setActiveDocument] = useState(documents[0]);
   const [isWizardOpen, setIsWizardOpen] = useState(false);
+  const [isPaywallOpen, setIsPaywallOpen] = useState(false);
+  const [paywallReason, setPaywallReason] = useState('');
   const [toastMessage, setToastMessage] = useState(null);
 
   const showToast = (msg) => {
@@ -1935,7 +1934,7 @@ Peserta didik mampu menganalisis interaksi antar komponen ekosistem, memahami pe
     try {
       localStorage.setItem('trisula_user_session', JSON.stringify(updatedUser));
     } catch (e) {
-      console.error('Failed to save user session to localStorage', e);
+      console.error('Failed to save user session', e);
     }
     setAllUsers(prev => prev.map(u => u.id === updatedUser.id ? updatedUser : u));
   };
@@ -1957,7 +1956,7 @@ Peserta didik mampu menganalisis interaksi antar komponen ekosistem, memahami pe
     try {
       localStorage.removeItem('trisula_user_session');
     } catch (e) {
-      console.error('Failed to clear user session from localStorage', e);
+      console.error('Failed to clear user session', e);
     }
     setCurrentView('dashboard');
     showToast('Anda telah keluar dari akun.');
@@ -1985,11 +1984,17 @@ Peserta didik mampu menganalisis interaksi antar komponen ekosistem, memahami pe
     setAllUsers(prev => [newUserPayload, ...prev]);
   };
 
+  // CHECK CAN CREATE OR EXPORT: Requires Premium OR remaining credit > 0
+  const canPerformAction = Boolean(currentUser?.is_premium || (currentUser?.kredit_tersisa && currentUser.kredit_tersisa > 0));
+
+  const handleTriggerPaywall = (reason) => {
+    setPaywallReason(reason || 'Batas kuota gratis Anda telah habis. Silakan pilih Paket 1 Modul Ajar (Rp10.000) atau Paket Bulanan (Rp29.000) di bawah ini!');
+    setIsPaywallOpen(true);
+  };
+
   const handleOpenWizard = () => {
-    const canCreate = currentUser?.is_premium || (currentUser?.kredit_tersisa && currentUser.kredit_tersisa > 0);
-    if (!canCreate) {
-      setActiveDocument(documents[0]);
-      setCurrentView('workspace');
+    if (!canPerformAction) {
+      handleTriggerPaywall('Pembuatan perangkat ajar baru memerlukan kuota modul aktif atau akun Premium.');
       return;
     }
     setIsWizardOpen(true);
@@ -2284,6 +2289,7 @@ Peserta didik mampu menganalisis interaksi antar komponen ekosistem, memahami pe
                 onBackToDashboard={() => setCurrentView('dashboard')} 
                 currentUser={currentUser}
                 onUpdateCurrentUser={handleUpdateCurrentUser}
+                onRequestPaywall={handleTriggerPaywall}
               />
             </div>
           )}
@@ -2323,6 +2329,14 @@ Peserta didik mampu menganalisis interaksi antar komponen ekosistem, memahami pe
         isOpen={isWizardOpen}
         onClose={() => setIsWizardOpen(false)}
         onCreateDocument={handleCreateDocument}
+      />
+
+      {/* GLOBAL PAYWALL MODAL */}
+      <PaywallModal
+        isOpen={isPaywallOpen}
+        onClose={() => setIsPaywallOpen(false)}
+        userContext={currentUser}
+        paywallReason={paywallReason}
       />
     </div>
   );
