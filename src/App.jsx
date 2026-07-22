@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 
-// Google Apps Script Webhook URL (Isi dengan Web App URL Deployment Google Apps Script kamu)
+// Google Apps Script Webhook URL
 const GOOGLE_SHEETS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyJJp3CVGiAEkCQ-6zDTgS1Rz2Fz2vQYCvpn_hB-JkN13q9aWQOAFfAtpWH3cHnby6LEg/exec";
 
 const syncUserToGoogleSheets = async (userData, action = 'SYNC_USER') => {
@@ -118,11 +118,6 @@ const Icons = {
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
     </svg>
-  ),
-  Copy: ({ className = "w-4 h-4 text-slate-400" }) => (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-    </svg>
   )
 };
 
@@ -136,7 +131,9 @@ const formatMathFormula = (formulaStr) => {
     .replace(/\\sqrt\{([^}]+)\}/g, '√($1)')
     .replace(/\\log/g, 'log')
     .replace(/\\times/g, '×')
-    .replace(/\\div/g, '÷');
+    .replace(/\\div/g, '÷')
+    .replace(/x_i/g, 'xᵢ')
+    .replace(/x_n/g, 'xₙ');
 };
 
 const parseMarkdownToHTML = (markdown) => {
@@ -164,6 +161,13 @@ const parseMarkdownToHTML = (markdown) => {
   let inTable = false;
   let tableBuffer = [];
 
+  const parseInlineMarkdown = (str) => {
+    return str
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      .replace(/`(.*?)`/g, '<code style="background:#F1F5F9; color:#1E3A8A; padding:2px 5px; border-radius:4px; font-family:monospace;">$1</code>');
+  };
+
   const renderTable = (rows) => {
     if (rows.length === 0) return '';
     let tableHtml = `<table border="1" cellpadding="8" cellspacing="0" style="width:100%; border-collapse:collapse; margin: 16px 0; font-size:12px; font-family: 'Segoe UI', sans-serif; border-color:#CBD5E1;">`;
@@ -180,7 +184,7 @@ const parseMarkdownToHTML = (markdown) => {
       if (rowIndex === 0) {
         tableHtml += `<tr style="background-color:#1E3A8A; color:#FFFFFF;">`;
         cells.forEach(cell => {
-          let parsedCell = cell.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+          let parsedCell = parseInlineMarkdown(cell);
           tableHtml += `<th style="border:1px solid #CBD5E1; padding:10px 12px; text-align:left; font-weight:bold; color:#FFFFFF;">${parsedCell}</th>`;
         });
         tableHtml += `</tr>`;
@@ -188,7 +192,7 @@ const parseMarkdownToHTML = (markdown) => {
         let bg = rowIndex % 2 === 0 ? '#F8FAFC' : '#FFFFFF';
         tableHtml += `<tr style="background-color:${bg}; color:#1E293B;">`;
         cells.forEach(cell => {
-          let parsedCell = cell.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+          let parsedCell = parseInlineMarkdown(cell);
           tableHtml += `<td style="border:1px solid #CBD5E1; padding:8px 12px;">${parsedCell}</td>`;
         });
         tableHtml += `</tr>`;
@@ -212,20 +216,23 @@ const parseMarkdownToHTML = (markdown) => {
       inTable = false;
     }
 
-    if (line.startsWith('# ')) {
-      htmlResult.push(`<h1 style="color:#1E3A8A; border-bottom:2px solid #D4AF37; padding-bottom:6px; font-size:18px; font-weight:bold; margin-top:18px; margin-bottom:12px;">${line.replace('# ', '').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</h1>`);
-    } else if (line.startsWith('## ')) {
-      htmlResult.push(`<h2 style="color:#1E3A8A; border-bottom:1px solid #E2E8F0; padding-bottom:4px; font-size:15px; font-weight:bold; margin-top:18px; margin-bottom:10px;">${line.replace('## ', '').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</h2>`);
+    // STRICT HEADING ORDER (#### before ### before ## before #)
+    if (line.startsWith('#### ')) {
+      htmlResult.push(`<h4 style="color:#D4AF37; font-size:13px; font-weight:bold; margin-top:14px; margin-bottom:6px;">${parseInlineMarkdown(line.replace('#### ', ''))}</h4>`);
     } else if (line.startsWith('### ')) {
-      htmlResult.push(`<h3 style="color:#2563EB; font-size:13px; font-weight:bold; margin-top:14px; margin-bottom:8px;">${line.replace('### ', '').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</h3>`);
+      htmlResult.push(`<h3 style="color:#2563EB; font-size:14px; font-weight:bold; margin-top:16px; margin-bottom:8px;">${parseInlineMarkdown(line.replace('### ', ''))}</h3>`);
+    } else if (line.startsWith('## ')) {
+      htmlResult.push(`<h2 style="color:#1E3A8A; border-bottom:1px solid #E2E8F0; padding-bottom:4px; font-size:16px; font-weight:bold; margin-top:20px; margin-bottom:10px;">${parseInlineMarkdown(line.replace('## ', ''))}</h2>`);
+    } else if (line.startsWith('# ')) {
+      htmlResult.push(`<h1 style="color:#1E3A8A; border-bottom:2px solid #D4AF37; padding-bottom:6px; font-size:18px; font-weight:bold; margin-top:18px; margin-bottom:12px;">${parseInlineMarkdown(line.replace('# ', ''))}</h1>`);
     } else if (line.trim() === '---') {
       htmlResult.push(`<hr style="border:0; border-top:1px solid #CBD5E1; margin:16px 0;"/>`);
     } else if (line.trim().startsWith('> ')) {
-      htmlResult.push(`<blockquote style="border-left:4px solid #D4AF37; background:#FEF3C7; padding:8px 12px; margin:10px 0; color:#78350F; font-size:11px;">${line.replace('> ', '')}</blockquote>`);
+      htmlResult.push(`<blockquote style="border-left:4px solid #D4AF37; background:#FEF3C7; padding:8px 12px; margin:10px 0; color:#78350F; font-size:11px;">${parseInlineMarkdown(line.replace('> ', ''))}</blockquote>`);
     } else if (line.trim().startsWith('- ')) {
-      htmlResult.push(`<li style="margin-left:20px; margin-bottom:4px; color:#334155;">${line.replace('- ', '').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</li>`);
-    } else if (line.trim().length > 0 && line.trim() !== '#') {
-      htmlResult.push(`<p style="margin-bottom:8px; color:#334155; line-height:1.6;">${line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</p>`);
+      htmlResult.push(`<li style="margin-left:20px; margin-bottom:4px; color:#334155;">${parseInlineMarkdown(line.replace('- ', ''))}</li>`);
+    } else if (line.trim().length > 0) {
+      htmlResult.push(`<p style="margin-bottom:8px; color:#334155; line-height:1.6;">${parseInlineMarkdown(line)}</p>`);
     }
   }
 
@@ -261,7 +268,7 @@ const generateRichAIContent = (instruction, subject = 'Informatika & STEM') => {
   }
 
   if (text.includes('tp') || text.includes('tujuan pembelajaran')) {
-    return `\n\n---\n## III. TUJUAN PEMBELAJARAN (TP)\n### 🎯 Poin Tujuan Pembelajaran ABCD (${upperSubject})\n\n- **TP1**: Menganalisis kompleksitas masalah menggunakan persamaan logika $\\bar{x} = \\frac{\\sum x_i}{n}$.\n- **TP2**: Menyusun diagram alir pemecahan masalah kontekstual.\n- **TP3**: Mempresentasikan hasil proyek kelompok secara kolaboratif.`;
+    return `\n\n---\n## III. TUJUAN PEMBELAJARAN (TP)\n### 🎯 Poin Tujuan Pembelajaran ABCD (${upperSubject})\n\n- **TP1**: Menganalisis kompleksitas masalah menggunakan persamaan logika $\\bar{x} = \\frac{\\sum x_i}{n}$.\n- **TP2**: Menyusun diagram alir pemecahan masalah kontekstual.\n- **TP3**: Mempresentasikan hasil analisis proyek kelompok secara kolaboratif.`;
   }
 
   if (text.includes('cp') || text.includes('capaian')) {
@@ -1349,7 +1356,7 @@ Berikut adalah formula dasar perhitungan laju pertumbuhan populasi dan rata-rata
   );
 }
 
-function MyFilesView({ documents, onOpenDocument, onDeleteDocument, onOpenWizard }) {
+function MyFilesView({ documents, onOpenDocument, onOpenInEditor, onDeleteDocument, onOpenWizard }) {
   const [searchTerm, setSearchTerm] = useState('');
 
   const filtered = documents.filter(doc => 
@@ -1420,13 +1427,24 @@ function MyFilesView({ documents, onOpenDocument, onDeleteDocument, onOpenWizard
                 <Icons.Trash />
               </button>
 
-              <button
-                onClick={() => onOpenDocument(doc)}
-                className="text-[#D4AF37] font-bold hover:underline flex items-center gap-1 cursor-pointer"
-              >
-                <span>Buka di Workspace</span>
-                <span>→</span>
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => onOpenInEditor(doc)}
+                  className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg text-[11px] font-semibold transition-all cursor-pointer flex items-center gap-1"
+                  title="Sunting di Editor Teks Rapih"
+                >
+                  <Icons.Edit className="w-3.5 h-3.5 text-[#D4AF37]" />
+                  <span>Editor Teks</span>
+                </button>
+
+                <button
+                  onClick={() => onOpenDocument(doc)}
+                  className="text-[#D4AF37] font-bold hover:underline flex items-center gap-1 cursor-pointer"
+                >
+                  <span>Buka Workspace</span>
+                  <span>→</span>
+                </button>
+              </div>
             </div>
           </div>
         ))}
@@ -1439,6 +1457,13 @@ function CleanEditorView({ activeDocument, onSaveDocument }) {
   const [title, setTitle] = useState(activeDocument?.title || 'Modul Ajar Deep Learning');
   const [content, setContent] = useState(activeDocument?.content || `# MODUL AJAR DEEP LEARNING\n\n## I. INFORMASI UMUM\n- **Mata Pelajaran**: General\n- **Fase**: Fase E`);
   const [toast, setToast] = useState(null);
+
+  useEffect(() => {
+    if (activeDocument) {
+      setTitle(activeDocument.title || 'Modul Ajar Deep Learning');
+      setContent(activeDocument.content || `# MODUL AJAR DEEP LEARNING\n\n## I. INFORMASI UMUM\n- **Mata Pelajaran**: ${activeDocument.subject || 'General'}\n- **Fase**: ${activeDocument.phase || 'Fase E'}`);
+    }
+  }, [activeDocument]);
 
   const showToast = (msg) => {
     setToast(msg);
@@ -1532,12 +1557,60 @@ function WizardModal({ isOpen, onClose, onCreateDocument }) {
   const [phase, setPhase] = useState('Fase E (Kelas 10 SMA)');
   const [topic, setTopic] = useState('Ekosistem, Keanekaragaman Hayati & Perubahan Lingkungan');
   const [hours, setHours] = useState('2 JP x 45 Menit');
+  
+  // Selection options for curriculum components
+  const [selectedComponents, setSelectedComponents] = useState({
+    modulAjar: true,
+    cp: true,
+    tp: true,
+    atp: true,
+    kktp: true,
+    prota: true,
+    prosem: true
+  });
+
   const [pillars, setPillars] = useState({ mindful: true, meaningful: true, joyful: true });
 
   if (!isOpen) return null;
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const upperSub = subject.toUpperCase();
+
+    let generatedContent = `# MODUL AJAR DEEP LEARNING: ${upperSub} ${phase.toUpperCase()}
+
+## I. INFORMASI UMUM
+- **Mata Pelajaran**: ${subject}
+- **Fase / Kelas**: ${phase}
+- **Topik Utama**: ${topic}
+- **Alokasi Waktu**: ${hours}`;
+
+    if (selectedComponents.cp) {
+      generatedContent += `\n\n---\n## II. CAPAIAN PEMBELAJARAN (CP)\n### 📘 Analisis Capaian Pembelajaran Elemen (${upperSub})\nPeserta didik mampu memahami konsep utama ${topic}, mengaitkannya dengan fenomena nyata, serta merancang solusi kreatif melalui pendekatan analisis kritis.`;
+    }
+
+    if (selectedComponents.tp) {
+      generatedContent += `\n\n---\n## III. TUJUAN PEMBELAJARAN (TP)\n### 🎯 Poin Tujuan Pembelajaran ABCD (${upperSub})\n- **TP1**: Menganalisis struktur dan dinamika ${topic}.\n- **TP2**: Menyusun model matematika/logika sederhana terkait ${topic}.\n- **TP3**: Mempresentasikan hasil analisis proyek kelompok secara kolaboratif.`;
+    }
+
+    if (selectedComponents.atp) {
+      generatedContent += `\n\n---\n## IV. ALUR TUJUAN PEMBELAJARAN (ATP)\n### 🗺️ Pemetaan Runtutan ATP (${upperSub})\n| Kode ATP | Alokasi Waktu | Indikator Ketercapaian | Rencana Asesmen |\n| :--- | :--- | :--- | :--- |\n| **ATP.01** | 2 JP | Mampu menganalisis efisiensi model matematika | Formatif Latihan Soal |\n| **ATP.02** | 2 JP | Mampu membuat diagram alir terstruktur | Unjuk Kerja Kelompok |`;
+    }
+
+    if (selectedComponents.kktp) {
+      generatedContent += `\n\n---\n## V. KRITERIA KETERCAPAIAN TUJUAN PEMBELAJARAN (KKTP)\n### 📊 Rubrik Observasi Unjuk Kerja Pemecahan Masalah (${upperSub})\n| Kriteria Penilaian | Belum Memenuhi (1) | Memenuhi (2-3) | Sangat Baik (4) |\n| :--- | :--- | :--- | :--- |\n| **Penerapan Konsep** | Salah mengidentifikasi komponen | Tepat mengidentifikasi 80% komponen | Tepat 100% & solutif |`;
+    }
+
+    if (selectedComponents.prota) {
+      generatedContent += `\n\n---\n## VI. PROGRAM TAHUNAN (PROTA)\n### 🗓️ Alokasi Efektif Jam Pelajaran Tahunan (${upperSub})\n| No | Bab / Elemen Materi Utama | Alokasi Waktu (JP) | Keterangan Semester |\n| :--- | :--- | :--- | :--- |\n| **1** | ${topic} | 18 JP | Semester 1 |`;
+    }
+
+    if (selectedComponents.prosem) {
+      generatedContent += `\n\n---\n## VII. PROGRAM SEMESTER (PROSEM)\n### 📅 Alokasi Pemetaan Jam Pelajaran Semester 1 & 2 (${upperSub})\n| No | Materi / Tujuan Pembelajaran | JP | Juli | Ags | Sep | Okt | Nov | Des |\n| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |\n| **1** | ${topic} | 6 JP | x | x | | | | |`;
+    }
+
+    generatedContent += `\n\n---\n## VIII. INTEGRASI 3 PILAR DEEP LEARNING\n${pillars.mindful ? '- **Mindful Learning**: Siswa diajak melakukan sesi hening STOP untuk membangun kesadaran belajar.' : ''}\n${pillars.meaningful ? '- **Meaningful Learning**: Menganalisis isu lingkungan lokal di sekitar lingkungan sekolah.' : ''}\n${pillars.joyful ? '- **Joyful Learning**: Kuis interaktif berbasis kelompok dan presentasi solutif.' : ''}`;
+
     const newDoc = {
       id: `doc_${Date.now()}`,
       title: `Modul Ajar ${subject} - ${topic}`,
@@ -1545,73 +1618,7 @@ function WizardModal({ isOpen, onClose, onCreateDocument }) {
       phase: phase,
       topic: topic,
       status: 'In Progress',
-      content: `# MODUL AJAR DEEP LEARNING: ${subject.toUpperCase()} ${phase.toUpperCase()}
-
-## I. INFORMASI UMUM
-- **Mata Pelajaran**: ${subject}
-- **Fase / Kelas**: ${phase}
-- **Topik Utama**: ${topic}
-- **Alokasi Waktu**: ${hours}
-
----
-
-## II. CAPAIAN PEMBELAJARAN (CP)
-### 📘 Analisis Capaian Pembelajaran Elemen (${subject.toUpperCase()})
-Peserta didik mampu memahami konsep utama ${topic}, mengaitkan dengan fenomena nyata, serta merancang solusi kreatif melalui pendekatan penyelidikan ilmiah.
-
----
-
-## III. TUJUAN PEMBELAJARAN (TP)
-### 🎯 Poin Tujuan Pembelajaran ABCD (${subject.toUpperCase()})
-- **TP1**: Menganalisis struktur dan dinamika ${topic}.
-- **TP2**: Menyusun model matematika/logika sederhana terkait ${topic}.
-- **TP3**: Mempresentasikan hasil analisis proyek kelompok secara kolaboratif.
-
----
-
-## IV. ALUR TUJUAN PEMBELAJARAN (ATP)
-### 🗺️ Pemetaan Runtutan ATP (${subject.toUpperCase()})
-| Kode ATP | Alokasi Waktu | Indikator Ketercapaian | Rencana Asesmen |
-| :--- | :--- | :--- | :--- |
-| **ATP.01** | 2 JP | Mampu menganalisis efisiensi model matematika | Formatif Latihan Soal |
-| **ATP.02** | 2 JP | Mampu membuat diagram alir terstruktur | Unjuk Kerja Kelompok |
-
----
-
-## V. KRITERIA KETERCAPAIAN TUJUAN PEMBELAJARAN (KKTP)
-### 📊 Rubrik Observasi Unjuk Kerja Pemecahan Masalah (${subject.toUpperCase()})
-| Kriteria Penilaian | Belum Memenuhi (1) | Memenuhi (2-3) | Sangat Baik (4) |
-| :--- | :--- | :--- | :--- |
-| **Penerapan Konsep** | Salah mengidentifikasi komponen | Tepat mengidentifikasi 80% komponen | Tepat 100% & solutif |
-
----
-
-## VI. PROGRAM TAHUNAN (PROTA)
-### 🗓️ Alokasi Efektif Jam Pelajaran Tahunan (${subject.toUpperCase()})
-| No | Bab / Elemen Materi Utama | Alokasi Waktu (JP) | Keterangan Semester |
-| :--- | :--- | :--- | :--- |
-| **1** | ${topic} | 18 JP | Semester 1 |
-
----
-
-## VII. PROGRAM SEMESTER (PROSEM)
-### 📅 Alokasi Pemetaan Jam Pelajaran Semester 1 & 2 (${subject.toUpperCase()})
-| No | Materi / Tujuan Pembelajaran | JP | Juli | Ags | Sep | Okt | Nov | Des |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **1** | ${topic} | 6 JP | x | x | | | | |
-
----
-
-## VIII. INTEGRASI 3 PILAR DEEP LEARNING
-${pillars.mindful ? '- **Mindful Learning**: Siswa diajak melakukan sesi hening STOP untuk membangun kesadaran belajar.' : ''}
-${pillars.meaningful ? '- **Meaningful Learning**: Menganalisis isu lingkungan lokal di sekitar lingkungan sekolah.' : ''}
-${pillars.joyful ? '- **Joyful Learning**: Kuis interaktif berbasis kelompok dan presentasi solutif.' : ''}
-
----
-
-## IX. DUKUNGAN RUMUS MATEMATIKA (LATEX FORMULA)
-- **Model Laju Pertumbuhan Populasi**: $$P(t) = P_0 e^{rt}$$
-- **Rata-rata Sampel**: $\\bar{x} = \\frac{\\sum x_i}{n}$`
+      content: generatedContent
     };
 
     onCreateDocument(newDoc);
@@ -1620,7 +1627,7 @@ ${pillars.joyful ? '- **Joyful Learning**: Kuis interaktif berbasis kelompok dan
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-[#0B192C] border border-[#D4AF37]/50 rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl text-white">
+      <div className="bg-[#0B192C] border border-[#D4AF37]/50 rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl text-white max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between border-b border-slate-800 pb-3">
           <h3 className="text-base font-bold text-[#D4AF37] flex items-center gap-2">
             <span>✨</span> Wizard Generator Perangkat Ajar Deep Learning
@@ -1677,6 +1684,43 @@ ${pillars.joyful ? '- **Joyful Learning**: Kuis interaktif berbasis kelompok dan
               onChange={(e) => setHours(e.target.value)}
               className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-[#D4AF37]"
             />
+          </div>
+
+          {/* CURRICULUM SECTIONS SELECTION */}
+          <div>
+            <label className="block text-xs font-semibold text-[#D4AF37] mb-1.5">
+              Pilihan Komponen Perangkat Ajar Wajib
+            </label>
+            <div className="grid grid-cols-2 gap-2 text-xs text-slate-300 bg-slate-950 p-3 rounded-xl border border-slate-800">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" checked={selectedComponents.modulAjar} onChange={(e) => setSelectedComponents({ ...selectedComponents, modulAjar: e.target.checked })} className="rounded bg-slate-900 text-[#D4AF37]" />
+                📘 Modul Ajar
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" checked={selectedComponents.cp} onChange={(e) => setSelectedComponents({ ...selectedComponents, cp: e.target.checked })} className="rounded bg-slate-900 text-[#D4AF37]" />
+                📘 CP (Capaian)
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" checked={selectedComponents.tp} onChange={(e) => setSelectedComponents({ ...selectedComponents, tp: e.target.checked })} className="rounded bg-slate-900 text-[#D4AF37]" />
+                🎯 TP (Tujuan)
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" checked={selectedComponents.atp} onChange={(e) => setSelectedComponents({ ...selectedComponents, atp: e.target.checked })} className="rounded bg-slate-900 text-[#D4AF37]" />
+                🗺️ ATP (Alur)
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" checked={selectedComponents.kktp} onChange={(e) => setSelectedComponents({ ...selectedComponents, kktp: e.target.checked })} className="rounded bg-slate-900 text-[#D4AF37]" />
+                📊 KKTP & Rubrik
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" checked={selectedComponents.prota} onChange={(e) => setSelectedComponents({ ...selectedComponents, prota: e.target.checked })} className="rounded bg-slate-900 text-[#D4AF37]" />
+                🗓️ Prota
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" checked={selectedComponents.prosem} onChange={(e) => setSelectedComponents({ ...selectedComponents, prosem: e.target.checked })} className="rounded bg-slate-900 text-[#D4AF37]" />
+                📅 Prosem
+              </label>
+            </div>
           </div>
 
           <div>
@@ -1815,7 +1859,7 @@ Peserta didik mampu melakukan evaluasi kritis terhadap penyajian data statistik.
     }
   ]);
 
-  const [currentView, setCurrentView] = useState('dashboard'); // 'dashboard', 'workspace', 'files', 'editor', 'admin'
+  const [currentView, setCurrentView] = useState('dashboard');
   const [activeDocument, setActiveDocument] = useState(documents[0]);
   const [isWizardOpen, setIsWizardOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
@@ -1875,6 +1919,11 @@ Peserta didik mampu melakukan evaluasi kritis terhadap penyajian data statistik.
   const handleOpenDocumentInWorkspace = (doc) => {
     setActiveDocument(doc);
     setCurrentView('workspace');
+  };
+
+  const handleOpenDocumentInEditor = (doc) => {
+    setActiveDocument(doc);
+    setCurrentView('editor');
   };
 
   const handleDeleteDocument = (docId) => {
@@ -2154,6 +2203,7 @@ Peserta didik mampu melakukan evaluasi kritis terhadap penyajian data statistik.
             <MyFilesView
               documents={documents}
               onOpenDocument={handleOpenDocumentInWorkspace}
+              onOpenInEditor={handleOpenDocumentInEditor}
               onDeleteDocument={handleDeleteDocument}
               onOpenWizard={() => setIsWizardOpen(true)}
             />
