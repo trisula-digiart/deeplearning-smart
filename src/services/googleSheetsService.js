@@ -10,7 +10,7 @@ export const syncUserToGoogleSheets = async (userData, action = 'SYNC_USER') => 
     console.warn('Webhook URL Google Sheets belum dikonfigurasi.');
     return false;
   }
-
+ 
   try {
     const response = await fetch(GOOGLE_SHEETS_WEBHOOK_URL, {
       method: 'POST',
