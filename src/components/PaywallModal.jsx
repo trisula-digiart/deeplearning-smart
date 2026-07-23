@@ -31,7 +31,7 @@ export default function PaywallModal({ isOpen, onClose, userContext = {}, target
     {
       id: 'monthly',
       name: 'Paket Langganan Bulanan',
-      price: 'Rp 29.000',
+      price: 'Rp 50.000',
       period: '/ bulan',
       badge: 'PALING POPULER',
       description: 'Akses tanpa batas untuk guru profesional yang aktif mengajar.',
@@ -48,7 +48,7 @@ export default function PaywallModal({ isOpen, onClose, userContext = {}, target
     {
       id: 'credits',
       name: 'Paket Kuota Dokumen',
-      price: 'Rp 10.000',
+      price: 'Rp 19.000',
       period: '/ 10 Dokumen',
       badge: 'HEMAT & FLEKSIBEL',
       description: 'Cocok untuk persiapan supervisi atau kebutuhan insidental.',
