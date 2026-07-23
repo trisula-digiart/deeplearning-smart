@@ -1,10 +1,39 @@
 import { GAS_API_URL, API_CONFIG } from '../config/api';
 
 /**
- * TRISULAPROMPT - Google Apps Script Service Engine v2.5
- * Author: TRISULACODER v8.7 - Lead Solution Architect
+ * TRISULAPROMPT - Google Apps Script Service Engine v2.6
+ * Author: TRISULACODER v9.5 - Lead Solution Architect
  * Module: Async REST Bridge for Google Apps Script & Google Sheets Database
  */
+
+/** 
+ * Mengambil sisa saldo token pengguna dari Google Apps Script API
+ * @param {string} [userEmail=''] - Email pengguna
+ * @returns {Promise<number|null>} Jumlah saldo token
+ */
+export async function getUserTokensFromGAS(userEmail = '') {
+  try {
+    if (!GAS_API_URL || GAS_API_URL.includes("PASANG_WEB_APP_URL")) {
+      console.warn('[GAS Engine] Web App URL belum dikonfigurasi, mengembalikan nilai default.');
+      return 15000;
+    }
+
+    const response = await fetch(`${GAS_API_URL}?action=getUserTokens&email=${encodeURIComponent(userEmail)}`, {
+      method: 'GET',
+      redirect: 'follow'
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP Error Status: ${response.status}`);
+    }
+
+    const json = await response.json();
+    return json.tokens ?? json.data?.tokens ?? 15000;
+  } catch (error) {
+    console.error('[GAS Engine Error] Gagal mengambil data token pengguna:', error);
+    return null;
+  }
+}
 
 /** 
  * Mengambil seluruh daftar proyek perangkat ajar dari Google Sheets via GAS API
