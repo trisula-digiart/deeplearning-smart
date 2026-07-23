@@ -25,8 +25,8 @@ const DANA_NAME = "iis istianawahid";
 
 const getUserTokensFromGAS = async (userEmail = '') => {
   try {
-    if (!GOOGLE_SHEETS_WEBHOOK_URL) {
-      return 15000;
+    if (!GOOGLE_SHEETS_WEBHOOK_URL || !userEmail) {
+      return 0; // Default strictly 0 untuk User Gratis
     }
 
     const response = await fetch(`${GOOGLE_SHEETS_WEBHOOK_URL}?action=getUserTokens&email=${encodeURIComponent(userEmail)}`, {
@@ -35,14 +35,14 @@ const getUserTokensFromGAS = async (userEmail = '') => {
     });
 
     if (!response.ok) {
-      return 15000;
+      return 0;
     }
 
     const json = await response.json();
-    return json.tokens ?? json.data?.tokens ?? 15000;
+    return json.tokens ?? json.data?.tokens ?? 0;
   } catch (error) {
     console.error('[GAS Engine Error] Gagal mengambil data token pengguna:', error);
-    return null;
+    return 0;
   }
 };
 
@@ -57,6 +57,58 @@ const syncUserToGoogleSheets = async (userData, action = 'SYNC_USER') => {
     });
   } catch (err) {
     console.error('Failed to sync with Google Sheets:', err);
+  }
+};
+
+const saveProjectToGAS = async (projectData) => {
+  if (!GOOGLE_SHEETS_WEBHOOK_URL) return;
+  try {
+    await fetch(GOOGLE_SHEETS_WEBHOOK_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'saveProject', project: projectData })
+    });
+  } catch (err) {
+    console.error('Failed to save project to Google Sheets:', err);
+  }
+};
+
+const deleteProjectFromGAS = async (projectId) => {
+  if (!GOOGLE_SHEETS_WEBHOOK_URL) return;
+  try {
+    await fetch(GOOGLE_SHEETS_WEBHOOK_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'deleteProject', id: projectId })
+    });
+  } catch (err) {
+    console.error('Failed to delete project from Google Sheets:', err);
+  }
+};
+
+const getProjectsFromGAS = async (userEmail) => {
+  if (!GOOGLE_SHEETS_WEBHOOK_URL || !userEmail) return null;
+  try {
+    const response = await fetch(`${GOOGLE_SHEETS_WEBHOOK_URL}?action=getProjects`, {
+      method: 'GET',
+      redirect: 'follow'
+    });
+    if (!response.ok) return null;
+    const json = await response.json();
+    if (json.data && Array.isArray(json.data)) {
+      // Filter proyek khusus milik user terdaftar
+      const searchEmail = userEmail.toLowerCase().trim();
+      return json.data.filter(p => 
+        (p.userEmail && p.userEmail.toLowerCase().trim() === searchEmail) ||
+        (p.userId && p.userId.toLowerCase().trim() === searchEmail)
+      );
+    }
+    return null;
+  } catch (err) {
+    console.error('Failed to load projects from Google Sheets:', err);
+    return null;
   }
 };
 
@@ -354,7 +406,7 @@ function LoginPage({ onLoginSuccess }) {
         email: email,
         role: selectedRole,
         is_premium: isPrem,
-        kredit_tersisa: isPrem ? "UNLIMITED" : 15000,
+        kredit_tersisa: isPrem ? "UNLIMITED" : 0, // STRICTLY 0 TOKEN DEFAULT UNTUK USER GRATIS
         doc_generated_count: 0,
         school: schoolName || 'SMA Negeri 1 Jakarta'
       };
@@ -380,7 +432,7 @@ function LoginPage({ onLoginSuccess }) {
       email: 'siti.rahma@sd.kemdikbud.go.id',
       role: 'guru',
       is_premium: false,
-      kredit_tersisa: 15000,
+      kredit_tersisa: 0, // STRICTLY 0 TOKEN DEFAULT
       doc_generated_count: 0,
       school: 'SD Negeri 05 Kebayoran'
     };
@@ -570,7 +622,7 @@ function LoginPage({ onLoginSuccess }) {
               onClick={handleDemoLogin}
               className="w-full py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-[#D4AF37] rounded-xl text-xs text-slate-200 font-semibold transition-all text-center cursor-pointer"
             >
-              User Gratis
+              User Gratis (0 Token)
             </button>
           </div>
         </div>
@@ -609,7 +661,7 @@ function AdminDashboard({ usersData, onUpdateUserStatus, onAddCredits, onAddUser
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [selectedUserForCredits, setSelectedUserForCredits] = useState(null);
-  const [creditAmount, setCreditAmount] = useState(1);
+  const [creditAmount, setCreditAmount] = useState(7);
   const [notification, setNotification] = useState(null);
 
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
@@ -618,7 +670,7 @@ function AdminDashboard({ usersData, onUpdateUserStatus, onAddCredits, onAddUser
     email: '',
     role: 'guru',
     is_premium: false,
-    kredit_tersisa: 15000,
+    kredit_tersisa: 0,
     school: ''
   });
 
@@ -629,7 +681,7 @@ function AdminDashboard({ usersData, onUpdateUserStatus, onAddCredits, onAddUser
 
   const defaultUsers = [
     { id: 'usr_001', name: 'Budi Santoso, M.Pd.', email: 'budi.santoso@guru.sma.sch.id', role: 'guru', is_premium: true, kredit_tersisa: "UNLIMITED", doc_generated_count: 14, school: 'SMA Negeri 1 Jakarta' },
-    { id: 'usr_002', name: 'Siti Rahmawati, S.Pd.', email: 'siti.rahma@sd.kemdikbud.go.id', role: 'guru', is_premium: false, kredit_tersisa: 15000, doc_generated_count: 1, school: 'SD Negeri 05 Kebayoran' },
+    { id: 'usr_002', name: 'Siti Rahmawati, S.Pd.', email: 'siti.rahma@sd.kemdikbud.go.id', role: 'guru', is_premium: false, kredit_tersisa: 0, doc_generated_count: 1, school: 'SD Negeri 05 Kebayoran' },
     { id: 'usr_003', name: 'Ahmad Dahlan, M.T.', email: 'ahmad.dahlan@yayasan.ac.id', role: 'guru', is_premium: false, kredit_tersisa: 0, doc_generated_count: 3, school: 'Yayasan Islam Pusat' },
   ];
 
@@ -673,9 +725,9 @@ function AdminDashboard({ usersData, onUpdateUserStatus, onAddCredits, onAddUser
     }
 
     syncUserToGoogleSheets(updatedUser, 'ADD_CREDITS');
-    showToast(`Berhasil +${added} kuota modul untuk ${selectedUserForCredits.name} & tersimpan ke Google Sheets.`);
+    showToast(`Berhasil +${added} token untuk ${selectedUserForCredits.name} & tersimpan ke Google Sheets.`);
     setSelectedUserForCredits(null);
-    setCreditAmount(1);
+    setCreditAmount(7);
   };
 
   const handleCreateUserSubmit = (e) => {
@@ -691,7 +743,7 @@ function AdminDashboard({ usersData, onUpdateUserStatus, onAddCredits, onAddUser
       email: newUserForm.email,
       role: newUserForm.role,
       is_premium: newUserForm.is_premium,
-      kredit_tersisa: newUserForm.is_premium ? "UNLIMITED" : (parseInt(newUserForm.kredit_tersisa, 10) || 15000),
+      kredit_tersisa: newUserForm.is_premium ? "UNLIMITED" : (parseInt(newUserForm.kredit_tersisa, 10) || 0),
       doc_generated_count: 0,
       school: newUserForm.school || 'Instansi Pendidikan'
     };
@@ -709,7 +761,7 @@ function AdminDashboard({ usersData, onUpdateUserStatus, onAddCredits, onAddUser
       email: '',
       role: 'guru',
       is_premium: false,
-      kredit_tersisa: 15000,
+      kredit_tersisa: 0,
       school: ''
     });
   };
@@ -767,7 +819,7 @@ function AdminDashboard({ usersData, onUpdateUserStatus, onAddCredits, onAddUser
                 <th className="p-4">Pengguna</th>
                 <th className="p-4">Role</th>
                 <th className="p-4">Status Lisensi</th>
-                <th className="p-4">Sisa Kuota Modul</th>
+                <th className="p-4">Sisa Token</th>
                 <th className="p-4 text-center">Aksi</th>
               </tr>
             </thead>
@@ -879,7 +931,7 @@ function AdminDashboard({ usersData, onUpdateUserStatus, onAddCredits, onAddUser
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1">Sisa Kuota Modul</label>
+                  <label className="block text-xs font-medium text-slate-300 mb-1">Sisa Token</label>
                   <input
                     type="number"
                     min="0"
@@ -952,12 +1004,12 @@ function PaywallModal({ isOpen, onClose, userContext = {}, paywallReason = '' })
 
   const userEmail = userContext.email || 'email@sekolah.sch.id';
 
-  const waMonthlyText = encodeURIComponent(
-    `Halo Admin TRISULA SMART LEARNING ENGINE,\n\nSaya telah melakukan pembayaran untuk Paket Bulanan Rp29.000.\n\n📌 Email Terdaftar: ${userEmail}\n📌 Bukti Transfer: (Terlampir)\n\nMohon bantuannya untuk mengaktifkan akses akun saya. Terima kasih!`
+  const wa7TokensText = encodeURIComponent(
+    `Halo Admin TRISULA SMART LEARNING ENGINE,\n\nSaya ingin membeli Paket 1 Set Cetak (7 Token) Rp 19.000.\n\n📌 Email Terdaftar: ${userEmail}\n📌 Bukti Transfer: (Terlampir)\n\nMohon bantuannya untuk menambahkan 7 Token ke akun saya. Terima kasih!`
   );
 
-  const waSingleText = encodeURIComponent(
-    `Halo Admin TRISULA SMART LEARNING ENGINE,\n\nSaya telah melakukan pembayaran untuk Paket 1 Modul Ajar Rp10.000.\n\n📌 Email Terdaftar: ${userEmail}\n📌 Bukti Transfer: (Terlampir)\n\nMohon bantuannya untuk menambahkan 1 kuota modul saya. Terima kasih!`
+  const waMonthlyText = encodeURIComponent(
+    `Halo Admin TRISULA SMART LEARNING ENGINE,\n\nSaya telah melakukan pembayaran untuk Paket Langganan Bulanan Rp 50.000 (30 Hari Unlimited).\n\n📌 Email Terdaftar: ${userEmail}\n📌 Bukti Transfer: (Terlampir)\n\nMohon bantuannya untuk mengaktifkan akses akun saya. Terima kasih!`
   );
 
   const waB2BText = encodeURIComponent(
@@ -966,10 +1018,10 @@ function PaywallModal({ isOpen, onClose, userContext = {}, paywallReason = '' })
 
   return (
     <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-[#0B192C] border border-[#D4AF37] rounded-3xl max-w-xl w-full p-6 space-y-4 text-white shadow-2xl relative my-6">
+      <div className="bg-[#0B192C] border border-[#D4AF37] rounded-3xl max-w-2xl w-full p-6 space-y-4 text-white shadow-2xl relative my-6">
         <div className="flex justify-between items-center border-b border-slate-800 pb-3">
           <h3 className="font-bold text-base text-[#D4AF37] flex items-center gap-2">
-            <span>🔒</span> Buka Akses Feature / Top Up Kuota Modul
+            <span>🔒</span> Akses Cetak / Export Terkunci
           </h3>
           <button onClick={onClose} className="text-slate-400 hover:text-white cursor-pointer font-bold text-sm">✕</button>
         </div>
@@ -992,7 +1044,7 @@ function PaywallModal({ isOpen, onClose, userContext = {}, paywallReason = '' })
               <span className="block text-[10px] text-slate-400">a.n. {BANK_BCA_NAME}</span>
             </div>
             <div className="p-2.5 bg-slate-950 rounded-xl border border-slate-800 space-y-0.5">
-              <span className="font-bold text-white block">💙 DANA</span>
+              <span className="font-bold text-white block">💙 DANA / E-Wallet</span>
               <span className="font-mono text-amber-300 text-xs font-bold block select-all">{DANA_NUMBER}</span>
               <span className="block text-[10px] text-slate-400">a.n. {DANA_NAME}</span>
             </div>
@@ -1001,16 +1053,38 @@ function PaywallModal({ isOpen, onClose, userContext = {}, paywallReason = '' })
 
         {/* 3 PACKAGE TIERS */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
-          {/* Paket 1: Bulanan */}
+          {/* OPSI 1: CETAK 1 SET (7 TOKEN) */}
+          <div className="bg-slate-900 p-3.5 border border-indigo-500/40 rounded-2xl space-y-2 flex flex-col justify-between hover:border-indigo-400 transition-all">
+            <div className="space-y-1">
+              <span className="px-2 py-0.5 bg-indigo-500/20 text-indigo-300 text-[9px] font-bold rounded-full uppercase">Eceran</span>
+              <div className="font-bold text-xs text-indigo-300 uppercase">1 Set (7 Token)</div>
+              <div className="text-base font-black text-indigo-400">Rp 19.000 <span className="text-[9px] text-slate-400 font-normal">/ 7 token</span></div>
+              <ul className="text-[10px] text-slate-300 space-y-1 pt-1 border-t border-slate-800/80">
+                <li className="flex items-center gap-1"><span className="text-emerald-400">✓</span> Cetak 1 Set Perangkat</li>
+                <li className="flex items-center gap-1"><span className="text-emerald-400">✓</span> Export Word & PDF</li>
+                <li className="flex items-center gap-1"><span className="text-emerald-400">✓</span> Kuota Tanpa Hangus</li>
+              </ul>
+            </div>
+            <a
+              href={`https://wa.me/${ADMIN_WA_NUMBER}?text=${wa7TokensText}`}
+              target="_blank"
+              rel="noreferrer"
+              className="block text-center py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition-colors shadow-lg cursor-pointer mt-2"
+            >
+              🟢 Beli 7 Token
+            </a>
+          </div>
+
+          {/* OPSI 2: BULANAN (RP 50.000 / 30 HARI) */}
           <div className="bg-slate-900 p-3.5 border border-amber-500/50 rounded-2xl space-y-2 flex flex-col justify-between hover:border-[#D4AF37] transition-all">
             <div className="space-y-1">
               <span className="px-2 py-0.5 bg-amber-500/20 text-amber-300 text-[9px] font-bold rounded-full uppercase">Paling Laris</span>
-              <div className="font-bold text-xs text-amber-300 uppercase">Paket Bulanan</div>
-              <div className="text-base font-black text-[#D4AF37]">Rp29.000 <span className="text-[9px] text-slate-400 font-normal">/ bln</span></div>
+              <div className="font-bold text-xs text-amber-300 uppercase">Langganan Bulanan</div>
+              <div className="text-base font-black text-[#D4AF37]">Rp 50.000 <span className="text-[9px] text-slate-400 font-normal">/ 30 hr</span></div>
               <ul className="text-[10px] text-slate-300 space-y-1 pt-1 border-t border-slate-800/80">
                 <li className="flex items-center gap-1"><span className="text-emerald-400">✓</span> Unlimited 30 Hari</li>
-                <li className="flex items-center gap-1"><span className="text-emerald-400">✓</span> Bebas Generate</li>
-                <li className="flex items-center gap-1"><span className="text-emerald-400">✓</span> Bebas Cetak Word/PDF</li>
+                <li className="flex items-center gap-1"><span className="text-emerald-400">✓</span> Unlimited Generate AI</li>
+                <li className="flex items-center gap-1"><span className="text-emerald-400">✓</span> Unlimited Cetak Word/PDF</li>
               </ul>
             </div>
             <a
@@ -1019,33 +1093,11 @@ function PaywallModal({ isOpen, onClose, userContext = {}, paywallReason = '' })
               rel="noreferrer"
               className="block text-center py-2 bg-[#D4AF37] hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-xs transition-colors shadow-lg cursor-pointer mt-2"
             >
-              🟢 Beli via WA
+              🟢 Beli Paket Bulanan
             </a>
           </div>
 
-          {/* Paket 2: 1 Modul Ajar */}
-          <div className="bg-slate-900 p-3.5 border border-indigo-500/40 rounded-2xl space-y-2 flex flex-col justify-between hover:border-indigo-400 transition-all">
-            <div className="space-y-1">
-              <span className="px-2 py-0.5 bg-indigo-500/20 text-indigo-300 text-[9px] font-bold rounded-full uppercase">Eceran</span>
-              <div className="font-bold text-xs text-indigo-300 uppercase">1 Modul Ajar</div>
-              <div className="text-base font-black text-indigo-400">Rp10.000 <span className="text-[9px] text-slate-400 font-normal">/ modul</span></div>
-              <ul className="text-[10px] text-slate-300 space-y-1 pt-1 border-t border-slate-800/80">
-                <li className="flex items-center gap-1"><span className="text-emerald-400">✓</span> Hak Akses 1 Modul</li>
-                <li className="flex items-center gap-1"><span className="text-emerald-400">✓</span> Bebas Generate & Cetak</li>
-                <li className="flex items-center gap-1"><span className="text-emerald-400">✓</span> Kuota Tanpa Hangus</li>
-              </ul>
-            </div>
-            <a
-              href={`https://wa.me/${ADMIN_WA_NUMBER}?text=${waSingleText}`}
-              target="_blank"
-              rel="noreferrer"
-              className="block text-center py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition-colors shadow-lg cursor-pointer mt-2"
-            >
-              🟢 Beli via WA
-            </a>
-          </div>
-
-          {/* Paket 3: Lisensi Sekolah B2B */}
+          {/* OPSI 3: B2B SEKOLAH */}
           <div className="bg-slate-900 p-3.5 border border-cyan-500/40 rounded-2xl space-y-2 flex flex-col justify-between hover:border-cyan-400 transition-all">
             <div className="space-y-1">
               <span className="px-2 py-0.5 bg-cyan-500/20 text-cyan-300 text-[9px] font-bold rounded-full uppercase">Instansi</span>
@@ -1186,7 +1238,12 @@ Peserta didik mampu menganalisis interaksi antar komponen ekosistem, memahami pe
     }
   }, [activeDocument]);
 
-  const canExport = Boolean(currentUser?.is_premium || (currentUser?.kredit_tersisa && currentUser.kredit_tersisa > 0));
+  // Cek token minimal 7 untuk cetak 1 set (atau Premium Unlimited)
+  const currentTokens = typeof currentUser?.kredit_tersisa === 'number' 
+    ? currentUser.kredit_tersisa 
+    : (currentUser?.kredit_tersisa === "UNLIMITED" ? 999999 : parseInt(currentUser?.kredit_tersisa, 10) || 0);
+
+  const canExport = Boolean(currentUser?.is_premium || currentTokens >= 7);
 
   const handleSendMessage = (customPrompt) => {
     const textToSend = customPrompt || inputInstruction;
@@ -1212,7 +1269,7 @@ Peserta didik mampu menganalisis interaksi antar komponen ekosistem, memahami pe
   const handleOpenExportModal = () => {
     if (!canExport) {
       if (onRequestPaywall) {
-        onRequestPaywall('Fitur Cetak dan Export Dokumen (Word, PDF, TXT) membutuhkan kuota modul atau akun Premium aktif.');
+        onRequestPaywall('Akun Uji Coba Gratis hanya dapat membuat/edit dokumen. Untuk Cetak/Export (Word/PDF), silakan berlangganan Paket 7 Token (Rp19.000) atau Paket Bulanan (Rp50.000).');
       }
       return;
     }
@@ -1220,11 +1277,11 @@ Peserta didik mampu menganalisis interaksi antar komponen ekosistem, memahami pe
   };
 
   const deductQuotaOnAction = () => {
-    if (!currentUser.is_premium && typeof currentUser.kredit_tersisa === 'number' && currentUser.kredit_tersisa > 0) {
+    if (!currentUser.is_premium && typeof currentUser.kredit_tersisa === 'number' && currentUser.kredit_tersisa >= 7) {
       const updatedUser = {
         ...currentUser,
         doc_generated_count: (currentUser.doc_generated_count || 0) + 1,
-        kredit_tersisa: Math.max(0, currentUser.kredit_tersisa - 1)
+        kredit_tersisa: Math.max(0, currentUser.kredit_tersisa - 7) // PEMOTONGAN STRICT 7 TOKEN
       };
       if (onUpdateCurrentUser) onUpdateCurrentUser(updatedUser);
       syncUserToGoogleSheets(updatedUser, 'DEDUCT_CREDIT');
@@ -1411,7 +1468,7 @@ Peserta didik mampu menganalisis interaksi antar komponen ekosistem, memahami pe
               <button onClick={() => setIsExportModalOpen(false)} className="text-slate-400 hover:text-white cursor-pointer">✕</button>
             </div>
             
-            <p className="text-xs text-slate-300">Pilih format unduhan untuk dokumen perangkat ajar Anda:</p>
+            <p className="text-xs text-slate-300">Pilih format unduhan untuk dokumen perangkat ajar Anda (-7 Token):</p>
 
             <div className="space-y-2.5">
               <button
@@ -1420,7 +1477,7 @@ Peserta didik mampu menganalisis interaksi antar komponen ekosistem, memahami pe
               >
                 <div>
                   <div className="text-white">🟦 Unduh Berkas Word (.doc)</div>
-                  <div className="text-[10px] text-slate-400 font-normal">Layout Tabel Native Presisi</div>
+                  <div className="text-[10px] text-slate-400 font-normal">Layout Tabel Native Presisi (-7 Token)</div>
                 </div>
                 <span className="text-[#D4AF37]">Unduh →</span>
               </button>
@@ -1431,7 +1488,7 @@ Peserta didik mampu menganalisis interaksi antar komponen ekosistem, memahami pe
               >
                 <div>
                   <div className="text-white">📄 Unduh Teks Polos (.txt)</div>
-                  <div className="text-[10px] text-slate-400 font-normal">Format Markdown murni</div>
+                  <div className="text-[10px] text-slate-400 font-normal">Format Markdown murni (-7 Token)</div>
                 </div>
                 <span className="text-[#D4AF37]">Unduh →</span>
               </button>
@@ -1442,7 +1499,7 @@ Peserta didik mampu menganalisis interaksi antar komponen ekosistem, memahami pe
               >
                 <div>
                   <div className="text-white">🖨️ Cetak / Simpan PDF</div>
-                  <div className="text-[10px] text-slate-400 font-normal">Mencetak kanvas dokumen A4</div>
+                  <div className="text-[10px] text-slate-400 font-normal">Mencetak kanvas dokumen A4 (-7 Token)</div>
                 </div>
                 <span className="text-[#D4AF37]">Cetak →</span>
               </button>
@@ -1949,6 +2006,187 @@ Peserta didik mampu memahami konsep esensial ${topic}, mengaitkannya dengan feno
   );
 }
 
+export function SaaSDashboard({
+  projects = [],
+  setActiveProject,
+  setActiveTab,
+  onOpenWizard
+}) {
+  const inProgressCount = projects.filter((p) => p.status !== 'Completed').length;
+  const completedCount = projects.filter((p) => p.status === 'Completed').length;
+
+  return (
+    <div className="p-6 max-w-7xl mx-auto space-y-6 animate-fadeIn">
+      {/* Hero Welcome Banner */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-900/60 via-slate-900 to-slate-900 border border-indigo-500/20 p-8 shadow-2xl">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative z-10 max-w-2xl space-y-3">
+          <span className="px-3 py-1 bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded-full text-xs font-semibold tracking-wide">
+            SaaS Engine Kurikulum Merdeka v2.5
+          </span>
+          <h2 className="text-3xl font-extrabold text-white tracking-tight leading-tight">
+            Selamat Datang, Bapak/Ibu Guru Hebat! 🚀
+          </h2>
+          <p className="text-sm text-slate-300 leading-relaxed">
+            Rancang Modul Ajar, TP, ATP, KKTP, Prota, dan Prosem terintegrasi 3 Pilar Deep Learning (Mindful, Meaningful, Joyful) secara otomatis dan presisi.
+          </p>
+          <div className="pt-2 flex flex-wrap items-center gap-3">
+            <button
+              onClick={onOpenWizard}
+              className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs px-5 py-3 rounded-xl shadow-lg shadow-amber-500/20 flex items-center gap-2 transition active:scale-95 cursor-pointer"
+            >
+              <Sparkles className="w-4 h-4" />
+              Mulai Wizard Deep Learning
+            </button>
+            <button
+              onClick={() => setActiveTab('projects')}
+              className="bg-slate-800/80 hover:bg-slate-800 text-slate-200 text-xs px-4 py-3 rounded-xl border border-slate-700 font-semibold transition cursor-pointer"
+            >
+              Lihat Semua Proyek
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Key Performance Indicator (KPI) Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Total Projects Card */}
+        <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 flex items-center justify-between shadow-lg hover:border-slate-700 transition">
+          <div>
+            <p className="text-xs text-slate-400 font-medium">Total Perangkat Ajar</p>
+            <p className="text-2xl font-black text-white mt-1">{projects.length}</p>
+            <span className="text-[10px] text-emerald-400 flex items-center gap-1 mt-1 font-semibold">
+              <CheckCircle2 className="w-3 h-3" /> Terbuka di Local Storage
+            </span>
+          </div>
+          <div className="w-12 h-12 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
+            <Layers className="w-6 h-6" />
+          </div>
+        </div>
+
+        {/* In Progress Card */}
+        <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 flex items-center justify-between shadow-lg hover:border-slate-700 transition">
+          <div>
+            <p className="text-xs text-slate-400 font-medium">Dalam Proses (Draft)</p>
+            <p className="text-2xl font-black text-amber-400 mt-1">{inProgressCount}</p>
+            <span className="text-[10px] text-amber-400 flex items-center gap-1 mt-1 font-semibold">
+              <Clock className="w-3 h-3" /> Butuh peninjauan TP/ATP
+            </span>
+          </div>
+          <div className="w-12 h-12 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400">
+            <Clock className="w-6 h-6" />
+          </div>
+        </div>
+
+        {/* Completed Card */}
+        <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 flex items-center justify-between shadow-lg hover:border-slate-700 transition">
+          <div>
+            <p className="text-xs text-slate-400 font-medium">Selesai & Siap Cetak</p>
+            <p className="text-2xl font-black text-emerald-400 mt-1">{completedCount}</p>
+            <span className="text-[10px] text-emerald-400 flex items-center gap-1 mt-1 font-semibold">
+              <CheckCircle2 className="w-3 h-3" /> Siap di-export PDF/Word
+            </span>
+          </div>
+          <div className="w-12 h-12 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+            <CheckCircle2 className="w-6 h-6" />
+          </div>
+        </div>
+
+        {/* Saved Time Metric Card */}
+        <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 flex items-center justify-between shadow-lg hover:border-slate-700 transition">
+          <div>
+            <p className="text-xs text-slate-400 font-medium">Estimasi Waktu Dihemat</p>
+            <p className="text-2xl font-black text-indigo-400 mt-1">18.5 Jam</p>
+            <span className="text-[10px] text-indigo-300 flex items-center gap-1 mt-1 font-semibold">
+              <Zap className="w-3 h-3 text-amber-400 fill-amber-400" /> Otomasi Deep Learning
+            </span>
+          </div>
+          <div className="w-12 h-12 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-300">
+            <Zap className="w-6 h-6 text-amber-400 fill-amber-400" />
+          </div>
+        </div>
+      </div>
+
+      {/* Recent Teaching Material Drafts */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-bold text-white flex items-center gap-2">
+            <FileText className="w-5 h-5 text-indigo-400" /> Draft Perangkat Ajar Terbaru
+          </h3>
+          <button
+            onClick={() => setActiveTab('projects')}
+            className="text-xs text-indigo-400 hover:text-indigo-300 font-semibold flex items-center gap-1 transition cursor-pointer"
+          >
+            Lihat Semua <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
+
+        {projects.length === 0 ? (
+          <div className="p-8 text-center bg-slate-900/60 border border-slate-800 rounded-2xl text-slate-400 text-xs">
+            Belum ada proyek perangkat ajar. Klik tombol "Mulai Wizard Deep Learning" di atas untuk membuat.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {projects.slice(0, 4).map((proj) => (
+              <div
+                key={proj.id}
+                onClick={() => {
+                  setActiveProject(proj);
+                  setActiveTab('workspace');
+                }}
+                className="group bg-slate-900/90 hover:bg-slate-800/90 border border-slate-800 hover:border-indigo-500/50 rounded-2xl p-5 transition cursor-pointer shadow-lg space-y-3"
+              >
+                <div className="flex items-start justify-between">
+                  <div>
+                    <span className="text-[10px] font-bold text-indigo-400 bg-indigo-500/10 px-2.5 py-1 rounded-full border border-indigo-500/20">
+                      {proj.subject} • {proj.grade}
+                    </span>
+                    <h4 className="font-bold text-slate-100 group-hover:text-amber-300 transition mt-2 text-sm">
+                      {proj.title}
+                    </h4>
+                  </div>
+                  <span
+                    className={`text-[10px] px-2 py-0.5 rounded-md font-bold ${
+                      proj.status === 'Completed'
+                        ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                        : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                    }`}
+                  >
+                    {proj.status}
+                  </span>
+                </div>
+
+                <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">{proj.cp}</p>
+
+                {/* Progress Bar */}
+                <div className="space-y-1">
+                  <div className="flex justify-between text-[11px] text-slate-400 font-medium">
+                    <span>Kelengkapan Dokumen</span>
+                    <span>{proj.progress}%</span>
+                  </div>
+                  <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-indigo-500 to-amber-400 transition-all duration-500"
+                      style={{ width: `${proj.progress}%` }}
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-2 flex items-center justify-between text-[11px] text-slate-500 border-t border-slate-800/60">
+                  <span>Diedit {proj.lastEdited}</span>
+                  <span className="text-indigo-400 group-hover:translate-x-1 transition flex items-center gap-1 font-semibold">
+                    Buka AI Workspace <ChevronRight className="w-3.5 h-3.5" />
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const [currentUser, setCurrentUser] = useState(() => {
     try {
@@ -1961,27 +2199,16 @@ export default function App() {
 
   const [userTokens, setUserTokens] = useState(null);
 
-  useEffect(() => {
-    if (currentUser?.email) {
-      getUserTokensFromGAS(currentUser.email).then(tokens => {
-        if (tokens !== null && tokens !== undefined) {
-          setUserTokens(tokens);
-        } else {
-          setUserTokens(currentUser.is_premium ? 'UNLIMITED' : (currentUser.kredit_tersisa ?? 15000));
-        }
-      });
-    }
-  }, [currentUser?.email, currentUser?.kredit_tersisa, currentUser?.is_premium]);
-
   const [allUsers, setAllUsers] = useState([
     { id: 'usr_admin_master', name: 'Root Admin Trisula', email: 'admin@trisula.ai', role: 'admin', is_premium: true, kredit_tersisa: "UNLIMITED", doc_generated_count: 0, school: 'HQ Trisula Engine' },
     { id: 'usr_premium_01', name: 'Budi Santoso, M.Pd.', email: 'budi.santoso@guru.sma.sch.id', role: 'guru', is_premium: true, kredit_tersisa: "UNLIMITED", doc_generated_count: 14, school: 'SMA Negeri 1 Jakarta' },
-    { id: 'usr_free_01', name: 'Siti Rahmawati, S.Pd.', email: 'siti.rahma@sd.kemdikbud.go.id', role: 'guru', is_premium: false, kredit_tersisa: 15000, doc_generated_count: 0, school: 'SD Negeri 05 Kebayoran' }
+    { id: 'usr_free_01', name: 'Siti Rahmawati, S.Pd.', email: 'siti.rahma@sd.kemdikbud.go.id', role: 'guru', is_premium: false, kredit_tersisa: 0, doc_generated_count: 0, school: 'SD Negeri 05 Kebayoran' }
   ]);
 
   const [documents, setDocuments] = useState([
     {
       id: 'doc_01',
+      userEmail: 'siti.rahma@sd.kemdikbud.go.id',
       title: 'Modul Ajar IPA & Biologi - Ekosistem & Keanekaragaman Hayati',
       subject: 'IPA & Biologi',
       phase: 'Fase E (Kelas 10 SMA)',
@@ -2086,6 +2313,29 @@ Peserta didik mampu menganalisis interaksi antar komponen ekosistem, memahami pe
     setTimeout(() => setToastMessage(null), 3000);
   };
 
+  useEffect(() => {
+    if (currentUser?.email) {
+      // 1. Ambil Sisa Token Realtime
+      getUserTokensFromGAS(currentUser.email).then(tokens => {
+        if (tokens !== null && tokens !== undefined) {
+          setUserTokens(tokens);
+        } else {
+          setUserTokens(currentUser.is_premium ? 'UNLIMITED' : (currentUser.kredit_tersisa ?? 0));
+        }
+      });
+
+      // 2. Ambil Daftar Proyek Milik Member dari Google Sheets
+      getProjectsFromGAS(currentUser.email).then(userProjects => {
+        if (userProjects && userProjects.length > 0) {
+          setDocuments(userProjects);
+          if (!activeDocument || !userProjects.some(p => p.id === activeDocument.id)) {
+            setActiveDocument(userProjects[0]);
+          }
+        }
+      });
+    }
+  }, [currentUser?.email]);
+
   const handleUpdateCurrentUser = (updatedUser) => {
     setCurrentUser(updatedUser);
     try {
@@ -2142,26 +2392,35 @@ Peserta didik mampu menganalisis interaksi antar komponen ekosistem, memahami pe
     setAllUsers(prev => [newUserPayload, ...prev]);
   };
 
-  const canPerformAction = Boolean(currentUser?.is_premium || (currentUser?.kredit_tersisa && (currentUser.kredit_tersisa === "UNLIMITED" || currentUser.kredit_tersisa > 0)));
+  const currentTokens = typeof currentUser?.kredit_tersisa === 'number' 
+    ? currentUser.kredit_tersisa 
+    : (currentUser?.kredit_tersisa === "UNLIMITED" ? 999999 : parseInt(currentUser?.kredit_tersisa, 10) || 0);
+
+  const canPerformAction = Boolean(currentUser?.is_premium || currentTokens >= 7);
 
   const handleTriggerPaywall = (reason) => {
-    setPaywallReason(reason || 'Batas kuota gratis Anda telah habis. Silakan pilih Paket 1 Modul Ajar (Rp10.000) atau Paket Bulanan (Rp29.000) di bawah ini!');
+    setPaywallReason(reason || 'Akun Uji Coba Gratis hanya dapat membuat/edit dokumen. Untuk Cetak/Export (Word/PDF), silakan berlangganan Paket 7 Token (Rp19.000) atau Paket Bulanan (Rp50.000).');
     setIsPaywallOpen(true);
   };
 
   const handleOpenWizard = () => {
-    if (!canPerformAction) {
-      handleTriggerPaywall('Pembuatan perangkat ajar baru memerlukan kuota modul aktif atau akun Premium.');
-      return;
-    }
     setIsWizardOpen(true);
   };
 
   const handleCreateDocument = (newDoc) => {
-    setDocuments(prev => [newDoc, ...prev]);
-    setActiveDocument(newDoc);
+    const docWithUser = {
+      ...newDoc,
+      userId: currentUser?.id,
+      userEmail: currentUser?.email
+    };
+
+    setDocuments(prev => [docWithUser, ...prev]);
+    setActiveDocument(docWithUser);
     setCurrentView('workspace');
-    showToast(`Perangkat Ajar "${newDoc.title}" berhasil dibuat!`);
+
+    // Otomatis Simpan Proyek Baru ke Google Sheets
+    saveProjectToGAS(docWithUser);
+    showToast(`Perangkat Ajar "${newDoc.title}" berhasil dibuat & tersimpan di Sheet!`);
   };
 
   const handleOpenDocumentInWorkspace = (doc) => {
@@ -2176,13 +2435,20 @@ Peserta didik mampu menganalisis interaksi antar komponen ekosistem, memahami pe
 
   const handleDeleteDocument = (docId) => {
     setDocuments(prev => prev.filter(d => d.id !== docId));
-    showToast('Berkas berhasil dihapus dari daftar.');
+    deleteProjectFromGAS(docId);
+    showToast('Berkas berhasil dihapus.');
   };
 
   const handleSaveEditorDocument = (updatedDoc) => {
-    setDocuments(prev => prev.map(d => d.id === updatedDoc.id ? updatedDoc : d));
-    setActiveDocument(updatedDoc);
-    showToast('Perubahan berkas berhasil disimpan!');
+    const docWithUser = {
+      ...updatedDoc,
+      userId: currentUser?.id,
+      userEmail: currentUser?.email
+    };
+    setDocuments(prev => prev.map(d => d.id === updatedDoc.id ? docWithUser : d));
+    setActiveDocument(docWithUser);
+    saveProjectToGAS(docWithUser);
+    showToast('Perubahan berkas berhasil disimpan & tersinkron ke Sheet!');
   };
 
   if (!currentUser) {
@@ -2191,7 +2457,7 @@ Peserta didik mampu menganalisis interaksi antar komponen ekosistem, memahami pe
 
   const formattedTokens = userTokens !== null && userTokens !== undefined 
     ? (typeof userTokens === 'number' ? userTokens.toLocaleString('id-ID') : userTokens)
-    : (currentUser?.is_premium ? 'UNLIMITED' : (currentUser?.kredit_tersisa ?? 15000).toLocaleString('id-ID'));
+    : (currentUser?.is_premium ? 'UNLIMITED' : (currentUser?.kredit_tersisa ?? 0).toLocaleString('id-ID'));
 
   return (
     <div className="min-h-screen bg-[#070F1E] text-slate-100 font-sans flex flex-col selection:bg-[#D4AF37] selection:text-slate-950">
@@ -2514,187 +2780,6 @@ Peserta didik mampu menganalisis interaksi antar komponen ekosistem, memahami pe
         userContext={currentUser}
         paywallReason={paywallReason}
       />
-    </div>
-  );
-}
-
-export function SaaSDashboard({
-  projects = [],
-  setActiveProject,
-  setActiveTab,
-  onOpenWizard
-}) {
-  const inProgressCount = projects.filter((p) => p.status !== 'Completed').length;
-  const completedCount = projects.filter((p) => p.status === 'Completed').length;
-
-  return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6 animate-fadeIn">
-      {/* Hero Welcome Banner */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-900/60 via-slate-900 to-slate-900 border border-indigo-500/20 p-8 shadow-2xl">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="relative z-10 max-w-2xl space-y-3">
-          <span className="px-3 py-1 bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded-full text-xs font-semibold tracking-wide">
-            SaaS Engine Kurikulum Merdeka v2.5
-          </span>
-          <h2 className="text-3xl font-extrabold text-white tracking-tight leading-tight">
-            Selamat Datang, Bapak/Ibu Guru Hebat! 🚀
-          </h2>
-          <p className="text-sm text-slate-300 leading-relaxed">
-            Rancang Modul Ajar, TP, ATP, KKTP, Prota, dan Prosem terintegrasi 3 Pilar Deep Learning (Mindful, Meaningful, Joyful) secara otomatis dan presisi.
-          </p>
-          <div className="pt-2 flex flex-wrap items-center gap-3">
-            <button
-              onClick={onOpenWizard}
-              className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs px-5 py-3 rounded-xl shadow-lg shadow-amber-500/20 flex items-center gap-2 transition active:scale-95 cursor-pointer"
-            >
-              <Sparkles className="w-4 h-4" />
-              Mulai Wizard Deep Learning
-            </button>
-            <button
-              onClick={() => setActiveTab('projects')}
-              className="bg-slate-800/80 hover:bg-slate-800 text-slate-200 text-xs px-4 py-3 rounded-xl border border-slate-700 font-semibold transition cursor-pointer"
-            >
-              Lihat Semua Proyek
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Key Performance Indicator (KPI) Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Total Projects Card */}
-        <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 flex items-center justify-between shadow-lg hover:border-slate-700 transition">
-          <div>
-            <p className="text-xs text-slate-400 font-medium">Total Perangkat Ajar</p>
-            <p className="text-2xl font-black text-white mt-1">{projects.length}</p>
-            <span className="text-[10px] text-emerald-400 flex items-center gap-1 mt-1 font-semibold">
-              <CheckCircle2 className="w-3 h-3" /> Terbuka di Local Storage
-            </span>
-          </div>
-          <div className="w-12 h-12 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
-            <Layers className="w-6 h-6" />
-          </div>
-        </div>
-
-        {/* In Progress Card */}
-        <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 flex items-center justify-between shadow-lg hover:border-slate-700 transition">
-          <div>
-            <p className="text-xs text-slate-400 font-medium">Dalam Proses (Draft)</p>
-            <p className="text-2xl font-black text-amber-400 mt-1">{inProgressCount}</p>
-            <span className="text-[10px] text-amber-400 flex items-center gap-1 mt-1 font-semibold">
-              <Clock className="w-3 h-3" /> Butuh peninjauan TP/ATP
-            </span>
-          </div>
-          <div className="w-12 h-12 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400">
-            <Clock className="w-6 h-6" />
-          </div>
-        </div>
-
-        {/* Completed Card */}
-        <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 flex items-center justify-between shadow-lg hover:border-slate-700 transition">
-          <div>
-            <p className="text-xs text-slate-400 font-medium">Selesai & Siap Cetak</p>
-            <p className="text-2xl font-black text-emerald-400 mt-1">{completedCount}</p>
-            <span className="text-[10px] text-emerald-400 flex items-center gap-1 mt-1 font-semibold">
-              <CheckCircle2 className="w-3 h-3" /> Siap di-export PDF/Word
-            </span>
-          </div>
-          <div className="w-12 h-12 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-            <CheckCircle2 className="w-6 h-6" />
-          </div>
-        </div>
-
-        {/* Saved Time Metric Card */}
-        <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 flex items-center justify-between shadow-lg hover:border-slate-700 transition">
-          <div>
-            <p className="text-xs text-slate-400 font-medium">Estimasi Waktu Dihemat</p>
-            <p className="text-2xl font-black text-indigo-400 mt-1">18.5 Jam</p>
-            <span className="text-[10px] text-indigo-300 flex items-center gap-1 mt-1 font-semibold">
-              <Zap className="w-3 h-3 text-amber-400 fill-amber-400" /> Otomasi Deep Learning
-            </span>
-          </div>
-          <div className="w-12 h-12 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-300">
-            <Zap className="w-6 h-6 text-amber-400 fill-amber-400" />
-          </div>
-        </div>
-      </div>
-
-      {/* Recent Teaching Material Drafts */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-bold text-white flex items-center gap-2">
-            <FileText className="w-5 h-5 text-indigo-400" /> Draft Perangkat Ajar Terbaru
-          </h3>
-          <button
-            onClick={() => setActiveTab('projects')}
-            className="text-xs text-indigo-400 hover:text-indigo-300 font-semibold flex items-center gap-1 transition cursor-pointer"
-          >
-            Lihat Semua <ChevronRight className="w-4 h-4" />
-          </button>
-        </div>
-
-        {projects.length === 0 ? (
-          <div className="p-8 text-center bg-slate-900/60 border border-slate-800 rounded-2xl text-slate-400 text-xs">
-            Belum ada proyek perangkat ajar. Klik tombol "Mulai Wizard Deep Learning" di atas untuk membuat.
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {projects.slice(0, 4).map((proj) => (
-              <div
-                key={proj.id}
-                onClick={() => {
-                  setActiveProject(proj);
-                  setActiveTab('workspace');
-                }}
-                className="group bg-slate-900/90 hover:bg-slate-800/90 border border-slate-800 hover:border-indigo-500/50 rounded-2xl p-5 transition cursor-pointer shadow-lg space-y-3"
-              >
-                <div className="flex items-start justify-between">
-                  <div>
-                    <span className="text-[10px] font-bold text-indigo-400 bg-indigo-500/10 px-2.5 py-1 rounded-full border border-indigo-500/20">
-                      {proj.subject} • {proj.grade}
-                    </span>
-                    <h4 className="font-bold text-slate-100 group-hover:text-amber-300 transition mt-2 text-sm">
-                      {proj.title}
-                    </h4>
-                  </div>
-                  <span
-                    className={`text-[10px] px-2 py-0.5 rounded-md font-bold ${
-                      proj.status === 'Completed'
-                        ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                        : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
-                    }`}
-                  >
-                    {proj.status}
-                  </span>
-                </div>
-
-                <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">{proj.cp}</p>
-
-                {/* Progress Bar */}
-                <div className="space-y-1">
-                  <div className="flex justify-between text-[11px] text-slate-400 font-medium">
-                    <span>Kelengkapan Dokumen</span>
-                    <span>{proj.progress}%</span>
-                  </div>
-                  <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-gradient-to-r from-indigo-500 to-amber-400 transition-all duration-500"
-                      style={{ width: `${proj.progress}%` }}
-                    />
-                  </div>
-                </div>
-
-                <div className="pt-2 flex items-center justify-between text-[11px] text-slate-500 border-t border-slate-800/60">
-                  <span>Diedit {proj.lastEdited}</span>
-                  <span className="text-indigo-400 group-hover:translate-x-1 transition flex items-center gap-1 font-semibold">
-                    Buka AI Workspace <ChevronRight className="w-3.5 h-3.5" />
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
     </div>
   );
 }
