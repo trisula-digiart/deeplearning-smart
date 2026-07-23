@@ -2319,6 +2319,8 @@ Peserta didik mampu menganalisis interaksi antar komponen ekosistem, memahami pe
       getUserTokensFromGAS(currentUser.email).then(tokens => {
         if (tokens !== null && tokens !== undefined) {
           setUserTokens(tokens);
+          // Update properti kredit_tersisa pada currentUser agar selaras dengan Sheets
+          setCurrentUser(prev => prev ? { ...prev, kredit_tersisa: tokens } : prev);
         } else {
           setUserTokens(currentUser.is_premium ? 'UNLIMITED' : (currentUser.kredit_tersisa ?? 0));
         }
@@ -2338,6 +2340,9 @@ Peserta didik mampu menganalisis interaksi antar komponen ekosistem, memahami pe
 
   const handleUpdateCurrentUser = (updatedUser) => {
     setCurrentUser(updatedUser);
+    if (updatedUser.kredit_tersisa !== undefined) {
+      setUserTokens(updatedUser.kredit_tersisa);
+    }
     try {
       localStorage.setItem('trisula_user_session', JSON.stringify(updatedUser));
     } catch (e) {
@@ -2729,7 +2734,10 @@ Peserta didik mampu menganalisis interaksi antar komponen ekosistem, memahami pe
               <AIWorkspace 
                 activeDocument={activeDocument}
                 onBackToDashboard={() => setCurrentView('dashboard')} 
-                currentUser={currentUser}
+                currentUser={{
+                  ...currentUser,
+                  kredit_tersisa: userTokens !== null && userTokens !== undefined ? userTokens : currentUser?.kredit_tersisa
+                }}
                 onUpdateCurrentUser={handleUpdateCurrentUser}
                 onRequestPaywall={handleTriggerPaywall}
               />
